@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "discovery-portal",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -11,6 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@repo/networking": "workspace:*",
     "@repo/ui": "workspace:*",
     "next": "16.1.0",
     "react": "^19.2.0",
