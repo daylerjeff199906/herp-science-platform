@@ -1,5 +1,6 @@
 import { LoginForm } from '@/components/login-form'
 import { LogoRender } from '@repo/ui/logo'
+import Image from 'next/image'
 
 export default function LoginPage() {
   return (
@@ -18,9 +19,10 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
-          src="/placeholder.svg"
+        <Image
+          src="https://vertebrados.iiap.gob.pe/_next/static/media/specie_default.3717d154.webp"
           alt="Image"
+          fill
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
