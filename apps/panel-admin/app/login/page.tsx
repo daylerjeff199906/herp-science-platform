@@ -1,6 +1,17 @@
 import { LoginForm } from '@/components/login-form'
 import { LogoRender } from '@repo/ui/logo'
+import { Metadata } from 'next'
 import Image from 'next/image'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const meta = {
+    title: `Inicio de sesión | Anfibios y Reptiles`,
+    description:
+      'Encuentra la colección que buscas en nuestra plataforma de consultas.',
+  }
+
+  return meta
+}
 
 export default function LoginPage() {
   return (
