@@ -10,9 +10,10 @@ export function LoginForm({
   return (
     <form className={cn('flex flex-col gap-6', className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Inicia sesión en tu cuenta</h1>
+        <h1 className="text-2xl font-bold">Inicia sesión</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Inicia sesión para continuar con tu panel de administración.
+          Por favor, ingresa tus credenciales para acceder al panel de
+          administración.
         </p>
       </div>
       <div className="grid gap-6">
