@@ -1,12 +1,20 @@
 import axios from 'axios'
 
-// Esta URL debería venir de variables de entorno, pero por ahora la dejamos base
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'https://api-vertebrados.iiap.gob.pe/api/v1/'
+// 1. Leemos la variable.
+// Next.js inyectará el valor correspondiente dependiendo de qué App esté corriendo.
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+// 2. Validación de seguridad (Buenas prácticas)
+if (!API_URL) {
+  // Esto hará que la app falle ruidosamente si olvidaste configurar el .env
+  // Es mejor que falle aquí a que falle con un error 404 raro después.
+  throw new Error(
+    'FATAL: La variable de entorno NEXT_PUBLIC_API_URL no está definida.'
+  )
+}
 
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -9,8 +9,7 @@ import { z } from 'zod'
 // Schema definition for environment variables
 const envSchema = z.object({
   // API URLs for different environments
-  NEXT_APP_API_URL_DEV: z.string().url().default('http://localhost:8000'),
-  NEXT_APP_API_URL_PROD: z.string().url().optional(),
+  NEXT_PUBLIC_API_URL: z.string().url().default('http://localhost:8000'),
 
   // Node environment
   NODE_ENV: z
@@ -26,11 +25,10 @@ const envSchema = z.object({
 
 // Parse and validate environment variables
 const parsedEnv = envSchema.safeParse({
-//   NEXT_APP_API_URL_DEV: process.env.NEXT_APP_API_URL_DEV,
-//   NEXT_APP_API_URL_PROD: process.env.NEXT_APP_API_URL_PROD,
-//   NODE_ENV: process.env.NODE_ENV,
-//   SESSION_SECRET: process.env.SESSION_SECRET,
-//   APP_NAME: process.env.APP_NAME,
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  NODE_ENV: process.env.NODE_ENV,
+  SESSION_SECRET: process.env.SESSION_SECRET,
+  APP_NAME: process.env.APP_NAME,
 })
 
 if (!parsedEnv.success) {
@@ -44,11 +42,8 @@ if (!parsedEnv.success) {
 }
 
 // Compute the base API URL based on environment
-const API_BASE_URL =
-  parsedEnv.data.NODE_ENV === 'production'
-    ? parsedEnv.data.NEXT_APP_API_URL_PROD ||
-      parsedEnv.data.NEXT_APP_API_URL_DEV
-    : parsedEnv.data.NEXT_APP_API_URL_DEV
+// In this new model, NEXT_PUBLIC_API_URL is the source of truth for all environments
+const API_BASE_URL = parsedEnv.data.NEXT_PUBLIC_API_URL
 
 // Export validated environment variables
 export const ENV = {
