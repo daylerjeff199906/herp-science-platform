@@ -14,7 +14,6 @@ export default function CountriesPage() {
 
   // 2. Usamos el Hook (Se ejecuta cada vez que 'filters' cambia)
   const { data, isLoading, isError, isFetching } = useCountries(filters)
-
   // Manejadores de eventos
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, name: e.target.value, page: 1 })) // Reset a página 1 al buscar

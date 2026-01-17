@@ -1,19 +1,20 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { apiClient } from '../client'
-import {
-  CountryFilter,
-  PaginatedCountriesResponse,
-} from '@repo/shared-types'
+import { CountryFilter, PaginatedCountriesResponse } from '@repo/shared-types'
 
 // Función Fetcher: Recibe los filtros y los pasa como params a Axios
 const fetchCountries = async (
   filter: CountryFilter
 ): Promise<PaginatedCountriesResponse> => {
-  // Axios se encarga de convertir el objeto { name: 'Per', page: 1 } a "?name=Per&page=1"
+  const cleanFilter = Object.fromEntries(
+    Object.entries(filter).filter(
+      ([_, value]) => value !== '' && value !== undefined
+    )
+  )
   const { data } = await apiClient.get<PaginatedCountriesResponse>(
     '/countries',
     {
-      params: filter,
+      params: cleanFilter,
     }
   )
   return data
