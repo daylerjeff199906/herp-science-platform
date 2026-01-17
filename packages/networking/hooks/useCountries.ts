@@ -1,0 +1,37 @@
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { apiClient } from '../client'
+import {
+  CountryFilter,
+  PaginatedCountriesResponse,
+} from '@repo/shared-types'
+
+// Función Fetcher: Recibe los filtros y los pasa como params a Axios
+const fetchCountries = async (
+  filter: CountryFilter
+): Promise<PaginatedCountriesResponse> => {
+  // Axios se encarga de convertir el objeto { name: 'Per', page: 1 } a "?name=Per&page=1"
+  const { data } = await apiClient.get<PaginatedCountriesResponse>(
+    '/countries',
+    {
+      params: filter,
+    }
+  )
+  return data
+}
+
+// Custom Hook: Ahora recibe el filtro como argumento
+export const useCountries = (filter: CountryFilter) => {
+  return useQuery({
+    // IMPORTANTE: El filtro es parte de la "Key".
+    // Si 'filter' cambia, React Query detecta que es una búsqueda nueva y refresca.
+    queryKey: ['countries', filter],
+
+    queryFn: () => fetchCountries(filter),
+
+    // UI/UX: Mantiene los datos viejos visibles mientras cargan los nuevos (evita parpadeos)
+    placeholderData: keepPreviousData,
+
+    // Cache: 5 minutos
+    staleTime: 1000 * 60 * 5,
+  })
+}

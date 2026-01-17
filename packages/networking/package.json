@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@repo/shared-types": "workspace:*",
     "@types/node": "^22.15.3",
     "typescript": "^5.0.0"
   }
