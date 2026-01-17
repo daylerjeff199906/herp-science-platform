@@ -3,15 +3,15 @@ import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 
 export default async function DashboardLayout({
-    children,
+  children,
 }: {
-    children: ReactNode
+  children: ReactNode
 }) {
-    const session = await getSession()
+  const session = await getSession()
 
-    if (!session) {
-        redirect('/login')
-    }
+  if (!session) {
+    redirect('/login')
+  }
 
-    return <>{children}</>
+  return <>{children}</>
 }
