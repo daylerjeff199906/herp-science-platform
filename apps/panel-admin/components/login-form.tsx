@@ -65,10 +65,7 @@ export function LoginForm({
         </div>
       )
       if (user?.user?.role !== 'BASIC_USER') {
-        router.push('/dashboard')
-      }
-      if (user?.user?.role === 'BASIC_USER') {
-        router.push('/user')
+        router.replace('/dashboard')
       }
     }
     setLoading(false)
