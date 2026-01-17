@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {  images: {
+const nextConfig = {
+  images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
@@ -27,16 +28,17 @@ const nextConfig = {  images: {
         hostname: 'vertebrados.iiap.gob.pe',
       },
     ],
-    async redirects() {
-      return [
-        {
-          source: '/',
-          destination: '/login',
-          permanent: true,
-        },
-      ];
-    },
     unoptimized: true,
-  },};
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/login',
+        permanent: true,
+      },
+    ]
+  },
+}
 
 export default nextConfig;
