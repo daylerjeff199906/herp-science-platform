@@ -27,6 +27,15 @@ const nextConfig = {  images: {
         hostname: 'vertebrados.iiap.gob.pe',
       },
     ],
+    async redirects() {
+      return [
+        {
+          source: '/',
+          destination: '/login',
+          permanent: true,
+        },
+      ];
+    },
     unoptimized: true,
   },};
 
