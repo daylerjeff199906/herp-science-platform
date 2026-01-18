@@ -65,6 +65,7 @@ export async function fetchCountriesAdmin(
 
   try {
     const response = (await fetchMethods.get(url, headers)) as Response
+    console.log(response)
     if (response.status !== 200) {
       return dataInitial
     } else {

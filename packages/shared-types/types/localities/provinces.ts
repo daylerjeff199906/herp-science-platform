@@ -1,4 +1,4 @@
-import { PaginatedResponse } from './core'
+import { PaginatedResponse } from '../core'
 import { department } from './departments'
 
 export interface province {

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['@repo/shared-types', '@repo/ui', '@repo/networking'],
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

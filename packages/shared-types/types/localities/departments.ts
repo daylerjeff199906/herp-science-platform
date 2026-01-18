@@ -1,5 +1,5 @@
 import { Country } from './countries'
-import { PaginatedResponse } from './core'
+import { PaginatedResponse } from '../core'
 
 export interface department {
   id: number
@@ -10,7 +10,7 @@ export interface department {
   country: Country
 }
 
-export interface PaginatedDepartmentsResponse extends PaginatedResponse<department> {}
+export interface PaginatedDepartmentsResponse extends PaginatedResponse<department> { }
 
 export interface DepartmentFilter {
   name?: string // Filtro por nombre del departamento (parcial, case-insensitive)

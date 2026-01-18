@@ -1,4 +1,4 @@
-import { PaginatedResponse } from './core'
+import { PaginatedResponse } from '../core'
 import { district } from './districts'
 
 export interface locality {

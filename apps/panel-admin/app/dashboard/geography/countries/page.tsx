@@ -1,26 +1,35 @@
-import { ListCountries } from '@/modules/admin'
-import { fetchCountriesAdmin } from '@/api/app/locations/countries'
-import { SearchParams } from '@/types'
-import { PaginationCustom } from '@/modules/core'
+import { fetchCountriesAdmin } from '@/services/countries'
+import { SearchParams } from '@repo/shared-types/types'
+// import { PaginationCustom } from '@/modules/core'
+import { CountriesView } from './components/countries-view'
 
 interface IPageProps {
-  searchParams?: SearchParams
+  searchParams?: Promise<SearchParams>
 }
 
 export default async function Page(props: IPageProps) {
-  const SearchParams = await props.searchParams
+  const params = await props.searchParams
 
   const allCountries = await fetchCountriesAdmin({
-    page: SearchParams?.page ? Number(SearchParams.page) : 1,
-    name: SearchParams?.name ? String(SearchParams.name) : undefined,
+    page: params?.page ? Number(params.page) : 1,
+    name: params?.name ? String(params.name) : undefined,
   })
 
   return (
-    <>
-      <ListCountries countriesData={allCountries} />
-      <PaginationCustom count={allCountries?.totalPages} page_size={10} />
-    </>
+    <div className="p-6">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold tracking-tight">Países</h1>
+        <p className="text-muted-foreground">Administra el catálogo de países del sistema.</p>
+      </div>
+
+      <CountriesView countries={allCountries.data} />
+
+      <div className="mt-4">
+        {/* <PaginationCustom count={allCountries?.totalPages} page_size={10} /> */}
+      </div>
+    </div>
   )
 }
 
-export const dynamic = 'force-dynamic' // Force dynamic rendering for this page
+export const dynamic = 'force-dynamic'
+

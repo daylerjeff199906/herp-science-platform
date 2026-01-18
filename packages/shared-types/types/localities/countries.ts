@@ -1,4 +1,4 @@
-import { PaginatedResponse } from './core'
+import { PaginatedResponse } from '../core'
 export interface Country {
   id: string // Ej: "US"
   name: string // Ej: "United States"
@@ -7,7 +7,7 @@ export interface Country {
   updatedAt: string // Ej: "2023-06-20T08:22:10Z"
 }
 
-export interface PaginatedCountriesResponse extends PaginatedResponse<Country> {}
+export interface PaginatedCountriesResponse extends PaginatedResponse<Country> { }
 
 export interface CountryFilter {
   name?: string // Filtro por nombre del país (parcial, case-insensitive)
