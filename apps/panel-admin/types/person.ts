@@ -1,10 +1,9 @@
-
 export interface IPerson {
-    id: string
-    firstName: string
-    lastName: string
-    email: string
-    phone?: string
-    documentNumber?: string
-    photo?: string
+  id: string
+  firstname: string
+  lastname: string
+  email: string
+  phone?: string
+  documentNumber?: string
+  photo?: string
 }
