@@ -11,10 +11,12 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@next/third-parties": "^16.1.3",
     "@repo/networking": "workspace:*",
     "@repo/shared-types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.18",
+    "lucide-react": "^0.468.0",
     "next": "16.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
