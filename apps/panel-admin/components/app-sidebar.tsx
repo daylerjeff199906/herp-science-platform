@@ -13,13 +13,13 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { LucideIcon } from 'lucide-react'
+import { IconName } from './icon-map'
 
 // Define types for the props
 interface NavItem {
   title: string
   url: string
-  icon?: LucideIcon
+  icon?: IconName
   isActive?: boolean
   items?: {
     title: string
@@ -36,7 +36,7 @@ interface Team {
 interface Project {
   name: string
   url: string
-  icon: LucideIcon
+  icon: IconName
 }
 
 interface User {
