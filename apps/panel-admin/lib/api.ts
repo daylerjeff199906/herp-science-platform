@@ -20,3 +20,10 @@ export const fetchMethods = {
     patch: apiClient.patch.bind(apiClient),
     delete: apiClient.del.bind(apiClient),
 }
+
+export const buildHeaders = async () => {
+    const session = await getSession()
+    return {
+        Authorization: `Bearer ${session?.data?.token}`,
+    }
+}
