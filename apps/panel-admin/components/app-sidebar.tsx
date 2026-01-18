@@ -5,14 +5,17 @@ import * as React from 'react'
 import { NavMain } from '@/components/nav-main'
 import { NavProjects } from '@/components/nav-projects'
 import { NavUser } from '@/components/nav-user'
-import { TeamSwitcher } from '@/components/team-switcher'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { Command } from 'lucide-react'
 import { IconName } from './icon-map'
 
 // Define types for the props
@@ -27,11 +30,6 @@ interface NavItem {
   }[]
 }
 
-interface Team {
-  name: string
-  logo: React.ElementType
-  plan: string
-}
 
 interface Project {
   name: string
@@ -47,14 +45,12 @@ interface User {
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: User
-  teams?: Team[]
   navMain: NavItem[]
   projects?: Project[]
 }
 
 export function AppSidebar({
   user,
-  teams,
   navMain,
   projects,
   ...props
@@ -62,7 +58,21 @@ export function AppSidebar({
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        {teams && <TeamSwitcher teams={teams} />}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <a href="#">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <Command className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Panel Admin</span>
+                  <span className="truncate text-xs">v1.0.0</span>
+                </div>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />

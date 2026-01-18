@@ -4,6 +4,7 @@ import { getSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
 import { IconName } from '@/components/icon-map'
+import { ROUTES } from '@/config/routes'
 
 // Define navigation data here (or extract to a config file)
 const navMain: {
@@ -16,92 +17,104 @@ const navMain: {
     url: string
   }[]
 }[] = [
-  {
-    title: 'Playground',
-    url: '#',
-    icon: 'SquareTerminal',
-    isActive: true,
-    items: [
-      {
-        title: 'History',
-        url: '#',
-      },
-      {
-        title: 'Starred',
-        url: '#',
-      },
-      {
-        title: 'Settings',
-        url: '#',
-      },
-    ],
-  },
-  {
-    title: 'Models',
-    url: '#',
-    icon: 'Bot',
-    items: [
-      {
-        title: 'Genesis',
-        url: '#',
-      },
-      {
-        title: 'Explorer',
-        url: '#',
-      },
-      {
-        title: 'Quantum',
-        url: '#',
-      },
-    ],
-  },
-  {
-    title: 'Documentation',
-    url: '#',
-    icon: 'BookOpen',
-    items: [
-      {
-        title: 'Introduction',
-        url: '#',
-      },
-      {
-        title: 'Get Started',
-        url: '#',
-      },
-      {
-        title: 'Tutorials',
-        url: '#',
-      },
-      {
-        title: 'Changelog',
-        url: '#',
-      },
-    ],
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: 'Settings2',
-    items: [
-      {
-        title: 'General',
-        url: '#',
-      },
-      {
-        title: 'Team',
-        url: '#',
-      },
-      {
-        title: 'Billing',
-        url: '#',
-      },
-      {
-        title: 'Limits',
-        url: '#',
-      },
-    ],
-  },
-]
+    {
+      title: 'Taxonomía',
+      url: '#',
+      icon: 'Layers',
+      isActive: true,
+      items: [
+        {
+          title: 'Clases',
+          url: ROUTES.TAXONOMY.CLASSES,
+        },
+        {
+          title: 'Órdenes',
+          url: ROUTES.TAXONOMY.ORDERS,
+        },
+        {
+          title: 'Familias',
+          url: ROUTES.TAXONOMY.FAMILIES,
+        },
+        {
+          title: 'Géneros',
+          url: ROUTES.TAXONOMY.GENERA,
+        },
+        {
+          title: 'Especies',
+          url: ROUTES.TAXONOMY.SPECIES,
+        },
+        {
+          title: 'Sexos',
+          url: ROUTES.TAXONOMY.SEXES,
+        },
+      ],
+    },
+    {
+      title: 'Ubicación',
+      url: '#',
+      icon: 'Map',
+      items: [
+        {
+          title: 'Países',
+          url: ROUTES.GEOGRAPHY.COUNTRIES,
+        },
+        {
+          title: 'Departamentos',
+          url: ROUTES.GEOGRAPHY.DEPARTMENTS,
+        },
+        {
+          title: 'Provincias',
+          url: ROUTES.GEOGRAPHY.PROVINCES,
+        },
+        {
+          title: 'Distritos',
+          url: ROUTES.GEOGRAPHY.DISTRICTS,
+        },
+        {
+          title: 'Localidades',
+          url: ROUTES.GEOGRAPHY.LOCALITIES,
+        },
+      ],
+    },
+    {
+      title: 'Entidades',
+      url: '#',
+      icon: 'Landmark',
+      items: [
+        {
+          title: 'Instituciones',
+          url: ROUTES.ENTITIES.INSTITUTIONS,
+        },
+        {
+          title: 'Museos',
+          url: ROUTES.ENTITIES.MUSEUMS,
+        },
+        {
+          title: 'Colectores',
+          url: ROUTES.ENTITIES.COLLECTORS,
+        },
+        {
+          title: 'Tipos de Bosque',
+          url: ROUTES.ENTITIES.FOREST_TYPES,
+        },
+      ],
+    },
+    {
+      title: 'Principal',
+      url: '#',
+      icon: 'Database',
+      items: [
+        {
+          title: 'Individuos',
+          url: ROUTES.CORE.INDIVIDUALS,
+        },
+        {
+          title: 'Identificadores',
+          url: ROUTES.CORE.IDENTIFIERS,
+        },
+      ],
+    },
+  ]
 
 export default async function DashboardLayout({
   children,
