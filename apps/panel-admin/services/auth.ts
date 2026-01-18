@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server'
 
-import { createSession } from '@/lib/session'
+import { redirect } from 'next/navigation'
+
+import { createSession, deleteSession } from '@/lib/session'
 import { IAuth, ICredentials, IResposeLogin } from '@/types'
 import { fetchMethods } from '@/lib/api'
 import { urlBase } from './config'
@@ -46,4 +48,9 @@ export const fetchAuthLogin = async (data: IAuth): Promise<IResposeLogin> => {
       errors: ['Error al conectar con el servidor.'],
     }
   }
+}
+
+export const logout = async () => {
+  await deleteSession()
+  redirect('/login')
 }
