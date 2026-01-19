@@ -32,7 +32,7 @@ export function CountriesForm({ initialData, onSuccess }: CountriesFormProps) {
             if (result.success) {
                 return { values: result.data, errors: {} };
             }
-            const formattedErrors = result.error.errors.reduce((acc, current) => {
+            const formattedErrors = result.error.issues.reduce<Record<string, { type: string; message: string }>>((acc, current) => {
                 return {
                     ...acc,
                     [current.path[0] as string]: {
@@ -66,7 +66,7 @@ export function CountriesForm({ initialData, onSuccess }: CountriesFormProps) {
                 // Edit mode: Omit status
                 const { status, ...rest } = data;
                 response = await createOrUpdateCountry({
-                    id: initialData.id,
+                    id: Number(initialData.id),
                     data: rest as any, // Cast to avoid strict type mismatch if ICountryPost requires status
                 });
             } else {
