@@ -18,5 +18,25 @@
         "searchPlaceholder": "Buscar especie...",
         "actionButton": "Personalizar búsqueda",
         "explore": "Explorar"
+    },
+    "Home": {
+        "about": {
+            "tag": "Nuestra colección",
+            "title": "Sobre nuestra colección de Anfibios y Reptiles",
+            "description": "El Instituto de Investigación de la Amazonía Peruana (IIAP) alberga una impresionante colección de reptiles y anfibios, que son una muestra de la rica biodiversidad de la selva amazónica. La colección incluye más de 10,000 especímenes cuidadosamente conservados y procesados, que abarcan desde pequeñas ranas hasta grandes serpientes.",
+            "description2": "Los especímenes son utilizados por investigadores del IIAP y otras instituciones nacionales y extranjeras para estudiar la ecología, la evolución y la conservación de estos maravillosos animales.",
+            "cta": "Leer más"
+        },
+        "multimedia": {
+            "tag": "Multimedia",
+            "title": "Galería de imágenes",
+            "subtitle": "Últimos registros",
+            "cta": "Ver galería completa"
+        },
+        "resources": {
+            "tag": "Nuestros recursos",
+            "title": "Descubre Herramientas Exclusivas para la Exploración Científica",
+            "cta": "Ver todos los recursos"
+        }
     }
 }
