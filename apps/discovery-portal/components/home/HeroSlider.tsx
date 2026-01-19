@@ -55,7 +55,7 @@ export function HeroSlider() {
                                 />
                             </div>
                             {/* Overlay Gradient - Amazonian Green */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent" />
+                            <div className="absolute inset-0 bg-black/50" />
                         </CarouselItem>
                     ))}
                 </CarouselContent>
