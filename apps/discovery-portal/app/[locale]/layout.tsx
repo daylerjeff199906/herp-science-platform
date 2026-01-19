@@ -28,13 +28,15 @@ export const metadata: Metadata = {
   },
 }
 
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+};
+
 export default async function RootLayout({
   children,
   params
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
+}: Props) {
   const { locale } = await params;
   const messages = await getMessages();
 
