@@ -1,8 +1,5 @@
 "use client"
-
 import * as React from "react"
-import Link from 'next/link'
-import Image from 'next/image'
 import { Search, ArrowRight } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem } from "@repo/ui/components/ui/carousel"
 import { Input } from "@repo/ui/components/ui/input"
@@ -51,17 +48,14 @@ export function HeroSlider() {
                         <CarouselItem key={slide.id} className="pl-0 relative w-full h-full">
                             {/* Image */}
                             <div className="relative w-full h-full"> {/* Wrapper div for Next/Image */}
-                                <Image
+                                <img
                                     src={slide.image}
                                     alt={slide.title}
-                                    fill
-                                    className="object-cover transition-transform duration-1000 select-none" // Removed scale-105
-                                    priority
-                                    quality={90}
+                                    className="object-cover transition-transform duration-1000 select-none w-full h-full"
                                 />
                             </div>
                             {/* Overlay Gradient - Amazonian Green */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-emerald-900/60 to-transparent" /> {/* Changed via-emerald-900/20 to via-emerald-900/60 */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent" />
                         </CarouselItem>
                     ))}
                 </CarouselContent>
@@ -86,7 +80,6 @@ export function HeroSlider() {
 
                         {/* Search & Actions Container */}
                         <div className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full">
-
                             {/* Search Bar - Style match: Outline white, pill shape, icon right */}
                             <div className="relative w-full max-w-md group">
                                 <Input
