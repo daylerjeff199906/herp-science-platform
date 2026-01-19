@@ -45,13 +45,13 @@ export function LanguageSwitcher({ className, scrolled }: { className?: string, 
                     isOpen && "ring-2 ring-emerald-500/20 border-emerald-500/50"
                 )}
             >
-                <currentLocale.flag className="w-5 h-5 rounded-full object-cover shadow-sm" />
+                <currentLocale.flag className="w-5 h-5 rounded-full object-cover" />
                 <span className="text-sm font-semibold">{currentLocale.label}</span>
                 <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", isOpen && "rotate-180")} />
             </button>
 
             {isOpen && (
-                <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-gray-100 py-1 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-xl border border-gray-200 py-1 overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
                     {locales.map((l) => (
                         <Link
                             key={l.code}
@@ -63,7 +63,7 @@ export function LanguageSwitcher({ className, scrolled }: { className?: string, 
                             )}
                             onClick={() => setIsOpen(false)}
                         >
-                            <l.flag className="w-4 h-4 rounded-full object-cover shadow-sm" />
+                            <l.flag className="w-4 h-4 rounded-full object-cover" />
                             <span>{l.label}</span>
                         </Link>
                     ))}

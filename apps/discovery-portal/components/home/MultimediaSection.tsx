@@ -25,7 +25,7 @@ export function MultimediaSection() {
                         <p className="text-gray-500 mt-2 text-lg">{t('subtitle')}</p>
                     </div>
 
-                    <Button variant="outline" className="hidden md:flex gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800">
+                    <Button variant="outline" className="hidden md:flex gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 rounded-full">
                         {t('cta')}
                         <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -36,7 +36,7 @@ export function MultimediaSection() {
                     {images.map((img, i) => (
                         <div
                             key={i}
-                            className={`group relative overflow-hidden rounded-2xl bg-gray-200 shadow-sm transition-all hover:shadow-md cursor-pointer ${i === 0 ? 'col-span-2 md:col-span-2 md:row-span-2 md:auto-rows-[620px]' : ''}`}
+                            className={`group relative overflow-hidden rounded-2xl bg-gray-200 transition-all cursor-pointer ${i === 0 ? 'col-span-2 md:col-span-2 md:row-span-2 md:auto-rows-[620px]' : ''}`}
                         >
                             {/* Placeholder Skeleton */}
                             <div className="absolute inset-0 flex items-center justify-center text-gray-300 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
@@ -54,7 +54,7 @@ export function MultimediaSection() {
                 </div>
 
                 <div className="mt-8 md:hidden">
-                    <Button className="w-full gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50" variant="outline">
+                    <Button className="w-full gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-full" variant="outline">
                         {t('cta')}
                         <ArrowRight className="w-4 h-4" />
                     </Button>

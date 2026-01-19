@@ -38,7 +38,7 @@ export function AboutSection() {
 
                     {/* Image / Visuals */}
                     <div className="relative">
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] group">
+                        <div className="relative rounded-2xl overflow-hidden aspect-[4/3] group">
                             {/* Placeholder for About Image - User to replace */}
                             <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center text-gray-400">
                                 <span className="sr-only">About Image Placeholder</span>
@@ -52,7 +52,7 @@ export function AboutSection() {
                         </div>
 
                         {/* Floating Stat Card */}
-                        <div className="absolute -bottom-8 -left-8 md:bottom-8 md:-left-12 bg-white p-6 rounded-xl shadow-xl border border-gray-100 max-w-xs animate-in slide-in-from-bottom-5 duration-700 delay-200">
+                        <div className="absolute -bottom-8 -left-8 md:bottom-8 md:-left-12 bg-white p-6 rounded-xl border border-gray-100 max-w-xs animate-in slide-in-from-bottom-5 duration-700 delay-200">
                             <div className="flex items-start gap-4">
                                 <div className="p-3 bg-emerald-100 rounded-lg text-emerald-600">
                                     <Check className="w-6 h-6" />
