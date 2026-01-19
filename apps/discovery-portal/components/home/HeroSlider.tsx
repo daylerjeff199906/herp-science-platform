@@ -51,7 +51,7 @@ export function HeroSlider() {
                                 <img
                                     src={slide.image}
                                     alt={slide.title}
-                                    className="object-cover transition-transform duration-1000 select-none w-full h-full"
+                                    className="object-cover transition-transform duration-1000 select-none w-full h-screen md:h-full"
                                 />
                             </div>
                             {/* Overlay Gradient - Amazonian Green */}
