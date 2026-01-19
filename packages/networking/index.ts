@@ -1,2 +1,6 @@
-export * from './client';
-export * from './hooks/useCountries';
+
+export * from './src/types'
+export * from './src/error'
+export * from './src/fetch-client'
+export * from './src/api-client'
+export * from './hooks/useCountries'

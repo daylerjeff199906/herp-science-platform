@@ -5,8 +5,9 @@ import {
   Forward,
   MoreHorizontal,
   Trash2,
-  type LucideIcon,
 } from "lucide-react"
+
+import { iconMap, type IconName } from '@/components/icon-map'
 
 import {
   DropdownMenu,
@@ -31,7 +32,7 @@ export function NavProjects({
   projects: {
     name: string
     url: string
-    icon: LucideIcon
+    icon: IconName
   }[]
 }) {
   const { isMobile } = useSidebar()
@@ -44,7 +45,10 @@ export function NavProjects({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
-                <item.icon />
+                {(() => {
+                  const Icon = iconMap[item.icon]
+                  return <Icon />
+                })()}
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>
