@@ -1,14 +1,18 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { Link, usePathname } from '../../../i18n/routing'
+import { useTranslations } from 'next-intl'
 import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
 import { Globe } from 'lucide-react'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function Header() {
     const [scrolled, setScrolled] = useState(false)
+    const t = useTranslations('Header')
+    const pathname = usePathname()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -51,14 +55,11 @@ export function Header() {
 
                     {/* Actions Area */}
                     <div className="hidden md:flex items-center gap-4">
-                        {/* Language Switcher Placeholder */}
-                        <button
-                            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-emerald-600' : 'text-white/90 hover:text-white'
-                                }`}
-                        >
-                            <Globe className="w-4 h-4" />
-                            <span>ES</span>
-                        </button>
+                        {/* Language Switcher */}
+                        <LanguageSwitcher
+                            scrolled={scrolled}
+                            className={`transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}
+                        />
 
                         <Link
                             href="/login"
@@ -70,7 +71,7 @@ export function Header() {
                                 }
               `}
                         >
-                            Unirte
+                            {t('join')}
                         </Link>
                     </div>
 

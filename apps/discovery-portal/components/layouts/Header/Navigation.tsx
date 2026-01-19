@@ -1,17 +1,17 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '../../../i18n/routing'
+import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { NavItem } from './types'
 
-export const navItems: NavItem[] = [
-    { label: 'Inicio', href: '/' },
-    { label: 'Colecciones', href: '/colecciones' },
-    { label: 'Galería', href: '/galeria' },
-    { label: 'Visor', href: '/visor' },
-    { label: 'Cómo depositar', href: '/como-depositar' },
+export const navItems: { label: string; href: string; children?: any[] }[] = [
+    { label: 'home', href: '/' },
+    { label: 'collections', href: '/colecciones' },
+    { label: 'gallery', href: '/galeria' },
+    { label: 'viewer', href: '/visor' },
+    { label: 'deposit', href: '/como-depositar' },
 ]
 
 export function Navigation({
@@ -20,6 +20,7 @@ export function Navigation({
     scrolled: boolean
 }) {
     const pathname = usePathname()
+    const t = useTranslations('Header.nav')
 
     return (
         <nav className="hidden md:flex items-center gap-1">
@@ -38,7 +39,7 @@ export function Navigation({
                                 }
             `}
                         >
-                            {item.label}
+                            {t(item.label)}
                             {item.children && <ChevronDown className="w-4 h-4" />}
                         </Link>
 

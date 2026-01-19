@@ -1,9 +1,11 @@
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
 import type { Metadata } from 'next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { Inter } from 'next/font/google'
-import './globals.css'
+import '../globals.css'
 import { Providers } from './providers'
-import { Header } from '../components/layouts/Header/Header'
+import { Header } from '../../components/layouts/Header/Header'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -26,19 +28,28 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+};
+
+export default async function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+  params
+}: Props) {
+  const { locale } = await params;
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={inter.className}>
-        <Providers>
-          <Header />
-          <main>{children}</main>
-        </Providers>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
+        <NextIntlClientProvider messages={messages}>
+          <Providers>
+            <Header />
+            <main>{children}</main>
+          </Providers>
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
+        </NextIntlClientProvider>
       </body>
     </html>
   )
