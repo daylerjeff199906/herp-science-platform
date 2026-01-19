@@ -5,6 +5,7 @@ import { Link, usePathname } from '../../../i18n/routing'
 import { useTranslations } from 'next-intl'
 import { Menu, X, ChevronRight, ArrowRight } from 'lucide-react'
 import { navItems } from './Navigation'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function MobileMenu({ scrolled }: { scrolled: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
@@ -98,12 +99,9 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                                 <span>{t('joinNow')}</span>
                                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                             </Link>
-                            <div className="flex items-center justify-center gap-2 text-sm text-gray-400 font-medium">
-                                <Link href={pathname} locale="es" className="hover:text-emerald-600 cursor-pointer transition-colors">ES</Link>
-                                <span className="w-px h-3 bg-gray-300"></span>
-                                <Link href={pathname} locale="en" className="hover:text-emerald-600 cursor-pointer transition-colors">EN</Link>
-                                <span className="w-px h-3 bg-gray-300"></span>
-                                <Link href={pathname} locale="pt" className="hover:text-emerald-600 cursor-pointer transition-colors">PT</Link>
+
+                            <div className="flex items-center justify-center pt-2">
+                                <LanguageSwitcher className="text-gray-600 gap-6" scrolled={true} />
                             </div>
                         </div>
                     </div>

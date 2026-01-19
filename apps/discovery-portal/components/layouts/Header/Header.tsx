@@ -7,6 +7,7 @@ import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
 import { Globe } from 'lucide-react'
+import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function Header() {
     const [scrolled, setScrolled] = useState(false)
@@ -55,13 +56,10 @@ export function Header() {
                     {/* Actions Area */}
                     <div className="hidden md:flex items-center gap-4">
                         {/* Language Switcher */}
-                        <div className={`flex items-center gap-3 text-sm font-medium transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}>
-                            <Link href={pathname} locale="es" className="hover:text-emerald-500 transition-colors">ES</Link>
-                            <span className="opacity-30">|</span>
-                            <Link href={pathname} locale="en" className="hover:text-emerald-500 transition-colors">EN</Link>
-                            <span className="opacity-30">|</span>
-                            <Link href={pathname} locale="pt" className="hover:text-emerald-500 transition-colors">PT</Link>
-                        </div>
+                        <LanguageSwitcher
+                            scrolled={scrolled}
+                            className={`transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}
+                        />
 
                         <Link
                             href="/login"
