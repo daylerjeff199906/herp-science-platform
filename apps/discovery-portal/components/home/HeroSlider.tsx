@@ -70,7 +70,7 @@ export function HeroSlider() {
                         <div className="space-y-6">
                             <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-none drop-shadow-md">
                                 Descubre la <br />
-                                <span className="text-emerald-400">Biodiversidad Amazónica</span>
+                                <span className="text-[#ccff00]">Biodiversidad Amazónica</span>
                             </h1>
                             <p className="text-lg md:text-xl text-emerald-100/90 max-w-2xl leading-relaxed font-light">
                                 Accede a la colección científica más completa de anfibios y reptiles del IIAP.
@@ -84,18 +84,18 @@ export function HeroSlider() {
                             <div className="relative w-full max-w-md group">
                                 <Input
                                     placeholder="Buscar especie..."
-                                    className="w-full h-14 pl-6 pr-12 bg-transparent border-[1.5px] border-white/40 hover:border-white text-white placeholder:text-white/60 focus-visible:ring-0 focus-visible:bg-white/5 transition-all rounded-full text-lg"
+                                    className="w-full h-14 pl-6 pr-12 bg-transparent border-[1.5px] border-[#ccff00]/30 hover:border-[#ccff00] text-white placeholder:text-white/60 focus-visible:ring-1 focus-visible:ring-[#ccff00] focus-visible:border-[#ccff00] transition-all rounded-full text-lg"
                                 />
-                                <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-white/80 group-hover:text-white transition-colors" />
+                                <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-[#ccff00]/80 group-hover:text-[#ccff00] transition-colors" />
                             </div>
 
-                            {/* Custom Action Button - Style match: Dark background, circle arrow left */}
+                            {/* Custom Action Button - Style match: Solid Lime background, dark text */}
                             <Button
                                 size="lg"
-                                className="h-14 pl-2 pr-6 bg-emerald-900/40 hover:bg-emerald-800/60 border-[1.5px] border-white/20 hover:border-white/40 backdrop-blur-md text-white font-medium rounded-full transition-all group"
+                                className="h-14 pl-2 pr-6 bg-[#ccff00] hover:bg-[#b0dc00] text-emerald-950 font-bold text-lg rounded-full transition-all group shadow-[0_0_20px_rgba(204,255,0,0.3)] hover:shadow-[0_0_30px_rgba(204,255,0,0.5)]"
                             >
-                                <div className="bg-white rounded-full p-2 mr-3 group-hover:scale-110 transition-transform">
-                                    <ArrowRight className="w-4 h-4 text-emerald-900" />
+                                <div className="bg-emerald-950 rounded-full p-2 mr-3 group-hover:scale-110 transition-transform">
+                                    <ArrowRight className="w-4 h-4 text-[#ccff00]" />
                                 </div>
                                 Personalizar búsqueda
                             </Button>
@@ -105,9 +105,9 @@ export function HeroSlider() {
             </div>
 
             {/* Scroll Indicator */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-emerald-100/40 text-sm animate-pulse flex flex-col items-center gap-2">
-                <span className="uppercase tracking-widest text-xs">Explorar</span>
-                <div className="w-[1px] h-8 bg-gradient-to-b from-emerald-100/40 to-transparent" />
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#ccff00]/60 text-sm animate-pulse flex flex-col items-center gap-2">
+                <span className="uppercase tracking-widest text-xs font-medium">Explorar</span>
+                <div className="w-[1px] h-8 bg-gradient-to-b from-[#ccff00]/60 to-transparent" />
             </div>
         </div>
     )
