@@ -33,7 +33,7 @@ export function HeroSlider() {
     ]
 
     return (
-        <div className="relative w-full h-screen min-[1920px]:h-[800px] bg-emerald-950 overflow-hidden"> {/* Changed height to h-screen and added min-[1920px]:h-[800px] */}
+        <div className="relative w-full h-screen min-[1920px]:h-[920px] bg-emerald-950 overflow-hidden"> {/* Changed height to h-screen and added min-[1920px]:h-[800px] */}
             {/* Background Slider */}
             <Carousel
                 plugins={[plugin.current]}
@@ -55,7 +55,7 @@ export function HeroSlider() {
                                 />
                             </div>
                             {/* Overlay Gradient - Amazonian Green */}
-                            <div className="absolute inset-0 bg-black/50" />
+                            <div className="absolute inset-0 bg-black/40" />
                         </CarouselItem>
                     ))}
                 </CarouselContent>
