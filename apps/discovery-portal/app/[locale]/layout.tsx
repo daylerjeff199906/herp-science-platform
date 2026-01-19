@@ -33,12 +33,11 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-export default async function RootLayout({
-  children,
-  params
-}: Props) {
+export default async function RootLayout(props: Props) {
+  const params = await props.params;
   const { locale } = await params;
   const messages = await getMessages();
+  const children = props.children;
 
   return (
     <html lang={locale}>
