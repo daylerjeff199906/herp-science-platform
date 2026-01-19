@@ -1,15 +1,13 @@
 import type { Metadata } from 'next'
 import { GoogleAnalytics } from '@next/third-parties/google'
-import { Open_Sans } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 import { Header } from '../components/layouts/Header/Header'
 
-const openSans = Open_Sans({
-  weight: ['400', '700'],
-  style: ['normal'],
+const inter = Inter({
   subsets: ['latin'],
-  fallback: ['sans-serif'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -35,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={openSans.className}>
+      <body className={inter.className}>
         <Providers>
           <Header />
           <main>{children}</main>
