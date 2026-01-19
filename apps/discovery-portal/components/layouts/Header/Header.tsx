@@ -25,8 +25,8 @@ export function Header() {
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
-                    ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 py-3'
-                    : 'bg-transparent py-5'
+                ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 py-3'
+                : 'bg-transparent py-5'
                 }`}
         >
             <div className="container mx-auto px-4 md:px-6">
@@ -65,8 +65,8 @@ export function Header() {
                             className={`
                 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0
                 ${scrolled
-                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/20'
-                                    : 'bg-white text-emerald-900 hover:bg-emerald-50 shadow-black/10'
+                                    ? 'bg-emerald-600 text-white hover:bg-[#ADDE60] hover:text-emerald-950 shadow-emerald-600/20'
+                                    : 'bg-white text-emerald-900 hover:bg-[#ADDE60] hover:text-emerald-950 shadow-black/10'
                                 }
               `}
                         >
@@ -78,6 +78,6 @@ export function Header() {
                     <MobileMenu scrolled={scrolled} />
                 </div>
             </div>
-        </header>
+        </header >
     )
 }
