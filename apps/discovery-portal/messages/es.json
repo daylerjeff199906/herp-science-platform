@@ -1,0 +1,22 @@
+{
+    "Header": {
+        "nav": {
+            "home": "Inicio",
+            "collections": "Colecciones",
+            "gallery": "Galería",
+            "viewer": "Visor",
+            "deposit": "Cómo depositar"
+        },
+        "menu": "Menú",
+        "join": "Unirte",
+        "joinNow": "Unirte ahora"
+    },
+    "Hero": {
+        "titlePrefix": "Descubre la",
+        "titleAccent": "Biodiversidad Amazónica",
+        "description": "Accede a la colección científica más completa de anfibios y reptiles del IIAP. Información taxonómica y geográfica para la investigación.",
+        "searchPlaceholder": "Buscar especie...",
+        "actionButton": "Personalizar búsqueda",
+        "explore": "Explorar"
+    }
+}

@@ -9,11 +9,13 @@ import {
 import { Input } from '@repo/ui/components/ui/input'
 import { Button } from '@repo/ui/components/ui/button'
 import Autoplay from 'embla-carousel-autoplay'
+import { useTranslations } from 'next-intl'
 
 export function HeroSlider() {
   const plugin = React.useRef(
-    Autoplay({ delay: 5000, stopOnInteraction: false }) // Changed stopOnInteraction to false
+    Autoplay({ delay: 5000, stopOnInteraction: false })
   )
+  const t = useTranslations('Hero')
 
   const slides = [
     {
@@ -42,14 +44,13 @@ export function HeroSlider() {
   return (
     <div className="relative w-full h-screen min-[1920px]:h-[920px] bg-emerald-950 overflow-hidden">
       {' '}
-      {/* Changed height to h-screen and added min-[1920px]:h-[800px] */}
       {/* Background Slider */}
       <Carousel
         plugins={[plugin.current]}
         className="w-full h-full"
         opts={{
           loop: true,
-          align: 'start', // Added align: "start"
+          align: 'start',
         }}
       >
         <CarouselContent className="h-full ml-0">
@@ -81,13 +82,11 @@ export function HeroSlider() {
             {/* Text Content */}
             <div className="space-y-6">
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-none drop-shadow-md">
-                Descubre la <br />
-                <span className="text-[#ADDE60]">Biodiversidad Amazónica</span>
+                {t('titlePrefix')} <br />
+                <span className="text-[#ADDE60]">{t('titleAccent')}</span>
               </h1>
               <p className="text-lg md:text-xl text-emerald-100/90 max-w-2xl leading-relaxed font-light">
-                Accede a la colección científica más completa de anfibios y
-                reptiles del IIAP. Información taxonómica y geográfica para la
-                investigación.
+                {t('description')}
               </p>
             </div>
 
@@ -96,7 +95,7 @@ export function HeroSlider() {
               {/* Search Bar - Style match: Outline white, pill shape, icon right */}
               <div className="relative w-full max-w-md group">
                 <Input
-                  placeholder="Buscar especie..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full h-14 pl-6 pr-12 bg-transparent border-[1.5px] border-[#ADDE60]/30 hover:border-[#ADDE60] text-white placeholder:text-white/60 focus-visible:ring-1 focus-visible:ring-[#ADDE60] focus-visible:border-[#ADDE60] transition-all rounded-full text-lg"
                 />
                 <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-[#ADDE60]/80 group-hover:text-[#ADDE60] transition-colors" />
@@ -110,7 +109,7 @@ export function HeroSlider() {
                 <div className="bg-emerald-950 rounded-full p-2 mr-3 group-hover:scale-110 transition-transform">
                   <ArrowRight className="w-4 h-4 text-[#ADDE60]" />
                 </div>
-                Personalizar búsqueda
+                {t('actionButton')}
               </Button>
             </div>
           </div>
@@ -119,7 +118,7 @@ export function HeroSlider() {
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#ADDE60]/60 text-sm animate-pulse flex flex-col items-center gap-2">
         <span className="uppercase tracking-widest text-xs font-medium">
-          Explorar
+          {t('explore')}
         </span>
         <div className="w-[1px] h-8 bg-gradient-to-b from-[#ADDE60]/60 to-transparent" />
       </div>

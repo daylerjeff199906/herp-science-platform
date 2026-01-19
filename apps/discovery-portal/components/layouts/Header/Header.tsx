@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { Link, usePathname } from '../../../i18n/routing'
+import { useTranslations } from 'next-intl'
 import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
@@ -9,6 +10,8 @@ import { Globe } from 'lucide-react'
 
 export function Header() {
     const [scrolled, setScrolled] = useState(false)
+    const t = useTranslations('Header')
+    const pathname = usePathname()
 
     useEffect(() => {
         const handleScroll = () => {
@@ -51,14 +54,14 @@ export function Header() {
 
                     {/* Actions Area */}
                     <div className="hidden md:flex items-center gap-4">
-                        {/* Language Switcher Placeholder */}
-                        <button
-                            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${scrolled ? 'text-gray-600 hover:text-emerald-600' : 'text-white/90 hover:text-white'
-                                }`}
-                        >
-                            <Globe className="w-4 h-4" />
-                            <span>ES</span>
-                        </button>
+                        {/* Language Switcher */}
+                        <div className={`flex items-center gap-3 text-sm font-medium transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}>
+                            <Link href={pathname} locale="es" className="hover:text-emerald-500 transition-colors">ES</Link>
+                            <span className="opacity-30">|</span>
+                            <Link href={pathname} locale="en" className="hover:text-emerald-500 transition-colors">EN</Link>
+                            <span className="opacity-30">|</span>
+                            <Link href={pathname} locale="pt" className="hover:text-emerald-500 transition-colors">PT</Link>
+                        </div>
 
                         <Link
                             href="/login"
@@ -70,7 +73,7 @@ export function Header() {
                                 }
               `}
                         >
-                            Unirte
+                            {t('join')}
                         </Link>
                     </div>
 

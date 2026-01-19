@@ -1,14 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Link, usePathname } from '../../../i18n/routing'
+import { useTranslations } from 'next-intl'
 import { Menu, X, ChevronRight, ArrowRight } from 'lucide-react'
 import { navItems } from './Navigation'
 
 export function MobileMenu({ scrolled }: { scrolled: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
     const pathname = usePathname()
+    const t = useTranslations('Header')
+    const tNav = useTranslations('Header.nav')
 
     // Prevent scroll when menu is open
     React.useEffect(() => {
@@ -48,7 +50,7 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                 >
                     <div className="flex flex-col h-full">
                         <div className="p-6 flex items-center justify-between border-b border-gray-100">
-                            <span className="font-bold text-xl text-emerald-950 tracking-tight">Menú</span>
+                            <span className="font-bold text-xl text-emerald-950 tracking-tight">{t('menu')}</span>
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="p-2 -mr-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
@@ -74,7 +76,7 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                                                     }
                                             `}
                                             >
-                                                <span className={isActive ? 'font-semibold' : ''}>{item.label}</span>
+                                                <span className={isActive ? 'font-semibold' : ''}>{tNav(item.label)}</span>
                                                 {isActive ? (
                                                     <div className="w-2 h-2 rounded-full bg-[#ADDE60]" />
                                                 ) : (
@@ -93,13 +95,15 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                                 onClick={() => setIsOpen(false)}
                                 className="group flex items-center justify-center w-full py-4 px-6 bg-[#ADDE60] hover:bg-[#9cc954] text-emerald-950 font-bold rounded-2xl transition-all shadow-lg shadow-[#ADDE60]/20 hover:shadow-[#ADDE60]/40 hover:-translate-y-0.5"
                             >
-                                <span>Unirte ahora</span>
+                                <span>{t('joinNow')}</span>
                                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
                             </Link>
                             <div className="flex items-center justify-center gap-2 text-sm text-gray-400 font-medium">
-                                <span className="text-emerald-600">ES</span>
+                                <Link href={pathname} locale="es" className="hover:text-emerald-600 cursor-pointer transition-colors">ES</Link>
                                 <span className="w-px h-3 bg-gray-300"></span>
-                                <span className="hover:text-gray-600 cursor-pointer transition-colors">EN</span>
+                                <Link href={pathname} locale="en" className="hover:text-emerald-600 cursor-pointer transition-colors">EN</Link>
+                                <span className="w-px h-3 bg-gray-300"></span>
+                                <Link href={pathname} locale="pt" className="hover:text-emerald-600 cursor-pointer transition-colors">PT</Link>
                             </div>
                         </div>
                     </div>
