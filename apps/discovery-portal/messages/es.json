@@ -54,6 +54,16 @@
             "description2": "Los especímenes son utilizados por investigadores del IIAP y otras instituciones nacionales y extranjeras para estudiar la ecología, la evolución y la conservación de estos maravillosos animales.",
             "cta": "Leer más"
         },
+        "stats": {
+            "tag": "Métricas en tiempo real",
+            "title": "Impacto de la Colección",
+            "description": "Monitoreo continuo del crecimiento y diversidad de nuestros especímenes catalogados y disponibles para la ciencia.",
+            "total_records": "Registros Totales",
+            "published": "Publicados",
+            "species_count": "Individuos Visibles",
+            "amphibians": "Anfibios",
+            "reptiles": "Reptiles"
+        },
         "multimedia": {
             "tag": "Multimedia",
             "title": "Galería de imágenes",
