@@ -1,16 +1,13 @@
 'use client'
-
 import React, { useState } from 'react'
 import { Link, usePathname } from '../../../i18n/routing'
 import { useTranslations } from 'next-intl'
-import { Menu, X, ChevronRight, ArrowRight } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { navItems } from './Navigation'
-import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function MobileMenu({ scrolled }: { scrolled: boolean }) {
     const [isOpen, setIsOpen] = useState(false)
     const pathname = usePathname()
-    const t = useTranslations('Header')
     const tNav = useTranslations('Header.nav')
 
     // Prevent scroll when menu is open
@@ -21,6 +18,8 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
             document.body.style.overflow = 'unset'
         }
     }, [isOpen])
+
+    const currentYear = new Date().getFullYear()
 
     return (
         <div className="md:hidden">
@@ -50,39 +49,34 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                         }`}
                 >
                     <div className="flex flex-col h-full">
-                        <div className="p-6 flex items-center justify-between border-b border-gray-100">
-                            <span className="font-bold text-xl text-emerald-950 tracking-tight">{t('menu')}</span>
+                        {/* Header: Close Button Only */}
+                        <div className="p-6 flex items-center justify-end">
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="p-2 -mr-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-colors"
+                                className="p-2 -mr-2 text-gray-800 hover:text-emerald-600 rounded-full transition-colors"
                             >
-                                <X className="w-6 h-6" />
+                                <X className="w-8 h-8" />
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto py-6">
-                            <nav className="flex flex-col px-4 gap-2">
+                        {/* Navigation Links */}
+                        <div className="flex-1 overflow-y-auto px-8 py-4">
+                            <nav className="flex flex-col gap-6">
                                 {navItems.map((item) => {
                                     const isActive = pathname === item.href
-
                                     return (
                                         <div key={item.label}>
                                             <Link
                                                 href={item.href}
                                                 onClick={() => setIsOpen(false)}
-                                                className={`flex items-center justify-between px-5 py-4 rounded-2xl transition-all font-medium border
-                                                ${isActive
-                                                        ? 'bg-[#ADDE60]/10 text-emerald-900 border-[#ADDE60]/20'
-                                                        : 'bg-gray-50 text-gray-600 border-transparent hover:bg-emerald-50 hover:text-emerald-900'
+                                                className={`text-2xl transition-colors font-medium
+                                                    ${isActive
+                                                        ? 'text-emerald-900 font-semibold'
+                                                        : 'text-emerald-950/80 hover:text-emerald-700'
                                                     }
-                                            `}
+                                                `}
                                             >
-                                                <span className={isActive ? 'font-semibold' : ''}>{tNav(item.label)}</span>
-                                                {isActive ? (
-                                                    <div className="w-2 h-2 rounded-full bg-[#ADDE60]" />
-                                                ) : (
-                                                    item.children && <ChevronRight className="w-4 h-4 text-gray-400" />
-                                                )}
+                                                {tNav(item.label)}
                                             </Link>
                                         </div>
                                     )
@@ -90,19 +84,11 @@ export function MobileMenu({ scrolled }: { scrolled: boolean }) {
                             </nav>
                         </div>
 
-                        <div className="p-6 border-t border-gray-100 space-y-4 bg-gray-50/50">
-                            <Link
-                                href="/login"
-                                onClick={() => setIsOpen(false)}
-                                className="group flex items-center justify-center w-full py-4 px-6 bg-[#ADDE60] hover:bg-[#9cc954] text-emerald-950 font-bold rounded-2xl transition-all shadow-lg shadow-[#ADDE60]/20 hover:shadow-[#ADDE60]/40 hover:-translate-y-0.5"
-                            >
-                                <span>{t('joinNow')}</span>
-                                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-                            </Link>
-
-                            <div className="flex items-center justify-center pt-2">
-                                <LanguageSwitcher className="text-gray-600 gap-6" scrolled={true} />
-                            </div>
+                        {/* Footer: Copyright */}
+                        <div className="p-8 border-t border-gray-100 mt-auto">
+                            <p className="text-xs text-gray-400">
+                                © {currentYear} Instituto de Investigaciones de la Amazonía Peruana
+                            </p>
                         </div>
                     </div>
                 </div>

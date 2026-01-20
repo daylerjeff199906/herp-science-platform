@@ -1,0 +1,38 @@
+ÔÇó turbo 2.7.5
+ÔÇó Packages in scope: panel-admin
+ÔÇó Running build in 1 packages
+ÔÇó Remote caching disabled
+panel-admin:build: cache miss, executing 59c0b3585bff5f47
+panel-admin:build: 
+panel-admin:build: > panel-admin@0.1.0 build D:\IIAP-REPOS\herp-science-platform\apps\panel-admin
+panel-admin:build: > next build
+panel-admin:build: 
+panel-admin:build: Ôû▓ Next.js 16.1.0 (Turbopack)
+panel-admin:build: - Environments: .env.local
+panel-admin:build: 
+panel-admin:build:   Creating an optimized production build ...
+panel-admin:build: Ô£ô Compiled successfully in 7.1s
+panel-admin:build:   Running TypeScript ...
+panel-admin:build:   Collecting page data using 7 workers ...
+panel-admin:build:   Generating static pages using 7 workers (0/5) ...
+panel-admin:build:   Generating static pages using 7 workers (1/5) 
+panel-admin:build:   Generating static pages using 7 workers (2/5) 
+panel-admin:build:   Generating static pages using 7 workers (3/5) 
+panel-admin:build: Ô£ô Generating static pages using 7 workers (5/5) in 1208.0ms
+panel-admin:build:   Finalizing page optimization ...
+panel-admin:build: 
+panel-admin:build: Route (app)
+panel-admin:build: Ôöî Ôùï /_not-found
+panel-admin:build: Ôö£ ãÆ /dashboard
+panel-admin:build: Ôö£ ãÆ /dashboard/geography/countries
+panel-admin:build: Ôöö ãÆ /login
+panel-admin:build: 
+panel-admin:build: 
+panel-admin:build: Ôùï  (Static)   prerendered as static content
+panel-admin:build: ãÆ  (Dynamic)  server-rendered on demand
+panel-admin:build: 
+
+ Tasks:    1 successful, 1 total
+Cached:    0 cached, 1 total
+  Time:    22.176s 
+

@@ -20,6 +20,33 @@
         "explore": "Explorar"
     },
     "Home": {
+        "services": {
+            "tag": "LO QUE HACEMOS",
+            "title": "Soluciones Confiables,",
+            "title2": "Resultados Reales",
+            "cards": {
+                "search": {
+                    "title": "Búsqueda Avanzada",
+                    "description": "Filtra por especie, ubicación o taxonomía para encontrar exactamente lo que necesitas para tu investigación."
+                },
+                "maps": {
+                    "title": "Mapas Interactivos",
+                    "description": "Visualiza la distribución de especies en la Amazonía con nuestras herramientas de mapeo de alta precisión."
+                },
+                "data": {
+                    "title": "Acceso a Datos",
+                    "description": "Descarga conjuntos de datos completos para tus estudios científicos y planificación de conservación."
+                },
+                "publications": {
+                    "title": "Publicaciones",
+                    "description": "Accede a artículos científicos relevantes y publicaciones vinculadas a nuestros especímenes de colección."
+                },
+                "collections": {
+                    "title": "Gestión de Colección",
+                    "description": "Preservación de vanguardia y catalogación digital de más de 10,000 especímenes."
+                }
+            }
+        },
         "about": {
             "tag": "Nuestra colección",
             "title": "Sobre nuestra colección de Anfibios y Reptiles",
