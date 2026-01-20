@@ -7,17 +7,17 @@ export function AboutSection() {
   const t = useTranslations('Home.about')
 
   return (
-    <section className="py-20 bg-white overflow-hidden relative">
+    <section className="py-20 bg-[#F5F5F0] overflow-hidden relative">
       <div className="container px-4 md:px-6 mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Content */}
           <div className="space-y-8">
-            <div className="space-y-4">
+            <div className="space-y-5">
               <span className="text-emerald-600 font-semibold tracking-wider uppercase text-sm flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                 {t('tag')}
               </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              <h2 className="text-4xl md:text-5xl mb-6 leading-tight">
                 {t('title')}
               </h2>
               <div className="space-y-4 text-gray-600 text-lg leading-relaxed">
