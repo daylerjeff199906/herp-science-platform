@@ -9,9 +9,7 @@ const config = {
         './src/**/*.{ts,tsx}',
         '../../packages/ui/src/**/*.{ts,tsx}',
     ],
-    presets: [
-        sharedConfig
-    ],
+    presets: [sharedConfig],
     theme: {
         extend: {
             fontFamily: {
