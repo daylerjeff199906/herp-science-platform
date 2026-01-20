@@ -1,60 +1,90 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/routing'
-import { ArrowLeft, ArrowRight, Image as ImageIcon } from 'lucide-react'
+import { ArrowRight, Image as ImageIcon, ExternalLink } from 'lucide-react'
 import { Button } from '@repo/ui/components/ui/button'
 
 export function MultimediaSection() {
     const t = useTranslations('Home.multimedia')
 
-    // Placeholder data for the gallery
-    const images = [1, 2, 3, 4]
+    // Placeholder data for the gallery - In a real app, this would come from an API
+    const galleryItems = [
+        { id: 1, type: 'large', title: 'Bothrops atrox', category: 'Viperidae' },
+        { id: 2, type: 'small', title: 'Podocnemis unifilis', category: 'Podocnemididae' },
+        { id: 3, type: 'small', title: 'Osteocephalus taurinus', category: 'Hylidae' },
+        { id: 4, type: 'small', title: 'Paleosuchus trigonatus', category: 'Alligatoridae' },
+        { id: 5, type: 'small', title: 'Eunectes murinus', category: 'Boidae' },
+    ]
 
     return (
-        <section className="py-20 bg-gray-50">
-            <div className="container px-4 md:px-6 mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div>
-                        <span className="text-emerald-600 font-semibold tracking-wider uppercase text-sm mb-2 block">
-                            {t('tag')}
-                        </span>
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <section className="py-24 bg-[#111111] relative overflow-hidden border-t border-white/5">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#ADDE60]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+            <div className="container px-4 md:px-6 mx-auto relative z-10">
+
+                {/* Header */}
+                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div className="max-w-2xl">
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className="text-[#ADDE60] text-lg font-bold">+</span>
+                            <span className="text-gray-400 font-medium uppercase tracking-widest text-sm">
+                                {t('tag')}
+                            </span>
+                        </div>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
                             {t('title')}
                         </h2>
-                        <p className="text-gray-500 mt-2 text-lg">{t('subtitle')}</p>
+                        <p className="text-gray-400 text-lg leading-relaxed max-w-xl">
+                            {t('subtitle')}
+                        </p>
                     </div>
 
-                    <Button variant="outline" className="hidden md:flex gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 rounded-full">
+                    <Button
+                        variant="outline"
+                        className="hidden md:flex gap-2 border-white/20 text-white hover:bg-[#ADDE60] hover:text-[#111] hover:border-[#ADDE60] rounded-full px-8 h-12 transition-all duration-300 uppercase tracking-wider text-sm"
+                    >
                         {t('cta')}
                         <ArrowRight className="w-4 h-4" />
                     </Button>
                 </div>
 
-                {/* Gallery Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[200px] md:auto-rows-[300px]">
-                    {images.map((img, i) => (
+                {/* Gallery Grid - Bento Style */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6 auto-rows-[250px]">
+                    {galleryItems.map((item, i) => (
                         <div
-                            key={i}
-                            className={`group relative overflow-hidden rounded-2xl bg-gray-200 transition-all cursor-pointer ${i === 0 ? 'col-span-2 md:col-span-2 md:row-span-2 md:auto-rows-[620px]' : ''}`}
+                            key={item.id}
+                            className={`group relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-[#ADDE60]/50 transition-all duration-500 cursor-pointer ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''
+                                } ${i === 3 ? 'md:col-span-2' : ''}`}
                         >
-                            {/* Placeholder Skeleton */}
-                            <div className="absolute inset-0 flex items-center justify-center text-gray-300 bg-gray-100 group-hover:scale-105 transition-transform duration-700">
-                                <ImageIcon className="w-12 h-12 md:w-16 md:h-16 opacity-20" />
+                            {/* Image Placeholder */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-[#151515] group-hover:scale-105 transition-transform duration-700">
+                                {/* Use real Image component here later */}
+                                <ImageIcon className={`text-gray-800 ${i === 0 ? 'w-24 h-24' : 'w-12 h-12'}`} strokeWidth={1} />
                             </div>
 
-                            {/* Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                                <span className="text-white font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    Specimen #{3580 + i}
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
+                            {/* Content */}
+                            <div className="absolute inset-0 p-6 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                <span className="text-[#ADDE60] text-xs font-mono mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                    {item.category}
                                 </span>
+                                <div className="flex justify-between items-end">
+                                    <h3 className={`text-white font-medium ${i === 0 ? 'text-2xl' : 'text-lg'}`}>
+                                        {item.title}
+                                    </h3>
+                                    <ExternalLink className="w-5 h-5 text-[#ADDE60] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-8 md:hidden">
-                    <Button className="w-full gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 rounded-full" variant="outline">
+                {/* Mobile CTA */}
+                <div className="mt-12 md:hidden">
+                    <Button className="w-full gap-2 bg-[#ADDE60] text-[#111] hover:bg-[#9cc954] rounded-full h-12 uppercase tracking-wide font-bold">
                         {t('cta')}
                         <ArrowRight className="w-4 h-4" />
                     </Button>
