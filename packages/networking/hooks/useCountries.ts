@@ -23,16 +23,9 @@ const fetchCountries = async (
 // Custom Hook: Ahora recibe el filtro como argumento
 export const useCountries = (filter: CountryFilter) => {
   return useQuery({
-    // IMPORTANTE: El filtro es parte de la "Key".
-    // Si 'filter' cambia, React Query detecta que es una búsqueda nueva y refresca.
     queryKey: ['countries', filter],
-
     queryFn: () => fetchCountries(filter),
-
-    // UI/UX: Mantiene los datos viejos visibles mientras cargan los nuevos (evita parpadeos)
     placeholderData: keepPreviousData,
-
-    // Cache: 5 minutos
     staleTime: 1000 * 60 * 5,
   })
 }

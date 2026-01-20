@@ -20,6 +20,16 @@
         "explore": "Explore"
     },
     "Home": {
+        "stats": {
+            "tag": "Real-time Metrics",
+            "title": "Collection Impact",
+            "description": "Continuous monitoring of the growth and diversity of our cataloged specimens available for science.",
+            "total_records": "Total Records",
+            "published": "Published",
+            "species_count": "Visible Individuals",
+            "amphibians": "Amphibians",
+            "reptiles": "Reptiles"
+        },
         "services": {
             "tag": "WHAT WE DO",
             "title": "Reliable Solutions,",
