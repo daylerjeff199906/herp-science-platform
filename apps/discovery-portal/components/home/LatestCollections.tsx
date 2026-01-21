@@ -87,48 +87,47 @@ export const LatestCollections = () => {
                 }}
                 className="w-full"
             >
-                <CarouselContent>
+                <CarouselContent className="-ml-4">
                     {individuals.map((individual) => (
                         <CarouselItem
                             key={individual.id}
-                            className="md:basis-1/2 lg:basis-1/4 h-full"
+                            className="pl-4 md:basis-1/2 lg:basis-1/4"
                         >
-                            <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow h-full flex flex-col border border-stone-200">
-                                <div className="relative h-48 w-full bg-stone-100">
+                            <div className="h-full flex flex-col group cursor-pointer">
+                                <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-4">
                                     {individual.files.images && individual.files.images.length > 0 ? (
                                         <Image
-                                            src={individual.files.images[0]?.url || '/placeholder.png'} // Adjust based on actual API response structure for images
+                                            src={individual.files.images[0]?.url || '/placeholder.png'}
                                             alt={individual.species.scientificName}
                                             fill
-                                            className="object-cover"
+                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
                                         />
                                     ) : (
-                                        <div className="flex items-center justify-center h-full text-stone-400">
+                                        <div className="flex items-center justify-center h-full bg-stone-100 text-stone-400">
                                             No Image
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="p-5 flex flex-col flex-grow">
-                                    <div className="text-[#4a9335] text-sm font-medium mb-2">
+                                <div className="flex flex-col flex-grow">
+                                    <span className="text-[#4a9335] text-sm font-semibold mb-2 block">
                                         {individual.createdAt ? format(new Date(individual.createdAt), 'dd MMMM, yyyy', { locale: es }) : 'Fecha desconocida'}
-                                    </div>
+                                    </span>
 
-                                    <h3 className="text-lg font-bold text-[#1a4122] mb-2 line-clamp-2">
+                                    <h3 className="text-xl font-bold text-[#1a4122] mb-2 font-serif italic leading-tight">
                                         {individual.species.scientificName}
                                     </h3>
 
-                                    <p className="text-stone-600 text-sm mb-4 line-clamp-3">
-                                        {individual.species.commonName || 'Sin nombre común'} - {individual.species.description || 'Sin descripción disponible.'}
+                                    <p className="text-stone-600 text-sm mb-3 line-clamp-3">
+                                        {individual.species.description || 'Sin descripción disponible.'}
                                     </p>
 
-                                    <div className="mt-auto pt-2 border-t border-stone-100">
+                                    <div className="mt-auto">
                                         <Link
                                             href={`/collections/${individual.id}`}
-                                            className="text-[#4a9335] font-semibold text-sm hover:underline inline-flex items-center group"
+                                            className="text-[#1a4122] font-semibold text-sm hover:text-[#4a9335] transition-colors inline-block"
                                         >
-                                            Ver detalles
-                                            <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                                            Leer más...
                                         </Link>
                                     </div>
                                 </div>
