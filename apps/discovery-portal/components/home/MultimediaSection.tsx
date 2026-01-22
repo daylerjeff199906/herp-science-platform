@@ -12,7 +12,7 @@ export function MultimediaSection() {
 
     const { data } = useIndividuals({
         page: 1,
-        pageSize: 10,
+        pageSize: 8,
         hasImages: 1,
         orderBy: 'commonName',
         orderType: 'DESC',

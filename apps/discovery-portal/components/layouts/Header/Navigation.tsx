@@ -51,7 +51,7 @@ export function Navigation({
                                         <Link
                                             key={child.label}
                                             href={child.href}
-                                            className="block px-4 py-2.5 text-sm text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                            className="block px-4 py-2.5 text-sm text-gray-100 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                                         >
                                             {child.label}
                                         </Link>
