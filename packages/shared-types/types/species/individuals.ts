@@ -176,6 +176,18 @@ export interface TaxonomySpecies {
     genus: TaxonomyGenus;
 }
 
+export interface IndividualFile {
+    id: number;
+    name: string;
+    type: string;
+    format: string;
+    size: string | null;
+    note: string | null;
+    samplingSite: string;
+    order: number;
+    url?: string; // Adding optional url as it seems to be used in the component
+}
+
 export interface Individual {
     id: number;
     code: string | null;
@@ -193,8 +205,8 @@ export interface Individual {
     updatedAt: string;
     sex: Sex;
     files: {
-        images: any[];
-        audios: any[];
+        images: IndividualFile[];
+        audios: IndividualFile[];
     };
     activity: Activity;
     forestType: ForestType | null;

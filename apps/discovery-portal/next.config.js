@@ -32,6 +32,11 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: 'bioweb.bio',
                 pathname: '**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'api-vertebrados.iiap.gob.pe',
+                pathname: '**',
             }
 
         ],

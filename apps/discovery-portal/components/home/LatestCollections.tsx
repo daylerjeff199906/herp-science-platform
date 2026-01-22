@@ -16,9 +16,10 @@ import {
 import { Card, CardContent, CardFooter } from '@repo/ui/components/ui/card'
 import { Button } from '@repo/ui/components/ui/button'
 import { Skeleton } from '@repo/ui/components/ui/skeleton'
+import { ArrowRight, ArrowRightCircle } from 'lucide-react'
 
 export const LatestCollections = () => {
-    const { data, isLoading, error } = useIndividuals({
+    const { data, isLoading } = useIndividuals({
         page: 1,
         pageSize: 8,
         orderBy: 'commonName',
@@ -71,75 +72,98 @@ export const LatestCollections = () => {
     if (individuals.length === 0) return null
 
     return (
-        <section className="container mx-auto py-12 px-4 bg-[#F0FDF4]">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-3xl font-semibold text-[#1a4122]">
-                    Últimas Colecciones
-                </h2>
-                <Button variant="default" className="bg-[#4a9335] hover:bg-[#3d7a2c] text-white">
-                    <Link href="/collections">Ver todo</Link>
-                </Button>
-            </div>
+        <section className="bg-white">
+            <div className="container mx-auto py-16 px-4">
+                {/* Header with Title and Custom Navigation */}
+                <Carousel
+                    opts={{
+                        align: 'start',
+                    }}
+                    className="w-full"
+                >
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+                        <div className="flex items-center gap-6">
+                            <h2 className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight">
+                                Últimas Colecciones
+                            </h2>
+                            <div className="hidden md:flex gap-2">
+                                <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 transition-colors" />
+                                <CarouselNext className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 transition-colors" />
+                            </div>
+                        </div>
 
-            <Carousel
-                opts={{
-                    align: 'start',
-                }}
-                className="w-full"
-            >
-                <CarouselContent className="-ml-4">
-                    {individuals.map((individual) => (
-                        <CarouselItem
-                            key={individual.id}
-                            className="pl-4 md:basis-1/2 lg:basis-1/4"
+                        <Button
+                            asChild
+                            className="rounded-full bg-slate-800 hover:bg-slate-700 text-white px-8 py-6 text-sm font-medium"
                         >
-                            <div className="h-full flex flex-col group cursor-pointer">
-                                <div className="relative h-48 w-full overflow-hidden rounded-2xl mb-4">
-                                    {individual.files.images && individual.files.images.length > 0 ? (
-                                        <Image
-                                            src={individual.files.images[0]?.url || '/placeholder.png'}
-                                            alt={individual.species.scientificName}
-                                            fill
-                                            className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                    ) : (
-                                        <div className="flex items-center justify-center h-full bg-stone-100 text-stone-400">
-                                            No Image
-                                        </div>
-                                    )}
-                                </div>
+                            <Link href="/collections" className="flex items-center gap-2">
+                                Ver todo
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </div>
 
-                                <div className="flex flex-col flex-grow">
-                                    <span className="text-[#4a9335] text-sm font-semibold mb-2 block">
-                                        {individual.createdAt ? format(new Date(individual.createdAt), 'dd MMMM, yyyy', { locale: es }) : 'Fecha desconocida'}
-                                    </span>
-
-                                    <h3 className="text-xl font-bold text-[#1a4122] mb-2 font-serif italic leading-tight">
-                                        {individual.species.scientificName}
-                                    </h3>
-
-                                    <p className="text-stone-600 text-sm mb-3 line-clamp-3">
-                                        {individual.species.description || 'Sin descripción disponible.'}
-                                    </p>
-
-                                    <div className="mt-auto">
-                                        <Link
-                                            href={`/collections/${individual.id}`}
-                                            className="text-[#1a4122] font-semibold text-sm hover:text-[#4a9335] transition-colors inline-block"
-                                        >
-                                            Leer más...
+                    <CarouselContent className="-ml-6">
+                        {individuals.map((individual) => (
+                            <CarouselItem
+                                key={individual.id}
+                                className="pl-6 md:basis-1/2 lg:basis-1/4"
+                            >
+                                <div className="h-full flex flex-col group cursor-pointer">
+                                    {/* Image Card */}
+                                    <div className="relative h-64 w-full overflow-hidden rounded-xl mb-6 bg-slate-100">
+                                        <Link href={`/collections/${individual.id}`}>
+                                            {individual.files.images &&
+                                                individual.files.images.length > 0 ? (
+                                                <Image
+                                                    src={
+                                                        individual.files.images[0]?.name ||
+                                                        '/placeholder.png'
+                                                    }
+                                                    alt={individual.species.scientificName}
+                                                    fill
+                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                                />
+                                            ) : (
+                                                <div className="flex items-center justify-center h-full text-slate-400">
+                                                    <span className="text-sm">Sin imagen</span>
+                                                </div>
+                                            )}
                                         </Link>
                                     </div>
+
+                                    {/* Content */}
+                                    <div className="flex flex-col flex-grow">
+                                        <Link href={`/collections/${individual.id}`}>
+                                            <h3 className="text-xl font-medium text-slate-900 mb-3 leading-snug group-hover:text-slate-600 transition-colors">
+                                                {individual.species.scientificName}
+                                                <span className="block text-slate-500 text-lg font-normal mt-1">
+                                                    {individual.species.commonName}
+                                                </span>
+                                            </h3>
+                                        </Link>
+
+                                        <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
+                                            {individual.species.description ||
+                                                'No hay descripción disponible para esta especie.'}
+                                        </p>
+
+                                        <div className="mt-auto">
+                                            <Link
+                                                href={`/collections/${individual.id}`}
+                                                className="inline-flex items-center gap-2 text-sm font-medium text-slate-900 group-hover:text-slate-600 transition-colors border border-slate-200 rounded-full px-4 py-2 group-hover:bg-slate-50"
+                                            >
+                                                <ArrowRightCircle className="h-4 w-4" />
+                                                Leer más
+                                            </Link>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-                <div className="hidden md:block">
-                    <CarouselPrevious className="-left-4 border-[#4a9335] text-[#4a9335] hover:bg-[#4a9335] hover:text-white" />
-                    <CarouselNext className="-right-4 border-[#4a9335] text-[#4a9335] hover:bg-[#4a9335] hover:text-white" />
-                </div>
-            </Carousel>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                </Carousel>
+            </div>
         </section>
     )
 }
