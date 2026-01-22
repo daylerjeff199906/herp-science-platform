@@ -35,7 +35,7 @@ export function Navigation({
               flex items-center gap-1 text-sm font-medium transition-colors
               ${isActive
                                     ? 'text-[#ADDE60] font-semibold'
-                                    : scrolled ? 'text-gray-700 hover:text-emerald-600' : 'text-white/90 hover:text-white'
+                                    : scrolled ? 'text-gray-400 hover:text-emerald-600' : 'text-white/90 hover:text-white'
                                 }
             `}
                         >
@@ -51,7 +51,7 @@ export function Navigation({
                                         <Link
                                             key={child.label}
                                             href={child.href}
-                                            className="block px-4 py-2.5 text-sm text-gray-100 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                            className="block px-4 py-2.5 text-sm text-gray-200 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
                                         >
                                             {child.label}
                                         </Link>
