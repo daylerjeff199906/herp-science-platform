@@ -29,7 +29,7 @@ export function Header() {
     return (
         <header
             className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${scrolled
-                ? 'bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 py-3'
+                ? 'bg-[#111111]/90 backdrop-blur-md shadow-sm border-b border-white/5 py-3'
                 : 'bg-transparent py-5'
                 }`}
         >
@@ -39,11 +39,11 @@ export function Header() {
                     <Link href="/" className="relative z-50 flex items-center gap-2 group">
                         <div className="relative w-10 h-10 overflow-hidden rounded-lg">
                             <LogoRender
-                                className={`w-full h-full object-contain transition-all duration-300 ${scrolled ? 'brightness-100' : 'brightness-0 invert'
+                                className={`w-full h-full object-contain transition-all duration-300 ${scrolled ? 'brightness-0 invert' : 'brightness-0 invert'
                                     }`}
                             />
                         </div>
-                        <div className={`flex flex-col leading-none transition-colors duration-300 ${scrolled ? 'text-gray-900' : 'text-white'
+                        <div className={`flex flex-col leading-none transition-colors duration-300 ${scrolled ? 'text-white' : 'text-white'
                             }`}>
                             <span className="font-bold text-lg tracking-tight">Vertebrados</span>
                             <span className="text-[10px] font-medium opacity-80 uppercase tracking-wider">Discovery Portal</span>
@@ -58,7 +58,7 @@ export function Header() {
                         {/* Language Switcher */}
                         <LanguageSwitcher
                             scrolled={scrolled}
-                            className={`transition-colors ${scrolled ? 'text-gray-600' : 'text-white/90'}`}
+                            className={`transition-colors text-white/90`}
                         />
 
                         <Link
@@ -66,7 +66,7 @@ export function Header() {
                             className={`
                 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0
                 ${scrolled
-                                    ? 'bg-emerald-600 text-white hover:bg-[#ADDE60] hover:text-emerald-950 shadow-emerald-600/20'
+                                    ? 'bg-[#ADDE60] text-[#111] hover:bg-white hover:text-[#111] shadow-[#ADDE60]/20'
                                     : 'bg-white text-emerald-900 hover:bg-[#ADDE60] hover:text-emerald-950 shadow-black/10'
                                 }
               `}

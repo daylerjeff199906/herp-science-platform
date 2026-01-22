@@ -3,6 +3,7 @@ import { useGeneralCount } from '@repo/networking'
 import { useTranslations } from 'next-intl'
 import { Loader2, ArrowRight } from 'lucide-react'
 import { OrderCount } from '@repo/shared-types'
+import { Skeleton } from '@repo/ui/components/ui/skeleton'
 
 function StatCard({ value, label, subLabel }: { value: number; label: string; subLabel?: string }) {
     return (
@@ -58,21 +59,45 @@ function TaxonColumn({ title, data, total }: { title: string; data: any; total: 
     )
 }
 
+function StatsSkeleton() {
+    return (
+        <>
+            {/* Global Counters Skeleton */}
+            <div className="grid md:grid-cols-3 gap-6 mb-24">
+                {[1, 2, 3].map((i) => (
+                    <div key={i} className="bg-[#1a1a1a] p-8 rounded-[1rem] border border-white/5 min-h-[200px] flex flex-col justify-between">
+                        <div className="space-y-4">
+                            <Skeleton className="h-16 w-3/4 bg-gray-800" />
+                            <Skeleton className="h-4 w-1/2 bg-gray-800" />
+                        </div>
+                        <Skeleton className="h-6 w-6 rounded-full self-end bg-gray-800" />
+                    </div>
+                ))}
+            </div>
+
+            {/* Breakdown Columns Skeleton */}
+            <div className="grid md:grid-cols-2 gap-12 lg:gap-24">
+                {[1, 2].map((i) => (
+                    <div key={i} className="space-y-8">
+                        <div className="flex items-end justify-between border-b border-gray-800 pb-6 relative">
+                            <Skeleton className="h-10 w-40 bg-gray-800" />
+                            <Skeleton className="h-10 w-20 bg-gray-800" />
+                        </div>
+                        <div className="space-y-3">
+                            {[1, 2, 3, 4].map((j) => (
+                                <Skeleton key={j} className="h-16 w-full rounded-lg bg-gray-800" />
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </>
+    )
+}
+
 export function StatsSection() {
     const t = useTranslations('Home.stats')
     const { data: stats, isLoading, error } = useGeneralCount()
-
-    if (isLoading) {
-        return (
-            <section className="py-24 bg-[#111111] border-t border-gray-900 flex justify-center">
-                <Loader2 className="w-8 h-8 text-[#ADDE60] animate-spin" />
-            </section>
-        )
-    }
-
-    if (error || !stats) {
-        return null
-    }
 
     return (
         <section className="py-24 bg-[#111111] border-t border-white/5 relative">
@@ -90,8 +115,6 @@ export function StatsSection() {
                             </span>
                         </div>
                         <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[0.9] tracking-tight">
-                            {/* Implementing a split title effect if possible, assuming title text allows it. 
-                        For now, rendering the title normally but with tight leading. */}
                             {t('title')}
                         </h2>
                     </div>
@@ -111,26 +134,36 @@ export function StatsSection() {
                     </div>
                 </div>
 
-                {/* Global Counters */}
-                <div className="grid md:grid-cols-3 gap-6 mb-24">
-                    <StatCard label={t('total_records')} value={stats.allIndividuals} subLabel="IIAP COLLECTION" />
-                    <StatCard label={t('published')} value={stats.publishedIndividuals} subLabel="SCIENTIFIC DATA" />
-                    <StatCard label={t('species_count')} value={stats.publishedAmphibians.total + stats.publishedReptiles.total} subLabel="ACTIVE SPECIMENS" />
-                </div>
+                {isLoading ? (
+                    <StatsSkeleton />
+                ) : error || !stats ? (
+                    <div className="py-12 text-center text-gray-500">
+                        No se pudieron cargar las estadísticas.
+                    </div>
+                ) : (
+                    <>
+                        {/* Global Counters */}
+                        <div className="grid md:grid-cols-3 gap-6 mb-24">
+                            <StatCard label={t('total_records')} value={stats.allIndividuals} subLabel="IIAP COLLECTION" />
+                            <StatCard label={t('published')} value={stats.publishedIndividuals} subLabel="SCIENTIFIC DATA" />
+                            <StatCard label={t('species_count')} value={stats.publishedAmphibians.total + stats.publishedReptiles.total} subLabel="ACTIVE SPECIMENS" />
+                        </div>
 
-                {/* Breakdown Columns */}
-                <div className="grid md:grid-cols-2 gap-12 lg:gap-24">
-                    <TaxonColumn
-                        title={t('amphibians')}
-                        data={stats.publishedAmphibians}
-                        total={stats.publishedAmphibians.total}
-                    />
-                    <TaxonColumn
-                        title={t('reptiles')}
-                        data={stats.publishedReptiles}
-                        total={stats.publishedReptiles.total}
-                    />
-                </div>
+                        {/* Breakdown Columns */}
+                        <div className="grid md:grid-cols-2 gap-12 lg:gap-24">
+                            <TaxonColumn
+                                title={t('amphibians')}
+                                data={stats.publishedAmphibians}
+                                total={stats.publishedAmphibians.total}
+                            />
+                            <TaxonColumn
+                                title={t('reptiles')}
+                                data={stats.publishedReptiles}
+                                total={stats.publishedReptiles.total}
+                            />
+                        </div>
+                    </>
+                )}
 
             </div>
         </section>

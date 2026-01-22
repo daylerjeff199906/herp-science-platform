@@ -5,3 +5,5 @@ export * from './localities/provinces'
 export * from './localities/districts'
 export * from './localities/localities'
 export * from './others/general-counter'
+export * from './species/individuals'
+

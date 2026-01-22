@@ -1,20 +1,24 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ArrowRight, Image as ImageIcon, ExternalLink } from 'lucide-react'
+import { ArrowRight, ExternalLink, ImageIcon } from 'lucide-react'
 import { Button } from '@repo/ui/components/ui/button'
+import { useIndividuals } from '@repo/networking'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export function MultimediaSection() {
     const t = useTranslations('Home.multimedia')
 
-    // Placeholder data for the gallery - In a real app, this would come from an API
-    const galleryItems = [
-        { id: 1, type: 'large', title: 'Bothrops atrox', category: 'Viperidae' },
-        { id: 2, type: 'small', title: 'Podocnemis unifilis', category: 'Podocnemididae' },
-        { id: 3, type: 'small', title: 'Osteocephalus taurinus', category: 'Hylidae' },
-        { id: 4, type: 'small', title: 'Paleosuchus trigonatus', category: 'Alligatoridae' },
-        { id: 5, type: 'small', title: 'Eunectes murinus', category: 'Boidae' },
-    ]
+    const { data } = useIndividuals({
+        page: 1,
+        pageSize: 8,
+        hasImages: 1,
+        orderBy: 'commonName',
+        orderType: 'DESC',
+    })
+
+    const galleryItems = data?.data || []
 
     return (
         <section className="py-24 bg-[#111111] relative overflow-hidden border-t border-white/5">
@@ -41,11 +45,14 @@ export function MultimediaSection() {
                     </div>
 
                     <Button
+                        asChild
                         variant="outline"
                         className="hidden md:flex gap-2 border-white/20 text-white hover:bg-[#ADDE60] hover:text-[#111] hover:border-[#ADDE60] rounded-full px-8 h-12 transition-all duration-300 uppercase tracking-wider text-sm"
                     >
-                        {t('cta')}
-                        <ArrowRight className="w-4 h-4" />
+                        <Link href="/gallery">
+                            {t('cta')}
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </Button>
                 </div>
 
@@ -57,36 +64,48 @@ export function MultimediaSection() {
                             className={`group relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-[#ADDE60]/50 transition-all duration-500 cursor-pointer ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''
                                 } ${i === 3 ? 'md:col-span-2' : ''}`}
                         >
-                            {/* Image Placeholder */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-[#151515] group-hover:scale-105 transition-transform duration-700">
-                                {/* Use real Image component here later */}
-                                <ImageIcon className={`text-gray-800 ${i === 0 ? 'w-24 h-24' : 'w-12 h-12'}`} strokeWidth={1} />
-                            </div>
-
-                            {/* Gradient Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-
-                            {/* Content */}
-                            <div className="absolute inset-0 p-6 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                <span className="text-[#ADDE60] text-xs font-mono mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                                    {item.category}
-                                </span>
-                                <div className="flex justify-between items-end">
-                                    <h3 className={`text-white font-medium ${i === 0 ? 'text-2xl' : 'text-lg'}`}>
-                                        {item.title}
-                                    </h3>
-                                    <ExternalLink className="w-5 h-5 text-[#ADDE60] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                            <Link href={`/collections/${item.id}`} className="block h-full w-full">
+                                {/* Image Placeholder */}
+                                <div className="absolute inset-0 flex items-center justify-center bg-[#151515] group-hover:scale-105 transition-transform duration-700">
+                                    {item.files.images && item.files.images.length > 0 ? (
+                                        <Image
+                                            src={item.files.images[0]?.name || ''}
+                                            alt={item.species.scientificName}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        <ImageIcon className={`text-gray-800 ${i === 0 ? 'w-24 h-24' : 'w-12 h-12'}`} strokeWidth={1} />
+                                    )}
                                 </div>
-                            </div>
+
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+
+                                {/* Content */}
+                                <div className="absolute inset-0 p-6 flex flex-col justify-end translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                    <span className="text-[#ADDE60] text-xs font-mono mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                        {item.species.genus?.family?.name || 'Familia desconocida'}
+                                    </span>
+                                    <div className="flex justify-between items-end">
+                                        <h3 className={`text-white font-medium ${i === 0 ? 'text-2xl' : 'text-lg'}`}>
+                                            {item.species.scientificName}
+                                        </h3>
+                                        <ExternalLink className="w-5 h-5 text-[#ADDE60] opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                                    </div>
+                                </div>
+                            </Link>
                         </div>
                     ))}
                 </div>
 
                 {/* Mobile CTA */}
                 <div className="mt-12 md:hidden">
-                    <Button className="w-full gap-2 bg-[#ADDE60] text-[#111] hover:bg-[#9cc954] rounded-full h-12 uppercase tracking-wide font-bold">
-                        {t('cta')}
-                        <ArrowRight className="w-4 h-4" />
+                    <Button asChild className="w-full gap-2 bg-[#ADDE60] text-[#111] hover:bg-[#9cc954] rounded-full h-12 uppercase tracking-wide font-bold">
+                        <Link href="/gallery">
+                            {t('cta')}
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </Button>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/routing'
+// import { Link } from '@/i18n/routing'
 import { ArrowRight, Database, Map, FileText, Search } from 'lucide-react'
 import { Button } from '@repo/ui/components/ui/button'
 

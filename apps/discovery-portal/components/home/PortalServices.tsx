@@ -53,7 +53,7 @@ export function PortalServices() {
                         <div
                             key={card.id}
                             className={`
-                relative p-8 border-gray-200 min-h-[320px] flex flex-col justify-between group transition-colors hover:border-emerald-500/50
+                relative p-8 border-gray-200 min-h-[320px] flex flex-col justify-between group transition-colors hover:bg-gray-50
                 border-t border-l 
                 ${(index + 1) % 3 === 0 ? 'lg:border-r' : ''} /* Right border for items 3, 6 (on desktop) */
                 ${index === 1 ? 'md:border-r lg:border-r-0' : ''} /* Mobile/Tablet borders */
@@ -70,7 +70,7 @@ export function PortalServices() {
                             </div>
 
                             <div className="mt-8">
-                                <div className="w-10 h-10 rounded-full border border-emerald-200 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                                <div className="w-10 h-10 rounded-full border border-bg-[#ADDE60] flex items-center justify-center text-lime-400 group-hover:bg-[#ADDE60] group-hover:text-white transition-all duration-300">
                                     <ArrowUpRight className="w-5 h-5" />
                                 </div>
                             </div>
@@ -78,7 +78,7 @@ export function PortalServices() {
                     ))}
 
                     {/* Last Card (Solid Color Block) */}
-                    <div className="bg-[#8CBF3F] p-8 min-h-[320px] flex flex-col justify-between rounded-bl-[0] lg:rounded-bl-[5rem] lg:col-start-3 lg:row-start-2 border-t border-b border-l lg:border-r-0 border-[#8CBF3F]">
+                    <div className="bg-[#ADDE60] p-8 min-h-[320px] flex flex-col justify-between rounded-bl-[0] lg:rounded-bl-[5rem] lg:col-start-3 lg:row-start-2 border-t border-b border-l lg:border-r-0 border-[#8CBF3F]">
                     </div>
                 </div>
             </div>
