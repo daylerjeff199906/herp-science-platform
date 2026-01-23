@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ViewToggler, ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
 import { ChevronDown, Download, SlidersHorizontal } from 'lucide-react'
+import { Input } from '@repo/ui/components/ui/input'
 
 // Placeholder interface
 interface PaginationMeta {
@@ -32,16 +33,13 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     }
 
     return (
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full container mx-auto">
             {/* Header / Toolbar */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Resultados
-                    </h1>
-                    <p className="text-gray-500 text-sm">
-                        {data.meta?.totalItems || 0} especímenes encontrados
-                    </p>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4">
+                <div className='w-full md:w-1/2'>
+                    <Input placeholder="Buscar"
+                        className='rounded-full w-full'
+                    />
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
