@@ -1,7 +1,7 @@
 import { fetchIndividualsList } from '@/api'
+import { IIndividualFilterParams } from '@/types'
 import { CollectionsView } from '@/components/collections/CollectionsView'
 import { SearchParams } from '@repo/shared-types'
-import { IIndividualFilterParams } from '@/types'
 import { Metadata } from 'next'
 
 interface IProps {
