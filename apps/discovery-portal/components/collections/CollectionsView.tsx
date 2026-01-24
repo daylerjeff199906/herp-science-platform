@@ -1,36 +1,19 @@
 'use client'
-
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ViewToggler, ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
 import { ChevronDown, Download, SlidersHorizontal } from 'lucide-react'
 import { Input } from '@repo/ui/components/ui/input'
-
-// Placeholder interface
-interface PaginationMeta {
-    itemCount: number
-    totalItems: number
-    itemsPerPage: number
-    totalPages: number
-    currentPage: number
-}
+import { Individual } from '@repo/shared-types'
 
 interface CollectionsViewProps {
-    data: {
-        items: any[]
-        meta: PaginationMeta
-    }
+    data: Individual[]
 }
 
 export function CollectionsView({ data }: CollectionsViewProps) {
     const searchParams = useSearchParams()
     const view = (searchParams.get('view') as ViewType) || 'grid'
-
-    // Placeholder sort handler
-    const handleSort = (value: string) => {
-        // Implement sort logic using URLSearchParams
-    }
 
     return (
         <div className="flex flex-col gap-6 w-full container mx-auto">
@@ -64,7 +47,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
 
             {/* Main Content Area */}
             <div className="w-full min-h-[500px]">
-                {data.items.length === 0 ? (
+                {data.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                             <SlidersHorizontal className="text-gray-400" size={32} />
@@ -84,19 +67,11 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                             {view === 'map' ? (
                                 <div className="text-gray-400 font-medium">Vista de Mapa (Próximamente)</div>
                             ) : (
-                                data.items.map((item: any, idx: number) => (
+                                data.map((item: any, idx: number) => (
                                     <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
                                 ))
                             )}
                         </div>
-
-                        {/* Simpler Pagination (Previous/Next) from current structure */}
-                        {data.meta && (
-                            <div className="flex justify-center mt-12 gap-2">
-                                {/* Logic would be implemented here to show page numbers */}
-                                <span className="text-sm text-gray-500">Página {data.meta.currentPage} de {data.meta.totalPages}</span>
-                            </div>
-                        )}
                     </>
                 )}
             </div>

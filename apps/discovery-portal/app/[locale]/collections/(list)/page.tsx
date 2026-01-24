@@ -1,4 +1,4 @@
-import { fetchIndividualsList } from '@/api'
+import { fetchIndividuals } from '@repo/networking'
 import { IIndividualFilterParams } from '@/types'
 import { CollectionsView } from '@/components/collections/CollectionsView'
 import { SearchParams } from '@repo/shared-types'
@@ -57,7 +57,6 @@ export default async function Page(props: IProps) {
     page,
     pageSize,
   } = searchParams as unknown as IIndividualFilterParams
-  const { fetchIndividuals } = fetchIndividualsList
 
   const res = await fetchIndividuals({
     searchTerm: searchTerm || undefined,
@@ -86,7 +85,7 @@ export default async function Page(props: IProps) {
     forestTypeId: forestTypeId ? Number(forestTypeId) : undefined,
     hasEggs: hasEggs ? Number(hasEggs) : undefined,
     page: page ? Number(page) : undefined,
-    pageSize: 20, // Enforce 20 per page as requested
+    pageSize: pageSize ? Number(pageSize) : 20,
     sexId: sexId ? Number(sexId) : undefined,
     museumId: museumId ? Number(museumId) : undefined,
     orderBy: orderBy || undefined,
@@ -95,5 +94,7 @@ export default async function Page(props: IProps) {
     hasImages: 1,
   })
 
-  return <CollectionsView data={res} />
+  return <>
+    <CollectionsView data={res.data} />
+  </>
 }

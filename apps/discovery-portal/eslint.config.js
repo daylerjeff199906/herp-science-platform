@@ -4,6 +4,9 @@ import { nextJsConfig } from "@repo/eslint-config/next-js";
 const config = [
     ...nextJsConfig,
     {
+        plugins: {
+            "prettier": "prettier",
+        },
         rules: {
             "@next/next/no-img-element": "off",
             // "no-console": ["error", { "allow": ["warn", "error", "log"] }]
