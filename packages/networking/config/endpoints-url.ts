@@ -1,0 +1,100 @@
+// Helper function to generate standard CRUD endpoints
+const createStandardEndpoints = (resource: string) => {
+    const root = `/${resource}`;
+    return {
+        GET_PAGINATED: root,
+        CREATE: root,
+        GET_ADMIN_PAGINATED: `${root}/admin`,
+        GET_BY_ID: (id: string | number) => `${root}/${id}`,
+        UPDATE: (id: string | number) => `${root}/${id}`,
+        DELETE: (id: string | number) => `${root}/${id}`,
+        GET_ADMIN_BY_ID: (id: string | number) => `${root}/admin/${id}`,
+        RESTORE: (id: string | number) => `${root}/admin/restore/${id}`,
+        CHANGE_STATUS: (id: string | number) => `${root}/change-status/${id}`,
+    };
+};
+
+export const ENDPOINTS = {
+    AUTH: {
+        REGISTER: `/auth/register`,
+        LOGIN: `/auth/login`,
+    },
+    USERS: {
+        CHANGE_USERNAME: (id: string | number) => `/users/username/${id}`,
+        CHANGE_PASSWORD: (id: string | number) => `/users/password/${id}`,
+        CHANGE_ROLE: (id: string | number) => `/users/role/${id}`,
+        RESET_PASSWORD: (id: string | number) => `/users/reset-password/${id}`,
+        DELETE_ACCOUNT: (id: string | number) => `/users/delete-account/${id}`,
+    },
+    PERSONS: {
+        GET_ADMIN_PAGINATED: `/persons/admin`,
+        GET_PUBLIC_PROFILE: (id: string | number) => `/persons/${id}`,
+        UPDATE_PUBLIC_PROFILE: (id: string | number) => `/persons/${id}`,
+        CHANGE_STATUS: (id: string | number) => `/persons/${id}`, // DELETE method
+        GET_PRIVATE_PROFILE: (id: string | number) => `/persons/admin/${id}`,
+        CREATE: `/persons`,
+        UPLOAD_IMAGE: (id: string | number) => `/persons/image/${id}`,
+        DELETE_IMAGE: (id: string | number) => `/persons/image/${id}`,
+    },
+    CLASSES: createStandardEndpoints('classes'),
+    ORDERS: createStandardEndpoints('orders'),
+    FAMILIES: createStandardEndpoints('families'),
+    GENERA: createStandardEndpoints('genera'),
+    SPECIES: createStandardEndpoints('species'),
+    COUNTRIES: createStandardEndpoints('countries'),
+    DEPARTMENTS: createStandardEndpoints('departments'),
+    PROVINCES: createStandardEndpoints('provinces'),
+    DISTRICTS: createStandardEndpoints('districts'),
+    LOCALITIES: createStandardEndpoints('localities'),
+    INDIVIDUALS: {
+        QUERY_PUBLIC: `/individuals/query`,
+        QUERY_ADMIN: `/individuals/admin/query`,
+        GET_BY_ID: (id: string | number) => `/individuals/${id}`,
+        UPDATE: (id: string | number) => `/individuals/${id}`,
+        DELETE: (id: string | number) => `/individuals/${id}`,
+        GET_ADMIN_BY_ID: (id: string | number) => `/individuals/admin/${id}`,
+        RESTORE: (id: string | number) => `/individuals/admin/restore/${id}`,
+        CREATE: `/individuals`,
+        CHANGE_STATUS: (id: string | number) => `/individuals/change-status/${id}`,
+        FILES: {
+            UPLOAD: (id: string | number) => `/individuals/files/${id}`,
+            DELETE: (id: string | number) => `/individuals/files/${id}`,
+            UPDATE_IMAGES: (id: string | number) => `/individuals/files/${id}/images`,
+            UPDATE_AUDIOS: (id: string | number) => `/individuals/files/${id}/audios`,
+            UPDATE_ORDER: (id: string | number) => `/individuals/files/${id}/orders`,
+        },
+        EXPORT: {
+            TEMPLATE: `/individuals/export/template`,
+            PUBLISHED: `/individuals/export-published`,
+            ALL: `/individuals/export-all`,
+        },
+        IMPORT: `/individuals/import`,
+    },
+    IDENTIFIERS: {
+        ADD: `/identifiers`,
+        GET_BY_INDIVIDUAL: (id: string | number) => `/identifiers/admin/in-individual/${id}`,
+        GET_NOT_IN_INDIVIDUAL: (id: string | number) => `/identifiers/admin/not-in-individual/${id}`,
+        REMOVE: (individualId: string | number, personId: string | number) => `/identifiers/${individualId}/${personId}`,
+    },
+    SEXES: createStandardEndpoints('sexes'),
+    INSTITUTIONS: createStandardEndpoints('institutions'),
+    MUSEUMS: createStandardEndpoints('museums'),
+    OCURRENCES: createStandardEndpoints('ocurrences'),
+    COLLECTORS: {
+        GET_ALL: `/collectors`,
+        ADD: `/collectors`,
+        GET_BY_OCCURRENCE: (id: string | number) => `/collectors/admin/in-ocurrence/${id}`,
+        GET_NOT_IN_OCCURRENCE: (id: string | number) => `/collectors/admin/not-in-ocurrence/${id}`,
+        REMOVE: (occurrenceId: string | number, personId: string | number) => `/collectors/${occurrenceId}/${personId}`,
+    },
+    EVENTS: createStandardEndpoints('events'),
+    EVENT_TYPES: createStandardEndpoints('event-types'),
+    FOREST_TYPES: createStandardEndpoints('forest-types'),
+    INDIVIDUAL_ACTIVITIES: createStandardEndpoints('individual-activities'),
+    GENERAL_COUNTER: `/general-counter`,
+    PUBLICATIONS: createStandardEndpoints('publications'),
+    FILES: {
+        SERVER: `/files/server`,
+        LOCAL: `/files/local`,
+    },
+};
