@@ -1,2 +1,6 @@
 export * from './sexes'
 export * from './individuals'
+export * from './classes'
+export * from './orders'
+export * from './families'
+export * from './genera'
