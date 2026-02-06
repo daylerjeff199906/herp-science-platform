@@ -7,4 +7,4 @@ export * from './hooks/useCountries'
 export * from './hooks/useGeneralCount'
 export * from './hooks/useIndividuals'
 export * from './services'
-
+export * from './config'
