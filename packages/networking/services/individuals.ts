@@ -29,5 +29,6 @@ const cleanFilters = <T extends object>(filters: T): Partial<T> => {
 export const fetchIndividuals = async (filters: IndividualFilter): Promise<IndividualResponse> => {
     const payload = cleanFilters(filters);
     const { data } = await apiClient.post<IndividualResponse>('/individuals/query', payload)
+    console.log(data)
     return data
 }
