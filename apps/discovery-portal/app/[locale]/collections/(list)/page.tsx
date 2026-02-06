@@ -99,3 +99,5 @@ export default async function Page(props: IProps) {
     <CollectionsView data={res.data} />
   </>
 }
+
+export const dynamic = 'force-dynamic'
