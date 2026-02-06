@@ -1,5 +1,7 @@
 'use client'
 
+import { CollectionsFilters } from "@/components/collections/CollectionsFilters"
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
 
@@ -10,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <aside
           className="w-72 fixed top-20 h-[calc(100vh-4rem)] overflow-y-auto"
         >
-          <div></div>
+          <CollectionsFilters />
         </aside>
         <main className="ml-72 py-4">
           {children}

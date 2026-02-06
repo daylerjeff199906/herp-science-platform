@@ -5,7 +5,6 @@ import { ViewToggler, ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
 import { ChevronDown, Download, SlidersHorizontal } from 'lucide-react'
 import { Input } from '@repo/ui/components/ui/input'
-import { SmartFilter } from '@repo/ui/components/ui/smart-filter'
 import { Individual } from '@repo/shared-types'
 
 interface CollectionsViewProps {
@@ -45,111 +44,35 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                     </button>
                 </div>
             </div>
-
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* Sidebar Filters - DEMO */}
-                <aside className="w-full lg:w-64 flex-shrink-0 space-y-6">
-                    <div className='p-4 bg-white rounded-xl border border-gray-100 shadow-sm'>
-                        <h3 className="font-semibold text-lg mb-4 text-gray-900 flex items-center gap-2">
-                            <SlidersHorizontal size={18} />
-                            Filtros
-                        </h3>
-
-                        <div className="space-y-6">
-                            {/* DEMO: SmartFilter Integration */}
-                            <SmartFilter
-                                type="text"
-                                placeholder="Buscar especie..."
-                                value=""
-                                onChange={() => { }}
-                                debounceMs={500}
-                            />
-
-                            <SmartFilter
-                                type="select"
-                                label="Sexo"
-                                value={null}
-                                onChange={() => { }}
-                                options={[
-                                    { label: 'Todos', value: 'all' },
-                                    { label: 'Macho', value: 'male' },
-                                    { label: 'Hembra', value: 'female' },
-                                    { label: 'Indeterminado', value: 'unknown' }
-                                ]}
-                            />
-
-                            <SmartFilter
-                                type="switch"
-                                label="Con Huevos"
-                                value={false}
-                                onChange={() => { }}
-                            />
-
-                            <SmartFilter
-                                type="radio"
-                                label="Estado"
-                                value="all"
-                                onChange={() => { }}
-                                options={[
-                                    { label: 'Todos', value: 'all' },
-                                    { label: 'Vivo', value: 'alive' },
-                                    { label: 'Preservado', value: 'preserved' }
-                                ]}
-                            />
-
-                            {/* Example Async Select (Mocked for Demo) */}
-                            <SmartFilter
-                                type="async-select"
-                                label="Taxonomía (Demo Async)"
-                                value={null}
-                                onChange={() => { }}
-                                loadOptions={async (query) => {
-                                    // Mock API call
-                                    await new Promise(resolve => setTimeout(resolve, 1000));
-                                    return {
-                                        options: [
-                                            { label: 'Amphibia', value: 1 },
-                                            { label: 'Reptilia', value: 2 },
-                                            { label: 'Aves', value: 3 }
-                                        ].filter(o => o.label.toLowerCase().includes(query.toLowerCase())),
-                                        hasMore: false
-                                    }
-                                }}
-                            />
+            {/* Main Content Area */}
+            <div className="min-h-[500px]">
+                {data.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center">
+                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                            <SlidersHorizontal className="text-gray-400" size={32} />
                         </div>
+                        <h3 className="text-xl font-semibold text-gray-900">No se encontraron resultados</h3>
+                        <p className="text-gray-500 max-w-sm mt-2">Intenta ajustar los filtros para encontrar lo que buscas.</p>
                     </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className="flex-1 min-h-[500px]">
-                    {data.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-20 text-center">
-                            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                                <SlidersHorizontal className="text-gray-400" size={32} />
-                            </div>
-                            <h3 className="text-xl font-semibold text-gray-900">No se encontraron resultados</h3>
-                            <p className="text-gray-500 max-w-sm mt-2">Intenta ajustar los filtros para encontrar lo que buscas.</p>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Grid/Layout Rendering */}
-                            <div className={`
-                ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6' : ''}
+                ) : (
+                    <>
+                        {/* Grid/Layout Rendering */}
+                        <div className={`
+                ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
                 ${view === 'list' ? 'flex flex-col gap-4' : ''}
                 ${view === 'gallery' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4' : ''}
                 ${view === 'map' ? 'h-[600px] bg-gray-100 rounded-2xl flex items-center justify-center border' : ''}
                 `}>
-                                {view === 'map' ? (
-                                    <div className="text-gray-400 font-medium">Vista de Mapa (Próximamente)</div>
-                                ) : (
-                                    data.map((item, idx) => (
-                                        <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
-                                    ))
-                                )}
-                            </div>
-                        </>
-                    )}
-                </div>
+                            {view === 'map' ? (
+                                <div className="text-gray-400 font-medium">Vista de Mapa (Próximamente)</div>
+                            ) : (
+                                data.map((item, idx) => (
+                                    <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
+                                ))
+                            )}
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )
