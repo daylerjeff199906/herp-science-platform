@@ -119,7 +119,7 @@ export const CollectionsFilters = () => {
 
     // Render Filter Controls
     const FilterControls = () => (
-        <div className="space-y-6">
+        <div className="space-y-6 w-full">
             <SmartFilter
                 className="text-xs"
                 type="text"
@@ -260,8 +260,8 @@ export const CollectionsFilters = () => {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:block w-64 flex-shrink-0 space-y-4">
-                <div className='p-4 bg-white rounded-xl border border-gray-100 shadow-sm sticky top-24'>
+            <aside className="hidden lg:block flex-shrink-0 space-y-4">
+                <div className='p-4 bg-white rounded-xl border border-gray-100 sticky top-24'>
                     <div className="flex items-center justify-between mb-4">
                         <h3 className="font-semibold text-xs text-gray-900 flex items-center gap-2">
                             <SlidersHorizontal size={14} />
