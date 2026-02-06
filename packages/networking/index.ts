@@ -6,4 +6,5 @@ export * from './src/api-client'
 export * from './hooks/useCountries'
 export * from './hooks/useGeneralCount'
 export * from './hooks/useIndividuals'
+export * from './services'
 

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Link, usePathname } from '../../../i18n/routing'
-import { cn } from '@repo/ui/lib/utils'
+import { cn } from "@repo/ui"
 import { useLocale } from 'next-intl'
 import { ChevronDown, Globe } from 'lucide-react'
 import { FlagPE, FlagUS, FlagBR } from './Flags'

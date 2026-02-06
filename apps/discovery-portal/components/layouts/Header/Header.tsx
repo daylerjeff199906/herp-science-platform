@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl'
 import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
-import { Globe } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher'
 
 export function Header() {

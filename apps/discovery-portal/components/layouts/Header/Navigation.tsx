@@ -6,12 +6,12 @@ import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { NavItem } from './types'
 
-export const navItems: { label: string; href: string; children?: any[] }[] = [
+export const navItems: { label: string; href: string; children?: NavItem[] }[] = [
     { label: 'home', href: '/' },
-    { label: 'collections', href: '/colecciones' },
-    { label: 'gallery', href: '/galeria' },
-    { label: 'viewer', href: '/visor' },
-    { label: 'deposit', href: '/como-depositar' },
+    { label: 'collections', href: '/collections' },
+    { label: 'gallery', href: '/gallery' },
+    { label: 'viewer', href: '/viewer' },
+    { label: 'deposit', href: '/deposit' },
 ]
 
 export function Navigation({
