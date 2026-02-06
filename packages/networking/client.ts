@@ -24,7 +24,10 @@ export const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message)
+    // Suppress logging for 403 Forbidden to assume it's handled by services (e.g. empty results)
+    if (error.response?.status !== 403) {
+      console.error('API Error:', error.response?.data || error.message)
+    }
     return Promise.reject(error)
   }
 )

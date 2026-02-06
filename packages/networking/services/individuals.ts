@@ -28,7 +28,19 @@ const cleanFilters = <T extends object>(filters: T): Partial<T> => {
 
 export const fetchIndividuals = async (filters: IndividualFilter): Promise<IndividualResponse> => {
     const payload = cleanFilters(filters);
-    const { data } = await apiClient.post<IndividualResponse>('/individuals/query', payload)
-    console.log(data)
-    return data
+    try {
+        const { data } = await apiClient.post<IndividualResponse>('/individuals/query', payload)
+        return data
+    } catch (error: any) {
+        // Handle 403 Forbidden gracefully -> return empty results
+        if (error.response?.status === 403) {
+            return {
+                data: [],
+                currentPage: 1,
+                totalPages: 1, // Avoid 0 if generic pagination breaks, but 0 is usually safer. Set 1 to be neutral. Or 0.
+                totalItems: 0
+            }
+        }
+        throw error;
+    }
 }
