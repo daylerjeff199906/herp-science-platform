@@ -1,16 +1,17 @@
 'use client'
 
-import { LayoutGrid, List, Map, Image as ImageIcon } from 'lucide-react'
+import { LayoutGrid, List, Table, Image as ImageIcon } from 'lucide-react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
-export type ViewType = 'grid' | 'list' | 'map' | 'gallery'
+export type ViewType = 'grid' | 'list' | 'table' | 'gallery'
 
 export function ViewToggler() {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const currentView = (searchParams.get('view') as ViewType) || 'grid'
+    const rawView = searchParams.get('view')
+    const currentView = rawView === 'map' ? 'table' : ((rawView as ViewType) || 'grid')
 
     const onViewChange = (view: ViewType) => {
         const params = new URLSearchParams(searchParams)
@@ -22,7 +23,7 @@ export function ViewToggler() {
         { id: 'grid', icon: LayoutGrid, label: 'Grid' },
         { id: 'list', icon: List, label: 'Lista' },
         { id: 'gallery', icon: ImageIcon, label: 'Galería' },
-        { id: 'map', icon: Map, label: 'Mapa' },
+        { id: 'table', icon: Table, label: 'Tabla' },
     ] as const
 
     return (

@@ -1,7 +1,7 @@
-export interface PaginationParams {
-    page?: number;
-    pageSize?: number;
-}
+import { PaginationParams } from "../core";
+import { Sex } from "./sexes";
+
+
 
 export interface TaxonomicFilter {
     classId?: number;
@@ -48,16 +48,12 @@ export interface IndividualFilter extends PaginationParams {
     timeRange?: TimeRangeFilter;
 }
 
-export interface BaseEntity {
+interface BaseEntity {
     id: number;
     name?: string;
     status: number;
     createdAt: string;
     updatedAt: string;
-}
-
-export interface Sex extends BaseEntity {
-    name: string;
 }
 
 export interface Activity extends BaseEntity {
