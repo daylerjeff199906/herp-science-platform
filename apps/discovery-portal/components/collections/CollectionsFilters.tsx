@@ -119,7 +119,7 @@ export const CollectionsFilters = () => {
 
     // Render Filter Controls
     const FilterControls = () => (
-        <div className="space-y-6 w-full">
+        <div className="space-y-4 w-full">
             <SmartFilter
                 className="text-xs"
                 type="text"
@@ -129,108 +129,133 @@ export const CollectionsFilters = () => {
                 debounceMs={500}
             />
 
-            <SmartFilter
-                type="select"
-                label="Sexo"
-                value={searchParams.get('sexId')}
-                onChange={(val) => updateFilter('sexId', val)}
-                options={sexOptions}
-                placeholder="Todos"
-            />
+            <Accordion type="multiple" defaultValue={['taxonomy', 'characteristics']} className="w-full">
 
-            {/* CLASE */}
-            <SmartFilter
-                type="async-select"
-                label="Clase"
-                value={classId}
-                onChange={(val) => updateFilter('classId', val)}
-                // Show initial list immediately, plus the selected item if handled
-                options={selectedClassOpt.length > 0 ? selectedClassOpt : mapToOptions(initialClasses?.data)}
-                loadOptions={async (query, page) => {
-                    const res = await fetchClasses({ name: query, page, pageSize: 20 })
-                    return {
-                        options: mapToOptions(res.data),
-                        hasMore: res.currentPage < res.totalPages
-                    }
-                }}
-            />
+                {/* GRUPO V: Taxonomía */}
+                <AccordionItem value="taxonomy" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-semibold hover:no-underline py-2">Taxonomía</AccordionTrigger>
+                    <AccordionContent className="pt-2 px-1 flex flex-col gap-4 lg:gap-6">
+                        <div className="flex flex-col gap-2">
+                            <SmartFilter
+                                className="text-xs"
+                                type="select"
+                                label="Sexo"
+                                value={searchParams.get('sexId')}
+                                onChange={(val) => updateFilter('sexId', val)}
+                                options={sexOptions}
+                                placeholder="Todos"
+                            />
 
-            {/* ORDEN (Depends on Class) */}
-            <SmartFilter
-                type="async-select"
-                label="Orden"
-                value={orderId}
-                onChange={(val) => updateFilter('orderId', val)}
-                options={selectedOrderOpt.length > 0 ? selectedOrderOpt : mapToOptions(initialOrders?.data)}
-                loadOptions={async (query, page) => {
-                    const res = await fetchOrders({
-                        name: query,
-                        page,
-                        pageSize: 20,
-                        classId: classId ? Number(classId) : undefined // Filter by parent
-                    })
-                    return {
-                        options: mapToOptions(res.data),
-                        hasMore: res.currentPage < res.totalPages
-                    }
-                }}
-            />
+                            {/* CLASE */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Clase"
+                                value={classId}
+                                onChange={(val) => updateFilter('classId', val)}
+                                // Show initial list immediately, plus the selected item if handled
+                                options={selectedClassOpt.length > 0 ? selectedClassOpt : mapToOptions(initialClasses?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchClasses({ name: query, page, pageSize: 20 })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
 
-            {/* FAMILIA (Depends on Order) */}
-            <SmartFilter
-                type="async-select"
-                label="Familia"
-                value={familyId}
-                onChange={(val) => updateFilter('familyId', val)}
-                options={selectedFamilyOpt.length > 0 ? selectedFamilyOpt : mapToOptions(initialFamilies?.data)}
-                loadOptions={async (query, page) => {
-                    const res = await fetchFamilies({
-                        name: query,
-                        page,
-                        pageSize: 20,
-                        orderId: orderId ? Number(orderId) : undefined
-                    })
-                    return {
-                        options: mapToOptions(res.data),
-                        hasMore: res.currentPage < res.totalPages
-                    }
-                }}
-            />
+                            {/* ORDEN (Depends on Class) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Orden"
+                                value={orderId}
+                                onChange={(val) => updateFilter('orderId', val)}
+                                options={selectedOrderOpt.length > 0 ? selectedOrderOpt : mapToOptions(initialOrders?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchOrders({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        classId: classId ? Number(classId) : undefined // Filter by parent
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
 
-            {/* GENERO (Depends on Family) */}
-            <SmartFilter
-                type="async-select"
-                label="Género"
-                value={genusId}
-                onChange={(val) => updateFilter('genusId', val)}
-                options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
-                loadOptions={async (query, page) => {
-                    const res = await fetchGenera({
-                        name: query,
-                        page,
-                        pageSize: 20,
-                        familyId: familyId ? Number(familyId) : undefined
-                    })
-                    return {
-                        options: mapToOptions(res.data),
-                        hasMore: res.currentPage < res.totalPages
-                    }
-                }}
-            />
+                            {/* FAMILIA (Depends on Order) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Familia"
+                                value={familyId}
+                                onChange={(val) => updateFilter('familyId', val)}
+                                options={selectedFamilyOpt.length > 0 ? selectedFamilyOpt : mapToOptions(initialFamilies?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchFamilies({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        orderId: orderId ? Number(orderId) : undefined
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
 
-            <SmartFilter
-                type="switch"
-                label="Con Huevos"
-                value={searchParams.get('hasEggs') === '1'}
-                onChange={(val) => updateFilter('hasEggs', val ? '1' : null)}
-            />
+                            {/* GENERO (Depends on Family) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Género"
+                                value={genusId}
+                                onChange={(val) => updateFilter('genusId', val)}
+                                options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchGenera({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        familyId: familyId ? Number(familyId) : undefined
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
 
-            <SmartFilter
-                type="switch"
-                label="Con Imagenes"
-                value={searchParams.get('hasImages') === '1'}
-                onChange={(val) => updateFilter('hasImages', val ? '1' : null)}
-            />
+                {/* GRUPO: Características */}
+                <AccordionItem value="characteristics" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-semibold hover:no-underline py-2">Características</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-2 px-1">
+                        <SmartFilter
+                            className="text-xs"
+                            type="switch"
+                            label="Con Huevos"
+                            value={searchParams.get('hasEggs') === '1'}
+                            onChange={(val) => updateFilter('hasEggs', val ? '1' : null)}
+                        />
+
+                        <SmartFilter
+                            className="text-xs"
+                            type="switch"
+                            label="Con Imagenes"
+                            value={searchParams.get('hasImages') === '1'}
+                            onChange={(val) => updateFilter('hasImages', val ? '1' : null)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+
+            </Accordion>
         </div>
     )
 
@@ -319,4 +344,3 @@ export const CollectionsFilters = () => {
         </>
     );
 };
-
