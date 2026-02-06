@@ -93,7 +93,6 @@ export default async function Page(props: IProps) {
     ocurrenceId: occurrenceId ? Number(occurrenceId) : undefined,
     hasImages: 1,
   })
-  console.log('res response', res.data)
   return <>
     <CollectionsView data={res.data} />
   </>
