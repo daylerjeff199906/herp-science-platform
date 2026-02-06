@@ -1,10 +1,7 @@
-
 export * from './src/types'
 export * from './src/error'
 export * from './src/fetch-client'
 export * from './src/api-client'
-export * from './hooks/useCountries'
-export * from './hooks/useGeneralCount'
-export * from './hooks/useIndividuals'
+export * from './hooks'
 export * from './services'
 export * from './config'

@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { SlidersHorizontal, X, Filter } from 'lucide-react';
 import { SmartFilter, Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, Badge, Button } from '@repo/ui'; // Consolidated import provided @repo/ui exports them
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useSexes } from '@repo/networking';
 
 export const CollectionsFilters = () => {
     const router = useRouter()
