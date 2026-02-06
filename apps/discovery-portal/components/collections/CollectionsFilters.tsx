@@ -121,6 +121,7 @@ export const CollectionsFilters = () => {
     const FilterControls = () => (
         <div className="space-y-6">
             <SmartFilter
+                className="text-xs"
                 type="text"
                 placeholder="Buscar especie, código..."
                 value={searchParams.get('searchTerm') || ''}
@@ -262,8 +263,8 @@ export const CollectionsFilters = () => {
             <aside className="hidden lg:block w-64 flex-shrink-0 space-y-4">
                 <div className='p-4 bg-white rounded-xl border border-gray-100 shadow-sm sticky top-24'>
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-semibold text-lg text-gray-900 flex items-center gap-2">
-                            <SlidersHorizontal size={18} />
+                        <h3 className="font-semibold text-xs text-gray-900 flex items-center gap-2">
+                            <SlidersHorizontal size={14} />
                             Filtros
                         </h3>
                         {activeCount > 0 && (
