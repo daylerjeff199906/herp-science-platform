@@ -185,7 +185,7 @@ export interface IndividualFile {
     note: string | null;
     samplingSite: string;
     order: number;
-    url?: string; // Adding optional url as it seems to be used in the component
+    // url?: string; // Adding optional url as it seems to be used in the component
 }
 
 export interface Individual {
@@ -211,7 +211,7 @@ export interface Individual {
     activity: Activity;
     forestType: ForestType | null;
     museum: Museum;
-    identifiers: any[];
+    identifiers: unknown[];
     ocurrence: Occurrence;
     species: TaxonomySpecies;
 }

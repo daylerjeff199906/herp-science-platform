@@ -67,7 +67,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                             {view === 'map' ? (
                                 <div className="text-gray-400 font-medium">Vista de Mapa (Próximamente)</div>
                             ) : (
-                                data.map((item: any, idx: number) => (
+                                data.map((item, idx) => (
                                     <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
                                 ))
                             )}
