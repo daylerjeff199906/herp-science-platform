@@ -42,45 +42,9 @@ const Accordion = React.forwardRef<
 })
 Accordion.displayName = "Accordion"
 
-const AccordionItem = React.forwardRef<
-    HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement> & { value: string }
->(({ className, value, children, ...props }, ref) => {
-    return (
-        <div ref={ref} className={cn("border-b", className)} data-value={value} {...props}>
-            {children}
-        </div>
-    )
-})
-AccordionItem.displayName = "AccordionItem"
-
-const AccordionTrigger = React.forwardRef<
-    HTMLButtonElement,
-    React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, children, ...props }, ref) => {
-    const context = React.useContext(AccordionContext)
-    // Logic to determine if open based on context (simplified for custom implementation)
-    // In a real radix implementation, this is handled internally. Here we need to check parent.
-    // However, simpler is just to let the user click. We need to find the parent value context though.
-    // To avoid complex context nesting without radix, we rely on the button onClick.
-    // But wait, the Trigger needs to know 'which' item it belongs to.
-    // With custom implementation without context for Item, we can't easily do this cleanly like Radix.
-
-    // Re-thinking: A recursive search or context for Item is needed.
-    // Let's add ItemContext.
-    return (
-        <div className="flex">
-            <AccordionTriggerButton className={className} ref={ref} {...props}>{children}</AccordionTriggerButton>
-        </div>
-    )
-})
-AccordionTrigger.displayName = "AccordionTrigger"
-
-// Helper for the actual button inside trigger to capture the item context
 const AccordionItemContext = React.createContext<string | null>(null)
 
-// Redefine Item to provide context
-const AccordionItemWrapper = React.forwardRef<
+const AccordionItem = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement> & { value: string }
 >(({ className, value, children, ...props }, ref) => {
@@ -92,50 +56,64 @@ const AccordionItemWrapper = React.forwardRef<
         </AccordionItemContext.Provider>
     )
 })
-AccordionItemWrapper.displayName = "AccordionItem"
+AccordionItem.displayName = "AccordionItem"
 
-const AccordionTriggerButton = React.forwardRef<
+const AccordionTrigger = React.forwardRef<
     HTMLButtonElement,
     React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, children, onClick, ...props }, ref) => {
-    const { openValue, setOpenValue, type } = React.useContext(AccordionContext)!
-    const value = React.useContext(AccordionItemContext)!
+    const accordionContext = React.useContext(AccordionContext)
+    const itemValue = React.useContext(AccordionItemContext)
+
+    if (!accordionContext || itemValue === null) {
+        throw new Error("AccordionTrigger must be used within AccordionItem and Accordion")
+    }
+
+    const { openValue, setOpenValue, type } = accordionContext
 
     const isOpen = type === "single"
-        ? openValue === value
-        : (Array.isArray(openValue) && openValue.includes(value))
+        ? openValue === itemValue
+        : (Array.isArray(openValue) && openValue.includes(itemValue))
 
     return (
-        <button
-            ref={ref}
-            onClick={(e) => {
-                setOpenValue(value)
-                onClick?.(e)
-            }}
-            className={cn(
-                "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
-                className
-            )}
-            data-state={isOpen ? "open" : "closed"}
-            {...props}
-        >
-            {children}
-            <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-        </button>
+        <div className="flex">
+            <button
+                ref={ref}
+                onClick={(e) => {
+                    setOpenValue(itemValue)
+                    onClick?.(e)
+                }}
+                className={cn(
+                    "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180 w-full",
+                    className
+                )}
+                data-state={isOpen ? "open" : "closed"}
+                {...props}
+            >
+                {children}
+                <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+            </button>
+        </div>
     )
 })
-AccordionTriggerButton.displayName = "AccordionTrigger"
+AccordionTrigger.displayName = "AccordionTrigger"
 
 const AccordionContent = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-    const { openValue, type } = React.useContext(AccordionContext)!
-    const value = React.useContext(AccordionItemContext)!
+    const accordionContext = React.useContext(AccordionContext)
+    const itemValue = React.useContext(AccordionItemContext)
+
+    if (!accordionContext || itemValue === null) {
+        return null
+    }
+
+    const { openValue, type } = accordionContext
 
     const isOpen = type === "single"
-        ? openValue === value
-        : (Array.isArray(openValue) && openValue.includes(value))
+        ? openValue === itemValue
+        : (Array.isArray(openValue) && openValue.includes(itemValue))
 
     if (!isOpen) return null
 
@@ -154,4 +132,4 @@ const AccordionContent = React.forwardRef<
 })
 AccordionContent.displayName = "AccordionContent"
 
-export { Accordion, AccordionItemWrapper as AccordionItem, AccordionTriggerButton as AccordionTrigger, AccordionContent }
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
