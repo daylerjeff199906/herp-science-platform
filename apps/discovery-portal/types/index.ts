@@ -22,7 +22,8 @@ export interface IIndividualFilterParams {
     orderBy?: string
     orderType?: 'ASC' | 'DESC'
     page?: string
-    pageSize?: string
+    pageSize?: string,
+    hasImages?: string
 }
 
 export type SearchParams = { [key: string]: string | string[] | undefined }

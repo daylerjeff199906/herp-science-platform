@@ -24,6 +24,9 @@ export const CollectionsFilters = () => {
         const search = current.toString()
         const query = search ? `?${search}` : ""
 
+        // Prevent infinite loops / unnecessary navigation
+        if (current.toString() === searchParams.toString()) return
+
         router.push(`${pathname}${query}`)
     }
 

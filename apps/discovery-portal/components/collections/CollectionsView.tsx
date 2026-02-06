@@ -1,8 +1,8 @@
 'use client'
-import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { ViewToggler, ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
+import { CollectionTable } from './CollectionTable'
 import { ChevronDown, Download, SlidersHorizontal } from 'lucide-react'
 import { Input } from '@repo/ui/components/ui/input'
 import { Individual } from '@repo/shared-types'
@@ -13,7 +13,8 @@ interface CollectionsViewProps {
 
 export function CollectionsView({ data }: CollectionsViewProps) {
     const searchParams = useSearchParams()
-    const view = (searchParams.get('view') as ViewType) || 'grid'
+    const rawView = searchParams.get('view')
+    const view = rawView === 'map' ? 'table' : ((rawView as ViewType) || 'grid')
 
     return (
         <div className="flex flex-col gap-6 w-full container mx-auto">
@@ -61,10 +62,9 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                 ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
                 ${view === 'list' ? 'flex flex-col gap-4' : ''}
                 ${view === 'gallery' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4' : ''}
-                ${view === 'map' ? 'h-[600px] bg-gray-100 rounded-2xl flex items-center justify-center border' : ''}
                 `}>
-                            {view === 'map' ? (
-                                <div className="text-gray-400 font-medium">Vista de Mapa (Próximamente)</div>
+                            {view === 'table' ? (
+                                <CollectionTable data={data} />
                             ) : (
                                 data.map((item, idx) => (
                                     <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
