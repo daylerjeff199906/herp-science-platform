@@ -73,7 +73,7 @@ const TextFilter = ({ value, onChange, placeholder, debounceMs = 300, className 
                 value={localValue}
                 onChange={(e) => setLocalValue(e.target.value)}
                 className={cn(
-                    "pl-9 rounded-lg bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                    "pl-9 rounded-lg bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-full",
                     className
                 )}
             />

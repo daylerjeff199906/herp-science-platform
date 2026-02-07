@@ -16,10 +16,25 @@ import {
 import { ViewToggler } from './ViewToggler'
 import { CollectionsFilterContent } from './CollectionsFilterContent'
 
+import { cn } from '@/lib/utils'
+
 export const CollectionsHeader = () => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+
+    // --- Scroll State ---
+    const [isScrolled, setIsScrolled] = React.useState(false)
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            // Threshold of 10px to trigger effect
+            setIsScrolled(window.scrollY > 10)
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     // --- Search Handler ---
     const updateSearch = (val: string) => {
@@ -48,7 +63,14 @@ export const CollectionsHeader = () => {
     }, [searchParams])
 
     return (
-        <div className="sticky top-0 lg:top-20 z-30 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4 mb-6">
+        <div
+            className={cn(
+                "sticky top-0 lg:top-20 z-30 transition-all duration-200",
+                isScrolled
+                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm p-4 mb-6 rounded-xl"
+                    : "bg-transparent border-transparent"
+            )}
+        >
             <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4 px-4 sm:px-0">
 
                 {/* Left: Search Bar */}
@@ -59,7 +81,7 @@ export const CollectionsHeader = () => {
                         value={searchParams.get('searchTerm') || ''}
                         onChange={updateSearch}
                         debounceMs={500}
-                        className="w-full h-10 shadow-sm"
+                        className="w-full h-10 shadow-sm bg-white"
                     />
                 </div>
 
@@ -84,7 +106,7 @@ export const CollectionsHeader = () => {
                     <div className="lg:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative">
+                                <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative bg-white">
                                     <SlidersHorizontal size={16} />
                                     <span>Filtros</span>
                                     {activeCount > 0 && (

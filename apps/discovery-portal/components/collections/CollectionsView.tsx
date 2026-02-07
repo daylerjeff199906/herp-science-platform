@@ -18,10 +18,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
 
     return (
         <div className="flex flex-col gap-6 w-full container mx-auto">
-            {/* Header / Toolbar */}
-            {/* Header / Toolbar */}
             <CollectionsHeader />
-            {/* Main Content Area */}
             <div className="min-h-[500px]">
                 {data.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -33,7 +30,6 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                     </div>
                 ) : (
                     <>
-                        {/* Grid/Layout Rendering */}
                         <div className={`
                 ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
                 ${view === 'list' ? 'flex flex-col gap-4' : ''}
