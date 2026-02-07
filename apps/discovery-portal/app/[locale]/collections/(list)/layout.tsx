@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <aside className="w-full lg:w-80 lg:fixed lg:top-20 lg:h-[calc(100vh-5rem)] overflow-y-auto">
           <CollectionsFilters />
         </aside>
-        <main className="flex-1 lg:ml-80 p-4 lg:p-6">
+        <main className="flex-1 lg:ml-80 p-0 lg:p-6">
           {children}
         </main>
       </div>

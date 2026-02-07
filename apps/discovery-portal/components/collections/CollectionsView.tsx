@@ -17,7 +17,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     const view = rawView === 'map' ? 'table' : ((rawView as ViewType) || 'grid')
 
     return (
-        <div className="flex flex-col gap-6 w-full container mx-auto">
+        <div className="flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6">
             <CollectionsHeader />
             <div className="min-h-[500px]">
                 {data.length === 0 ? (
