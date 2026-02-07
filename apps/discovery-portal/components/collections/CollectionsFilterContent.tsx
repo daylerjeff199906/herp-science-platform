@@ -161,12 +161,10 @@ export const CollectionsFilterContent = () => {
 
                             {/* CLASE */}
                             <SmartFilter
-                                className="text-xs h-8"
-                                type="async-select"
+                                type="list-search"
                                 label="Clase"
                                 value={classId}
                                 onChange={(val) => updateFilter('classId', val)}
-                                // Show initial list immediately, plus the selected item if handled
                                 options={selectedClassOpt.length > 0 ? selectedClassOpt : mapToOptions(initialClasses?.data)}
                                 loadOptions={async (query, page) => {
                                     const res = await fetchClasses({ name: query, page, pageSize: 20 })
@@ -175,73 +173,101 @@ export const CollectionsFilterContent = () => {
                                         hasMore: res.currentPage < res.totalPages
                                     }
                                 }}
+                                placeholder="Buscar clase..."
                             />
 
                             {/* ORDEN (Depends on Class) */}
-                            <SmartFilter
-                                className="text-xs h-8"
-                                type="async-select"
-                                label="Orden"
-                                value={orderId}
-                                onChange={(val) => updateFilter('orderId', val)}
-                                options={selectedOrderOpt.length > 0 ? selectedOrderOpt : mapToOptions(initialOrders?.data)}
-                                loadOptions={async (query, page) => {
-                                    const res = await fetchOrders({
-                                        name: query,
-                                        page,
-                                        pageSize: 20,
-                                        classId: classId ? Number(classId) : undefined // Filter by parent
-                                    })
-                                    return {
-                                        options: mapToOptions(res.data),
-                                        hasMore: res.currentPage < res.totalPages
-                                    }
-                                }}
-                            />
+                            {classId ? (
+                                <SmartFilter
+                                    type="list-search"
+                                    label="Orden"
+                                    value={orderId}
+                                    onChange={(val) => updateFilter('orderId', val)}
+                                    options={selectedOrderOpt.length > 0 ? selectedOrderOpt : mapToOptions(initialOrders?.data)}
+                                    loadOptions={async (query, page) => {
+                                        const res = await fetchOrders({
+                                            name: query,
+                                            page,
+                                            pageSize: 20,
+                                            classId: Number(classId)
+                                        })
+                                        return {
+                                            options: mapToOptions(res.data),
+                                            hasMore: res.currentPage < res.totalPages
+                                        }
+                                    }}
+                                    placeholder="Buscar orden..."
+                                />
+                            ) : (
+                                <div className="space-y-1">
+                                    <label className="text-xs font-semibold tracking-wider text-slate-400">Orden</label>
+                                    <p className="text-[10px] italic text-slate-400">
+                                        * Seleccione una <strong>Clase</strong> primero
+                                    </p>
+                                </div>
+                            )}
 
                             {/* FAMILIA (Depends on Order) */}
-                            <SmartFilter
-                                className="text-xs h-8"
-                                type="async-select"
-                                label="Familia"
-                                value={familyId}
-                                onChange={(val) => updateFilter('familyId', val)}
-                                options={selectedFamilyOpt.length > 0 ? selectedFamilyOpt : mapToOptions(initialFamilies?.data)}
-                                loadOptions={async (query, page) => {
-                                    const res = await fetchFamilies({
-                                        name: query,
-                                        page,
-                                        pageSize: 20,
-                                        orderId: orderId ? Number(orderId) : undefined
-                                    })
-                                    return {
-                                        options: mapToOptions(res.data),
-                                        hasMore: res.currentPage < res.totalPages
-                                    }
-                                }}
-                            />
+                            {orderId ? (
+                                <SmartFilter
+                                    type="list-search"
+                                    label="Familia"
+                                    value={familyId}
+                                    onChange={(val) => updateFilter('familyId', val)}
+                                    options={selectedFamilyOpt.length > 0 ? selectedFamilyOpt : mapToOptions(initialFamilies?.data)}
+                                    loadOptions={async (query, page) => {
+                                        const res = await fetchFamilies({
+                                            name: query,
+                                            page,
+                                            pageSize: 20,
+                                            orderId: Number(orderId)
+                                        })
+                                        return {
+                                            options: mapToOptions(res.data),
+                                            hasMore: res.currentPage < res.totalPages
+                                        }
+                                    }}
+                                    placeholder="Buscar familia..."
+                                />
+                            ) : (
+                                <div className="space-y-1">
+                                    <label className="text-xs font-semibold tracking-wider text-slate-400">Familia</label>
+                                    <p className="text-[10px] italic text-slate-400">
+                                        * Seleccione un <strong>Orden</strong> primero
+                                    </p>
+                                </div>
+                            )}
 
                             {/* GENERO (Depends on Family) */}
-                            <SmartFilter
-                                className="text-xs h-8"
-                                type="async-select"
-                                label="Género"
-                                value={genusId}
-                                onChange={(val) => updateFilter('genusId', val)}
-                                options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
-                                loadOptions={async (query, page) => {
-                                    const res = await fetchGenera({
-                                        name: query,
-                                        page,
-                                        pageSize: 20,
-                                        familyId: familyId ? Number(familyId) : undefined
-                                    })
-                                    return {
-                                        options: mapToOptions(res.data),
-                                        hasMore: res.currentPage < res.totalPages
-                                    }
-                                }}
-                            />
+                            {familyId ? (
+                                <SmartFilter
+                                    type="list-search"
+                                    label="Género"
+                                    value={genusId}
+                                    onChange={(val) => updateFilter('genusId', val)}
+                                    options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
+                                    loadOptions={async (query, page) => {
+                                        const res = await fetchGenera({
+                                            name: query,
+                                            page,
+                                            pageSize: 20,
+                                            familyId: Number(familyId)
+                                        })
+                                        return {
+                                            options: mapToOptions(res.data),
+                                            hasMore: res.currentPage < res.totalPages
+                                        }
+                                    }}
+                                    placeholder="Buscar género..."
+                                />
+                            ) : (
+                                <div className="space-y-1">
+                                    <label className="text-xs font-semibold tracking-wider text-slate-400">Género</label>
+                                    <p className="text-[10px] italic text-slate-400">
+                                        * Seleccione una <strong>Familia</strong> primero
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </AccordionContent>
                 </AccordionItem>
