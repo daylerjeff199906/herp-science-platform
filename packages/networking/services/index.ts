@@ -1,1 +1,7 @@
 export * from './individuals'
+export * from './classes.service'
+export * from './orders.service'
+export * from './families.service'
+export * from './genera.service'
+export * from './sexes.service'
+export * from './general-counter'

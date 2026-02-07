@@ -2,18 +2,51 @@
 
 import React, { useMemo } from 'react';
 import { SlidersHorizontal, X, Filter } from 'lucide-react';
-import { SmartFilter, Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, Badge, Button } from '@repo/ui'; // Consolidated import provided @repo/ui exports them
+import { SmartFilter, Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, Badge, Button, Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@repo/ui'; // Consolidated import provided @repo/ui exports them
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { useSexes } from '@repo/networking';
+import {
+    useSexes,
+    fetchClasses, fetchClassById,
+    fetchOrders, fetchOrderById,
+    fetchFamilies, fetchFamilyById,
+    fetchGenera, fetchGenusById,
+    useClasses,
+    useOrders,
+    useFamilies,
+    useGenera
+} from '@repo/networking';
+import { useQuery } from '@tanstack/react-query';
 
 export const CollectionsFilters = () => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
 
-    // Helper to update URL params
+
+    // helper to get param
+    const getParam = (k: string) => searchParams.get(k)
+    const classId = getParam('classId')
+    const orderId = getParam('orderId')
+    const familyId = getParam('familyId')
+    const genusId = getParam('genusId')
+
+    // --- Update Handler with Cascade Clear ---
     const updateFilter = (key: string, value: any) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()))
+
+        // Cascade logic: Clear children when parent changes
+        if (key === 'classId') {
+            current.delete('orderId')
+            current.delete('familyId')
+            current.delete('genusId')
+        }
+        if (key === 'orderId') {
+            current.delete('familyId')
+            current.delete('genusId')
+        }
+        if (key === 'familyId') {
+            current.delete('genusId')
+        }
 
         if (value === null || value === undefined || value === '' || value === 'all' || value === false) {
             current.delete(key)
@@ -24,88 +57,205 @@ export const CollectionsFilters = () => {
         const search = current.toString()
         const query = search ? `?${search}` : ""
 
-        // Prevent infinite loops / unnecessary navigation
         if (current.toString() === searchParams.toString()) return
 
         router.push(`${pathname}${query}`)
     }
 
-    // Clear all filters
     const clearAll = () => {
         router.push(pathname)
     }
 
-    // Get active filters count
     const activeCount = useMemo(() => {
         let count = 0;
-        searchParams.forEach((value, key) => {
-            // Ignore view param or other technical params if any
-            if (key !== 'view' && key !== 'page') count++
+        searchParams.forEach((_, key) => {
+            if (key !== 'view' && key !== 'page' && key !== 'pageSize') count++
         })
         return count
     }, [searchParams])
 
-    // Render Filter Controls (Reusable)
+    // --- Data Fetching for Selects ---
+
+    // 1. Sexes (Small list)
+    const { data: sexes } = useSexes({ pageSize: 100 })
+    const sexOptions = useMemo(() => {
+        if (!sexes?.data) return []
+        return sexes.data.map(s => ({ label: s.name, value: s.id.toString() }))
+    }, [sexes])
+
+    // 2. Initial Data Hooks (Fetch first page for immediate display on open)
+    const { data: initialClasses } = useClasses({ pageSize: 20 })
+    const { data: initialOrders } = useOrders({ pageSize: 20, classId: classId ? Number(classId) : undefined, })
+    const { data: initialFamilies } = useFamilies({ pageSize: 20, orderId: orderId ? Number(orderId) : undefined })
+    const { data: initialGenera } = useGenera({ pageSize: 20, familyId: familyId ? Number(familyId) : undefined })
+
+    // Helper to map response data to options
+    const mapToOptions = (data: any[] | undefined) => {
+        if (!data) return []
+        return data.map(i => ({ label: i.name, value: i.id.toString() }))
+    }
+
+    // --- Helper for Selected Item Label ---
+    // We fetching the specific selected item to display its name correctly if it's not in the initial page
+    const useInitialOption = (id: string | null, fetchFn: (id: number) => Promise<any>, key: string, initialList: any[] | undefined) => {
+        const { data } = useQuery({
+            queryKey: [key, id],
+            queryFn: () => fetchFn(Number(id)),
+            enabled: !!id && !initialList?.find(i => String(i.id) === id), // Only fetch if ID exists AND not already in initial list
+            staleTime: Infinity
+        })
+
+        // If we have the item in the initial list, use it. Otherwise use the fetched individual item.
+        const foundInList = initialList?.find(i => String(i.id) === id)
+        if (foundInList) return [{ label: foundInList.name, value: foundInList.id.toString() }]
+
+        return data ? [{ label: data.name, value: data.id.toString() }] : []
+    }
+
+    const selectedClassOpt = useInitialOption(classId, fetchClassById, 'class-initial', initialClasses?.data)
+    const selectedOrderOpt = useInitialOption(orderId, fetchOrderById, 'order-initial', initialOrders?.data)
+    const selectedFamilyOpt = useInitialOption(familyId, fetchFamilyById, 'family-initial', initialFamilies?.data)
+    const selectedGenusOpt = useInitialOption(genusId, fetchGenusById, 'genus-initial', initialGenera?.data)
+
+    // Render Filter Controls
     const FilterControls = () => (
-        <div className="space-y-6">
+        <div className="space-y-4 w-full">
             <SmartFilter
+                className="text-xs"
                 type="text"
-                placeholder="Buscar especie..."
-                value={searchParams.get('q') || ''}
-                onChange={(val) => updateFilter('q', val)}
+                placeholder="Buscar especie, código..."
+                value={searchParams.get('searchTerm') || ''}
+                onChange={(val) => updateFilter('searchTerm', val)}
                 debounceMs={500}
             />
 
-            <SmartFilter
-                type="select"
-                label="Sexo"
-                value={searchParams.get('sex')}
-                onChange={(val) => updateFilter('sex', val)}
-                options={[
-                    { label: 'Todos', value: 'all' },
-                    { label: 'Macho', value: 'male' },
-                    { label: 'Hembra', value: 'female' },
-                    { label: 'Indeterminado', value: 'unknown' }
-                ]}
-            />
+            <Accordion type="multiple" defaultValue={['taxonomy', 'characteristics']} className="w-full">
 
-            <SmartFilter
-                type="switch"
-                label="Con Huevos"
-                value={searchParams.get('hasEggs') === 'true'}
-                onChange={(val) => updateFilter('hasEggs', val)}
-            />
+                {/* GRUPO V: Taxonomía */}
+                <AccordionItem value="taxonomy" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-semibold hover:no-underline py-2">Taxonomía</AccordionTrigger>
+                    <AccordionContent className="pt-2 px-1 flex flex-col gap-4 lg:gap-6">
+                        <div className="flex flex-col gap-2">
+                            <SmartFilter
+                                className="text-xs"
+                                type="select"
+                                label="Sexo"
+                                value={searchParams.get('sexId')}
+                                onChange={(val) => updateFilter('sexId', val)}
+                                options={sexOptions}
+                                placeholder="Todos"
+                            />
 
-            <SmartFilter
-                type="radio"
-                label="Estado"
-                value={searchParams.get('status') || 'all'}
-                onChange={(val) => updateFilter('status', val)}
-                options={[
-                    { label: 'Todos', value: 'all' },
-                    { label: 'Vivo', value: 'alive' },
-                    { label: 'Preservado', value: 'preserved' }
-                ]}
-            />
+                            {/* CLASE */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Clase"
+                                value={classId}
+                                onChange={(val) => updateFilter('classId', val)}
+                                // Show initial list immediately, plus the selected item if handled
+                                options={selectedClassOpt.length > 0 ? selectedClassOpt : mapToOptions(initialClasses?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchClasses({ name: query, page, pageSize: 20 })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
 
-            {/* Example Async Select - Mocked */}
-            <SmartFilter
-                type="async-select"
-                label="Taxonomía"
-                value={searchParams.get('taxonomy')}
-                onChange={(val) => updateFilter('taxonomy', val)}
-                loadOptions={async (query) => {
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    return {
-                        options: [
-                            { label: 'Amphibia', value: '1' },
-                            { label: 'Reptilia', value: '2' },
-                            { label: 'Aves', value: '3' }
-                        ].filter(o => o.label.toLowerCase().includes(query.toLowerCase())),
-                        hasMore: false
-                    }
-                }}
-            />
+                            {/* ORDEN (Depends on Class) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Orden"
+                                value={orderId}
+                                onChange={(val) => updateFilter('orderId', val)}
+                                options={selectedOrderOpt.length > 0 ? selectedOrderOpt : mapToOptions(initialOrders?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchOrders({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        classId: classId ? Number(classId) : undefined // Filter by parent
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
+
+                            {/* FAMILIA (Depends on Order) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Familia"
+                                value={familyId}
+                                onChange={(val) => updateFilter('familyId', val)}
+                                options={selectedFamilyOpt.length > 0 ? selectedFamilyOpt : mapToOptions(initialFamilies?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchFamilies({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        orderId: orderId ? Number(orderId) : undefined
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
+
+                            {/* GENERO (Depends on Family) */}
+                            <SmartFilter
+                                className="text-xs"
+                                type="async-select"
+                                label="Género"
+                                value={genusId}
+                                onChange={(val) => updateFilter('genusId', val)}
+                                options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchGenera({
+                                        name: query,
+                                        page,
+                                        pageSize: 20,
+                                        familyId: familyId ? Number(familyId) : undefined
+                                    })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                            />
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+
+                {/* GRUPO: Características */}
+                <AccordionItem value="characteristics" className="border-b-0">
+                    <AccordionTrigger className="text-sm font-semibold hover:no-underline py-2">Características</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-2 px-1">
+                        <SmartFilter
+                            className="text-xs"
+                            type="switch"
+                            label="Con Huevos"
+                            value={searchParams.get('hasEggs') === '1'}
+                            onChange={(val) => updateFilter('hasEggs', val ? '1' : null)}
+                        />
+
+                        <SmartFilter
+                            className="text-xs"
+                            type="switch"
+                            label="Con Imagenes"
+                            value={searchParams.get('hasImages') === '1'}
+                            onChange={(val) => updateFilter('hasImages', val ? '1' : null)}
+                        />
+                    </AccordionContent>
+                </AccordionItem>
+
+            </Accordion>
         </div>
     )
 
@@ -116,7 +266,7 @@ export const CollectionsFilters = () => {
         return (
             <div className="flex flex-wrap gap-2 mb-4">
                 {Array.from(searchParams.entries()).map(([key, value]) => {
-                    if (key === 'view' || key === 'page') return null;
+                    if (['view', 'page', 'pageSize', 'orderBy', 'orderType'].includes(key)) return null;
                     return (
                         <Badge key={key} variant="secondary" className="gap-1 pl-2 pr-1 py-1 cursor-pointer hover:bg-slate-200" onClick={() => updateFilter(key, null)}>
                             <span className="capitalize">{key}: {value}</span>
@@ -135,11 +285,11 @@ export const CollectionsFilters = () => {
     return (
         <>
             {/* Desktop Sidebar */}
-            <aside className="hidden lg:block w-64 flex-shrink-0 space-y-4">
-                <div className='p-4 bg-white rounded-xl border border-gray-100 shadow-sm sticky top-24'>
+            <aside className="hidden lg:block flex-shrink-0 space-y-4">
+                <div className='p-4 bg-white rounded-xl border border-gray-100 sticky top-24'>
                     <div className="flex items-center justify-between mb-4">
-                        <h3 className="font-semibold text-lg text-gray-900 flex items-center gap-2">
-                            <SlidersHorizontal size={18} />
+                        <h3 className="font-semibold text-xs text-gray-900 flex items-center gap-2">
+                            <SlidersHorizontal size={14} />
                             Filtros
                         </h3>
                         {activeCount > 0 && (
@@ -182,14 +332,10 @@ export const CollectionsFilters = () => {
                         <FilterControls />
 
                         <div className="mt-8 pt-4 border-t sticky bottom-0 bg-background pb-4">
-                            <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={(e) => {
-                                // Close sheet logic is implied by native sheet behavior if clicking outside or we can control it if needed. 
-                                // For now, standard behavior. User sees results update immediately as they change filters.
-                                const closeBtn = document.querySelector('[data-radix-collection-item]') as HTMLElement;
-                                if (closeBtn) closeBtn.click(); // Hacky close or just let user swipe.
-                                // Actually, typically users want an "Apply" button or live update. Live update is implemented.
+                            <Button className="w-full bg-blue-600 hover:bg-blue-700" onClick={() => {
+                                // Close logic handled by UI
                             }}>
-                                Ver {activeCount > 0 ? `resultados filtrados` : 'resultados'}
+                                Ver resultados
                             </Button>
                         </div>
                     </SheetContent>
@@ -198,4 +344,3 @@ export const CollectionsFilters = () => {
         </>
     );
 };
-

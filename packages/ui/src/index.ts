@@ -12,6 +12,8 @@ export * from './components/ui/radio-group'
 export * from './components/ui/smart-filter'
 export * from './components/ui/sheet'
 export * from './components/ui/badge'
+export * from './components/ui/accordion'
+
 
 export * from './components/ui/carousel'
 export * from './components/ui/input'

@@ -71,7 +71,7 @@ const TextFilter = ({ value, onChange, placeholder, debounceMs = 300 }: SmartFil
                 placeholder={placeholder || "Buscar..."}
                 value={localValue}
                 onChange={(e) => setLocalValue(e.target.value)}
-                className="pl-9 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-colors"
+                className="pl-9 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-full"
             />
         </div>
     )
@@ -175,7 +175,7 @@ const SelectFilter = ({
                     <div
                         role="combobox"
                         aria-expanded={open}
-                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-slate-50 transition-colors"
+                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-slate-50 transition-colors rounded-full"
                         onClick={() => setOpen(!open)}
                     >
                         <span className={cn("truncate", !value && "text-muted-foreground")}>
