@@ -1,11 +1,11 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { ViewToggler, ViewType } from './ViewToggler'
+import { ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
 import { CollectionTable } from './CollectionTable'
-import { ChevronDown, Download, SlidersHorizontal } from 'lucide-react'
-import { Input } from '@repo/ui/components/ui/input'
+import { SlidersHorizontal } from 'lucide-react'
 import { Individual } from '@repo/shared-types'
+import { CollectionsHeader } from './CollectionsHeader'
 
 interface CollectionsViewProps {
     data: Individual[]
@@ -19,32 +19,8 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     return (
         <div className="flex flex-col gap-6 w-full container mx-auto">
             {/* Header / Toolbar */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4">
-                {/* Kept existing logic */}
-                <div className='w-full md:w-1/2'>
-                    <Input placeholder="Buscar"
-                        className='rounded-full w-full'
-                    />
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                    {/* View Toggler and other buttons... keeping them as placeholder for brevity in this replace but fully implementing context */}
-                    {/* View Toggler */}
-                    <div className="relative group">
-                        <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-full text-sm font-medium hover:bg-gray-50 transition-colors">
-                            Relevancia
-                            <ChevronDown size={16} />
-                        </button>
-                    </div>
-
-                    <ViewToggler />
-
-                    <button className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-900 transition-colors shadow-lg hover:shadow-xl">
-                        <Download size={16} />
-                        <span className="hidden sm:inline">Descargar</span>
-                    </button>
-                </div>
-            </div>
+            {/* Header / Toolbar */}
+            <CollectionsHeader />
             {/* Main Content Area */}
             <div className="min-h-[500px]">
                 {data.length === 0 ? (

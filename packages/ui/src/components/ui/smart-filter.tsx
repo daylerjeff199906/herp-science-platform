@@ -5,6 +5,7 @@ import { cn } from "../../lib/utils"
 import { Check, ChevronsUpDown, Search, X } from "lucide-react"
 import { Input } from "./input"
 import { Switch } from "./switch"
+import { Checkbox } from "./checkbox"
 import { RadioGroup, RadioGroupItem } from "./radio-group"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 import { Button } from "./button" // Assuming Button exists or I should check. Using html button if not? Button was in list_dir output!
@@ -19,7 +20,7 @@ import {
 
 // --- Types ---
 
-export type SmartFilterType = 'text' | 'switch' | 'radio' | 'select' | 'async-select' | 'date-range'
+export type SmartFilterType = 'text' | 'switch' | 'check' | 'radio' | 'select' | 'async-select' | 'date-range'
 
 export interface SmartFilterOption {
     label: string
@@ -55,7 +56,7 @@ function useDebounce<T>(value: T, delay: number): T {
 // --- Components ---
 
 // 1. Text Search Filter
-const TextFilter = ({ value, onChange, placeholder, debounceMs = 300 }: SmartFilterProps) => {
+const TextFilter = ({ value, onChange, placeholder, debounceMs = 300, className }: SmartFilterProps) => {
     const [localValue, setLocalValue] = React.useState(value || '')
     const debouncedValue = useDebounce(localValue, debounceMs)
 
@@ -65,43 +66,65 @@ const TextFilter = ({ value, onChange, placeholder, debounceMs = 300 }: SmartFil
 
     return (
         <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
                 type="search"
                 placeholder={placeholder || "Buscar..."}
                 value={localValue}
                 onChange={(e) => setLocalValue(e.target.value)}
-                className="pl-9 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-full"
+                className={cn(
+                    "pl-9 rounded-lg bg-slate-50 border-slate-200 focus:bg-white transition-colors",
+                    className
+                )}
             />
         </div>
     )
 }
 
 // 2. Switch Filter
-const SwitchFilter = ({ label, value, onChange }: SmartFilterProps) => {
+const SwitchFilter = ({ label, value, onChange, className }: SmartFilterProps) => {
     return (
-        <div className="flex items-center justify-between py-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
+        <div className={cn("flex items-center justify-between py-2", className)}>
+            <label className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700">
                 {label}
             </label>
             <Switch
-                checked={value}
+                checked={!!value}
                 onCheckedChange={onChange}
             />
         </div>
     )
 }
 
-// 3. Radio Filter
-const RadioFilter = ({ label, value, onChange, options }: SmartFilterProps) => {
+// 2.5 Checkbox Filter
+const CheckboxFilter = ({ label, value, onChange, className }: SmartFilterProps) => {
     return (
-        <div className="space-y-3">
-            {label && <h4 className="font-medium text-sm text-slate-900">{label}</h4>}
+        <div className={cn("flex items-center space-x-2 py-2", className)}>
+            <Checkbox
+                id={`chk-${label}`}
+                checked={!!value}
+                onCheckedChange={(checked) => onChange(checked)}
+            />
+            <label
+                htmlFor={`chk-${label}`}
+                className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700 cursor-pointer"
+            >
+                {label}
+            </label>
+        </div>
+    )
+}
+
+// 3. Radio Filter
+const RadioFilter = ({ label, value, onChange, options, className }: SmartFilterProps) => {
+    return (
+        <div className={cn("space-y-3", className)}>
+            {label && <h4 className="font-medium text-slate-900">{label}</h4>}
             <RadioGroup value={String(value)} onValueChange={onChange} className="gap-2">
                 {options?.map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                         <RadioGroupItem value={String(opt.value)} id={`r-${opt.value}`} />
-                        <label htmlFor={`r-${opt.value}`} className="text-sm text-slate-600 cursor-pointer">
+                        <label htmlFor={`r-${opt.value}`} className="text-slate-600 cursor-pointer">
                             {opt.label}
                         </label>
                     </div>
@@ -119,7 +142,8 @@ const SelectFilter = ({
     options: initialOptions = [],
     loadOptions,
     type,
-    placeholder
+    placeholder,
+    className
 }: SmartFilterProps) => {
     const [open, setOpen] = React.useState(false)
     const [options, setOptions] = React.useState<SmartFilterOption[]>(initialOptions)
@@ -169,13 +193,16 @@ const SelectFilter = ({
 
     return (
         <div className="flex flex-col gap-1.5">
-            {label && <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</label>}
+            {label && <label className="text-xs font-semibold tracking-wider text-slate-500">{label}</label>}
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <div
                         role="combobox"
                         aria-expanded={open}
-                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-slate-50 transition-colors rounded-full"
+                        className={cn(
+                            "flex h-9 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-slate-50 transition-colors",
+                            className
+                        )}
                         onClick={() => setOpen(!open)}
                     >
                         <span className={cn("truncate", !value && "text-muted-foreground")}>
@@ -256,6 +283,8 @@ export function SmartFilter(props: SmartFilterProps) {
             return <TextFilter {...props} />
         case 'switch':
             return <SwitchFilter {...props} />
+        case 'check':
+            return <CheckboxFilter {...props} />
         case 'radio':
             return <RadioFilter {...props} />
         case 'select':
