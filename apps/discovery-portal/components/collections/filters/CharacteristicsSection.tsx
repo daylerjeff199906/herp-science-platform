@@ -20,13 +20,19 @@ export const CharacteristicsSection: React.FC<CharacteristicsSectionProps> = ({ 
                     value={searchParams.get('hasEggs') === '1'}
                     onChange={(val) => onUpdate({ hasEggs: val ? '1' : null })}
                 />
-
                 <SmartFilter
                     className="text-xs py-1"
                     type="check"
                     label="Con Imagenes"
                     value={searchParams.get('hasImages') === '1'}
                     onChange={(val) => onUpdate({ hasImages: val ? '1' : null })}
+                />
+                <SmartFilter
+                    className="text-xs py-1"
+                    type="check"
+                    label="Con Código Genético"
+                    value={searchParams.get('barcode') === '1'}
+                    onChange={(val) => onUpdate({ barcode: val ? '1' : null })}
                 />
             </AccordionContent>
         </AccordionItem>
