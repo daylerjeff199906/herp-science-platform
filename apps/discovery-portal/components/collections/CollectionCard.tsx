@@ -169,11 +169,6 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                 <p className="text-gray-200 text-sm truncate opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
                     {commonName}
                 </p>
-                <div className="flex gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                    <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full">
-                        ID: {item.id}
-                    </span>
-                </div>
             </div>
         </div>
     )

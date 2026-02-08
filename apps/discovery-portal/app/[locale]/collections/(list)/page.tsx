@@ -58,6 +58,7 @@ export default async function Page(props: IProps) {
     pageSize,
     hasImages,
   } = searchParams as unknown as IIndividualFilterParams
+  const view = searchParams.view || undefined
 
   const res = await fetchIndividuals({
     searchTerm: searchTerm || undefined,
@@ -92,7 +93,7 @@ export default async function Page(props: IProps) {
     orderBy: orderBy || undefined,
     orderType: orderType as 'ASC' | 'DESC' | undefined,
     ocurrenceId: occurrenceId ? Number(occurrenceId) : undefined,
-    hasImages: hasImages ? Number(hasImages) : undefined,
+    hasImages: hasImages ? Number(hasImages) : view === 'gallery' ? 1 : undefined,
   })
   return <>
     <CollectionsView data={res.data} />
