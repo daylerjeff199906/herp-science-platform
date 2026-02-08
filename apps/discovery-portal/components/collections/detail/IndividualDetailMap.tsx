@@ -4,7 +4,7 @@ import React from 'react'
 import { IndividualDetails } from '@repo/shared-types'
 import { useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@repo/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 
 // Dynamically import Map component to avoid SSR issues with Leaflet
 const MapWithNoSSR = dynamic(
@@ -32,13 +32,14 @@ export function IndividualDetailMap({ individual }: IndividualDetailMapProps) {
     if (!hasCoordinates) return null
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 mb-4 px-1">
+        <Card className="rounded-xl bg-white">
+            <CardHeader className="bg-gray-50 rounded-t-xl">
+                <CardTitle className="text-lg font-semibold text-gray-900 px-1">
                     {t('distributionMap')}
                 </CardTitle>
             </CardHeader>
-            <CardContent>
+            <hr className="pb-4 lg:pb-6" />
+            <CardContent className="rounded-b-xl">
                 <div className="w-full h-[400px] rounded-xl overflow-hidden border border-gray-200 shadow-sm relative z-0">
                     <MapWithNoSSR lat={lat!} lng={lng!} popupText={individual.species.scientificName} />
                 </div>
