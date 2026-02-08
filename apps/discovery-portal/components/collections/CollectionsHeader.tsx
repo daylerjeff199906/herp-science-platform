@@ -65,9 +65,9 @@ export const CollectionsHeader = () => {
     return (
         <div
             className={cn(
-                "sticky top-0 lg:top-20 z-30 transition-all duration-200",
+                "sticky top-20 lg:top-20 z-30 transition-all duration-200",
                 isScrolled
-                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm p-4 mb-6 rounded-xl"
+                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm py-4 lg:px-4 mb-6 rounded-xl"
                     : "bg-transparent border-transparent"
             )}
         >
@@ -86,7 +86,7 @@ export const CollectionsHeader = () => {
                 </div>
 
                 {/* Right: Actions */}
-                <div className="flex flex-wrap items-center justify-end gap-3 w-full md:w-auto">
+                <div className="flex flex-wrap items-center justify-start gap-3 w-full md:w-auto">
 
                     {/* View Toggler */}
                     <div className="hidden sm:block">
