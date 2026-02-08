@@ -7,6 +7,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 import { TaxonomySection } from './filters/TaxonomySection';
 import { LocationSection } from './filters/LocationSection';
+import { InstitutionSection } from './filters/InstitutionSection';
 import { CharacteristicsSection } from './filters/CharacteristicsSection';
 
 export const CollectionsFilterContent = () => {
@@ -77,12 +78,15 @@ export const CollectionsFilterContent = () => {
         <div className="space-y-4 w-full">
             <ActiveFilters />
 
-            <Accordion type="multiple" defaultValue={['taxonomy', 'location', 'characteristics']} className="w-full">
+            <Accordion type="multiple" defaultValue={['taxonomy', 'location', 'characteristics', 'institutions']} className="w-full">
                 {/* GRUPO: Taxonomía */}
                 <TaxonomySection searchParams={searchParams} onUpdate={updateFilters} />
 
                 {/* GRUPO: Ubicación */}
                 <LocationSection searchParams={searchParams} onUpdate={updateFilters} />
+
+                {/* GRUPO: Instituciones */}
+                <InstitutionSection searchParams={searchParams} onUpdate={updateFilters} />
 
                 {/* GRUPO: Características */}
                 <CharacteristicsSection searchParams={searchParams} onUpdate={updateFilters} />
