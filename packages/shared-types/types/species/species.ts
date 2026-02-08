@@ -11,8 +11,8 @@ export interface Species extends BaseEntity {
 }
 
 export interface SpeciesParams extends PaginationParams {
-    searchTerm: string
-    genusId: string
+    searchTerm?: string
+    genusId?: string
 }
 
 export interface SpeciesData extends PaginationData<Species> { }
