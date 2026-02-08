@@ -6,6 +6,7 @@ import { SmartFilter, Accordion, AccordionContent, AccordionItem, AccordionTrigg
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import {
     useSexes,
+    fetchSexes,
     fetchClasses, fetchClassById,
     fetchOrders, fetchOrderById,
     fetchFamilies, fetchFamilyById,
@@ -74,6 +75,8 @@ export const CollectionsFilterContent = () => {
 
     // 1. Sexes (Small list)
     const { data: sexes } = useSexes({ pageSize: 100 })
+    console.log('DEBUG: Sexes hook data', sexes)
+
     const sexOptions = useMemo(() => {
         if (!sexes?.data) return []
         return sexes.data.map(s => ({ label: s.name, value: s.id.toString() }))
@@ -162,13 +165,20 @@ export const CollectionsFilterContent = () => {
                     <AccordionContent className="pt-2 px-1 flex flex-col gap-4 lg:gap-6">
                         <div className="flex flex-col gap-2">
                             <SmartFilter
-                                className="text-xs h-8"
-                                type="select"
+                                type="async-select"
                                 label="Sexo"
                                 value={searchParams.get('sexId')}
                                 onChange={(val) => updateFilter('sexId', val)}
                                 options={sexOptions}
-                                placeholder="Todos"
+                                loadOptions={async (query, page) => {
+                                    const res = await fetchSexes({ name: query, page, pageSize: 20 })
+                                    return {
+                                        options: mapToOptions(res.data),
+                                        hasMore: res.currentPage < res.totalPages
+                                    }
+                                }}
+                                placeholder="Buscar sexo..."
+                                hasMore={sexes ? sexes.currentPage < sexes.totalPages : false}
                             />
 
                             {/* CLASE */}

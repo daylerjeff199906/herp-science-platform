@@ -1,3 +1,4 @@
+'use server'
 import { apiClient } from '../client'
 import { IndividualFilter, IndividualResponse } from '@repo/shared-types'
 

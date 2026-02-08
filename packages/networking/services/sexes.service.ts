@@ -1,3 +1,4 @@
+'use server'
 import { apiClient } from '../client'
 import { SexResponse, SexFilter, Sex } from '@repo/shared-types';
 import { ENDPOINTS } from "../config";

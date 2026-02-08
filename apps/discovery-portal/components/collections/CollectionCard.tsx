@@ -34,9 +34,6 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-md text-white text-xs px-2 py-1 rounded-full">
-                        ID: {item.id}
-                    </div>
                 </div>
 
                 {/* Content Section */}
@@ -46,14 +43,14 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                             <span className="text-xs font-semibold uppercase tracking-wider mb-1 block">
                                 {familyName}
                             </span>
-                            <h3 className="font-bold text-xl text-gray-900 group-hover:text-blue-700 transition-colors">
+                            <h3 className="font-bold text-xl text-gray-900 group-hover:text-primary transition-colors">
                                 {scientificName}
                             </h3>
                             <p className="text-gray-500 font-medium italic">
                                 {commonName}
                             </p>
                         </div>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-primary whitespace-nowrap">
                             {sex}
                         </span>
                     </div>
@@ -81,7 +78,7 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                         <div className="text-xs text-gray-400">
                             Registrado: {new Date(item.createdAt).toLocaleDateString()}
                         </div>
-                        <button className="text-sm font-medium text-blue-600 flex items-center gap-1 group/btn hover:underline">
+                        <button className="text-sm font-medium text-primary flex items-center gap-1 group/btn hover:underline">
                             Ver detalles
                             <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                         </button>
