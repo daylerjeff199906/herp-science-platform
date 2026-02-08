@@ -16,6 +16,7 @@ import {
 import { Button } from '@repo/ui/components/ui/button'
 import { Skeleton } from '@repo/ui/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
+import { CollectionImagePlaceholder } from '@/components/collections/CollectionImagePlaceholder'
 
 export const LatestCollections = () => {
     const tCommon = useTranslations('Common')
@@ -140,8 +141,8 @@ export const LatestCollections = () => {
                                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                                 />
                                             ) : (
-                                                <div className="flex items-center justify-center h-full text-slate-400">
-                                                    <span className="text-sm">{tCommon('noImage')}</span>
+                                                <div className="h-full w-full">
+                                                    <CollectionImagePlaceholder />
                                                 </div>
                                             )}
                                         </Link>

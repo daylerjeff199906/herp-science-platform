@@ -3,8 +3,10 @@ import { Link } from '@/i18n/routing'
 import { ROUTES } from '@/config/routes'
 import { cn } from '@/lib/utils'
 import { Individual } from '@repo/shared-types'
+
 import { ArrowRight, Calendar, MapPin, Ruler, Activity } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { CollectionImagePlaceholder } from './CollectionImagePlaceholder'
 
 interface CollectionCardProps {
     item: Individual
@@ -31,12 +33,16 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
             <div className="group flex flex-col md:flex-row gap-4 p-4 bg-white rounded-xl border border-gray-100 transition-all duration-300">
                 {/* Image Section */}
                 <div className="relative w-full md:w-56 h-48 md:h-auto flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                    <Image
-                        src={imageUrl}
-                        alt={scientificName}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {item.files.images?.[0]?.name ? (
+                        <Image
+                            src={item.files.images[0].name}
+                            alt={scientificName}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                    ) : (
+                        <CollectionImagePlaceholder />
+                    )}
                 </div>
 
                 {/* Content Section */}
@@ -111,9 +117,7 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                         ) : (
-                            <div className="flex items-center justify-center h-full text-slate-400">
-                                <span className="text-sm">{tCommon('noImage')}</span>
-                            </div>
+                            <CollectionImagePlaceholder />
                         )}
                     </Link>
                 </div>
@@ -158,12 +162,16 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
             "group relative overflow-hidden rounded-2xl bg-white border hover:shadow-xl transition-all duration-300",
             "aspect-square"
         )}>
-            <Image
-                src={imageUrl}
-                alt={scientificName}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
-            />
+            {item.files.images?.[0]?.name ? (
+                <Image
+                    src={item.files.images[0].name}
+                    alt={scientificName}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+            ) : (
+                <CollectionImagePlaceholder />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
             <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                 <h3 className="text-white font-bold text-lg leading-tight mb-1 truncate">

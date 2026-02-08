@@ -6,6 +6,7 @@ import { ROUTES } from '@/config/routes'
 import { Individual } from '@repo/shared-types'
 import { Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { CollectionImagePlaceholder } from './CollectionImagePlaceholder'
 
 interface CollectionTableProps {
     data: Individual[]
@@ -38,7 +39,7 @@ export function CollectionTable({ data }: CollectionTableProps) {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {data.map((item) => {
-                            const imageUrl = item.files.images?.[0]?.name || '/images/placeholder.jpg'
+                            const imageUrl = item.files.images?.[0]?.name
                             const scientificName = item.species?.scientificName || tCommon('noIdentification')
                             const commonName = item.species?.commonName || '-'
                             const familyName = item.species?.genus?.family?.name || '-'
@@ -53,12 +54,16 @@ export function CollectionTable({ data }: CollectionTableProps) {
                                 <tr key={item.id} className="hover:bg-gray-50 transition-colors text-xs">
                                     <td className="px-6 py-3">
                                         <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
-                                            <Image
-                                                src={imageUrl}
-                                                alt={scientificName}
-                                                fill
-                                                className="object-cover"
-                                            />
+                                            {imageUrl ? (
+                                                <Image
+                                                    src={imageUrl}
+                                                    alt={scientificName}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            ) : (
+                                                <CollectionImagePlaceholder />
+                                            )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 italic">
