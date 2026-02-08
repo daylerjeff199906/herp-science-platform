@@ -1,13 +1,10 @@
-import { PaginatedResponse } from '../core'
+import { PaginatedResponse, BaseEntity } from '../core'
 import { province } from './provinces'
 
-export interface district {
-  id: number
+export interface district extends BaseEntity {
   name: string
   ubigeo: string
   status: number
-  createdAt: string
-  updatedAt: string
   province: province
 }
 
