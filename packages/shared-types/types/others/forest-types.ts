@@ -1,6 +1,7 @@
 import { PaginatedResponse, BaseEntity } from '../core'
 
 export interface ForestType extends BaseEntity {
+    id: number;
     name: string;
     status: number
 }
