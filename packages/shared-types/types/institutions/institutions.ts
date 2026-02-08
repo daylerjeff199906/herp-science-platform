@@ -1,6 +1,7 @@
 import { PaginatedResponse, BaseEntity } from '../core'
 
 export interface Institution extends BaseEntity {
+    id: string
     name: string
     status: number
 }
