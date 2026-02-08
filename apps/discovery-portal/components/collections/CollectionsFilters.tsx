@@ -30,17 +30,13 @@ export const CollectionsFilters = () => {
                             )}
                             <SlidersHorizontal size={14} />
                         </div>
-                        {
-                            activeCount > 0 ? (
-                                <span className="text-xs text-gray-500 pl-3">Filtros</span>
-                            ) : (
-                                <span className="text-xs text-gray-500">Filtros</span>
-                            )
-                        }
+                        {activeCount > 0 ? (
+                            <span className="text-xs text-gray-500 pl-3">Filtros</span>
+                        ) : (
+                            <span className="text-xs text-gray-500">Filtros</span>
+                        )}
                     </h3>
-
                 </div>
-
                 <CollectionsFilterContent />
             </div>
         </aside>

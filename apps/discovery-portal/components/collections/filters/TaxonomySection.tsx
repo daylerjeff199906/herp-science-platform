@@ -14,6 +14,8 @@ import {
     fetchFamilyById,
     fetchGenera,
     fetchGenusById,
+    fetchSpecies,
+    fetchSpeciesById,
 } from '@repo/networking';
 import { useQuery } from '@tanstack/react-query';
 import { mapToOptions, useInitialOption } from './utils';
@@ -29,6 +31,7 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
     const orderId = searchParams.get('orderId');
     const familyId = searchParams.get('familyId');
     const genusId = searchParams.get('genusId');
+    const speciesId = searchParams.get('speciesId');
     const sexId = searchParams.get('sexId');
 
     // === Data Fetching Initial Lists ===
@@ -53,6 +56,12 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
         enabled: !!familyId,
     });
 
+    const { data: initialSpecies } = useQuery({
+        queryKey: ['species-initial', genusId],
+        queryFn: () => fetchSpecies({ pageSize: 20, genusId: genusId ? genusId : '', searchTerm: '' }),
+        enabled: !!genusId,
+    });
+
     // === Options Setup ===
     const sexOptions = React.useMemo(() => {
         if (!sexes?.data) return [];
@@ -63,6 +72,7 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
     const selectedOrderOpt = useInitialOption(orderId, (id) => fetchOrderById(Number(id)), 'order-initial', initialOrders?.data);
     const selectedFamilyOpt = useInitialOption(familyId, (id) => fetchFamilyById(Number(id)), 'family-initial', initialFamilies?.data);
     const selectedGenusOpt = useInitialOption(genusId, (id) => fetchGenusById(Number(id)), 'genus-initial', initialGenera?.data);
+    const selectedSpeciesOpt = useInitialOption(speciesId, (id) => fetchSpeciesById(Number(id)), 'species-initial', initialSpecies?.data, 'scientificName');
 
     // === Handlers ===
     const handleClassChange = (val: string | null) => {
@@ -71,6 +81,7 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
             orderId: null,
             familyId: null,
             genusId: null,
+            speciesId: null,
         });
     };
 
@@ -79,6 +90,7 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
             orderId: val,
             familyId: null,
             genusId: null,
+            speciesId: null,
         });
     };
 
@@ -86,11 +98,19 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
         onUpdate({
             familyId: val,
             genusId: null,
+            speciesId: null,
         });
     };
 
     const handleGenusChange = (val: string | null) => {
-        onUpdate({ genusId: val });
+        onUpdate({
+            genusId: val,
+            speciesId: null
+        });
+    };
+
+    const handleSpeciesChange = (val: string | null) => {
+        onUpdate({ speciesId: val });
     };
 
     const handleSexChange = (val: string | null) => {
@@ -213,7 +233,10 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
                             type="list-search"
                             label="Género"
                             value={genusId}
-                            onChange={handleGenusChange}
+                            onChange={(val) => {
+                                handleGenusChange(val);
+                                onUpdate({ speciesId: null });
+                            }}
                             options={selectedGenusOpt.length > 0 ? selectedGenusOpt : mapToOptions(initialGenera?.data)}
                             loadOptions={async (query, page) => {
                                 const res = await fetchGenera({
@@ -233,6 +256,30 @@ export const TaxonomySection: React.FC<TaxonomySectionProps> = ({ searchParams, 
                     ) : (
                         <DisabledFilterHint label="Género" parentLabel="una Familia" />
                     )}
+
+                    {/* ESPECIE */}
+                    <SmartFilter
+                        key={`species-${genusId}`}
+                        type="list-search"
+                        label="Especie"
+                        value={speciesId}
+                        onChange={handleSpeciesChange}
+                        options={selectedSpeciesOpt.length > 0 ? selectedSpeciesOpt : mapToOptions(initialSpecies?.data, 'scientificName')}
+                        loadOptions={async (query, page) => {
+                            const res = await fetchSpecies({
+                                searchTerm: query,
+                                page,
+                                pageSize: 20,
+                                genusId: genusId || undefined,
+                            });
+                            return {
+                                options: mapToOptions(res.data, 'scientificName'),
+                                hasMore: res.currentPage < res.totalPages,
+                            };
+                        }}
+                        placeholder="Buscar especie..."
+                        hasMore={initialSpecies ? initialSpecies.currentPage < initialSpecies.totalPages : false}
+                    />
                 </div>
             </AccordionContent>
         </AccordionItem>

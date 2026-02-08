@@ -1,26 +1,47 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { ViewType } from './ViewToggler'
 import { CollectionCard } from './CollectionCard'
 import { CollectionTable } from './CollectionTable'
 import { SlidersHorizontal } from 'lucide-react'
-import { Individual } from '@repo/shared-types'
+import { Individual, PaginatedResponse } from '@repo/shared-types'
 import { CollectionsHeader } from './CollectionsHeader'
+import { PaginationControls } from '@repo/ui'
 
 interface CollectionsViewProps {
-    data: Individual[]
+    data: PaginatedResponse<Individual>
 }
 
 export function CollectionsView({ data }: CollectionsViewProps) {
+    const router = useRouter()
+    const pathname = usePathname()
     const searchParams = useSearchParams()
+
+    // View Handling
     const rawView = searchParams.get('view')
-    const view = rawView === 'map' ? 'table' : ((rawView as ViewType) || 'grid')
+    const view: ViewType = rawView === 'map' ? 'table' : ((rawView as ViewType) || 'grid')
+
+    const items = data.data || [];
+
+    // Validated Pagination handlers for Next.js routing
+    const handlePageChange = (newPage: number) => {
+        const params = new URLSearchParams(searchParams)
+        params.set('page', newPage.toString())
+        router.push(`${pathname}?${params.toString()}`)
+    }
+
+    const handlePageSizeChange = (newSize: number) => {
+        const params = new URLSearchParams(searchParams)
+        params.set('pageSize', newSize.toString())
+        params.set('page', '1')
+        router.push(`${pathname}?${params.toString()}`)
+    }
 
     return (
         <div className="flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6">
             <CollectionsHeader />
-            <div className="min-h-[500px]">
-                {data.length === 0 ? (
+            <div className="min-h-[500px] flex flex-col gap-6">
+                {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
                         <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                             <SlidersHorizontal className="text-gray-400" size={32} />
@@ -31,17 +52,27 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                 ) : (
                     <>
                         <div className={`
-                ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
-                ${view === 'list' ? 'flex flex-col gap-4' : ''}
-                ${view === 'gallery' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4' : ''}
-                `}>
+                            ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
+                            ${view === 'list' ? 'flex flex-col gap-4' : ''}
+                            ${view === 'gallery' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4' : ''}
+                        `}>
                             {view === 'table' ? (
-                                <CollectionTable data={data} />
+                                <CollectionTable data={items} />
                             ) : (
-                                data.map((item, idx) => (
+                                items.map((item, idx) => (
                                     <CollectionCard key={item.id || idx} item={item} view={view === 'gallery' ? 'gallery' : view === 'list' ? 'list' : 'grid'} />
                                 ))
                             )}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        <div className="mt-auto border-t border-gray-100">
+                            <PaginationControls
+                                data={data}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                enableUrlSync // Also enables reading initial page size from URL if logic permits
+                            />
                         </div>
                     </>
                 )}

@@ -47,7 +47,7 @@ export function MultimediaSection() {
                     <Button
                         asChild
                         variant="outline"
-                        className="hidden md:flex gap-2 border-white/20 text-white hover:bg-[#ADDE60] hover:text-[#111] hover:border-[#ADDE60] rounded-full px-8 h-12 transition-all duration-300 uppercase tracking-wider text-sm"
+                        className="hidden md:flex gap-2 border-white/20 text-white hover:bg-[#ADDE60] hover:text-[#111] hover:border-[#ADDE60] rounded-full px-8 h-12 transition-all duration-300 uppercase tracking-wider text-sm bg-transparent"
                     >
                         <Link href="/gallery">
                             {t('cta')}

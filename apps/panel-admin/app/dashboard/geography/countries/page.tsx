@@ -1,5 +1,5 @@
 import { fetchCountriesAdmin } from '@/services/countries'
-import { SearchParams } from '@repo/shared-types/types'
+import { SearchParams } from '@repo/shared-types'
 // import { PaginationCustom } from '@/modules/core'
 import { CountriesView } from './components/countries-view'
 
