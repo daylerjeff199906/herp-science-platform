@@ -6,4 +6,7 @@ export * from './useClasses'
 export * from './useOrders'
 export * from './useFamilies'
 export * from './useGenera'
-
+export * from './useDepartments'
+export * from './useProvinces'
+export * from './useDistricts'
+export * from './useLocalities'
