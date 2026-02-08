@@ -17,7 +17,7 @@ export function PaginationControls({
     onPageChange,
     onPageSizeChange,
     enableUrlSync = false,
-    defaultPageSize = 10
+    defaultPageSize = 20
 }: PaginationControlsProps) {
     const currentPage = data.currentPage ?? 1;
     const totalPages = data.totalPages ?? 1;
@@ -88,7 +88,7 @@ export function PaginationControls({
                         onChange={(e) => handlePageSizeChange(e.target.value)}
                         className="bg-transparent border border-gray-200 rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
                     >
-                        {[10, 20, 50, 100].map((size) => (
+                        {[20, 50, 100].map((size) => (
                             <option key={size} value={size}>
                                 {size}
                             </option>
