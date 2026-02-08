@@ -5,7 +5,7 @@ import { ENDPOINTS } from "../config/endpoints-url"
 
 export const fetchProvinces = async (params: ProvinceFilter): Promise<provincesResponse> => {
     const response = await apiClient.get<provincesResponse>(ENDPOINTS.PROVINCES.GET_PAGINATED, { params })
-    return response.data
+    return response.data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
 }
 
 export const fetchProvinceById = async (id: number): Promise<province> => {

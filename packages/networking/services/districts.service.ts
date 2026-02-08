@@ -5,7 +5,7 @@ import { ENDPOINTS } from "../config/endpoints-url"
 
 export const fetchDistricts = async (params: DistrictFilter): Promise<PaginatedDistrictsResponse> => {
     const response = await apiClient.get<PaginatedDistrictsResponse>(ENDPOINTS.DISTRICTS.GET_PAGINATED, { params })
-    return response.data
+    return response.data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
 }
 
 export const fetchDistrictById = async (id: number): Promise<district> => {

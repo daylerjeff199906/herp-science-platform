@@ -96,7 +96,7 @@ export default async function Page(props: IProps) {
     hasImages: hasImages ? Number(hasImages) : view === 'gallery' ? 1 : undefined,
   })
   return <>
-    <CollectionsView data={res.data} />
+    <CollectionsView data={res.data || []} />
   </>
 }
 

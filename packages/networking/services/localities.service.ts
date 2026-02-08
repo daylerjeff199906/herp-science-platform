@@ -5,7 +5,7 @@ import { ENDPOINTS } from "../config/endpoints-url"
 
 export const fetchLocalities = async (params: LocalityFilter): Promise<PaginatedLocalitiesResponse> => {
     const response = await apiClient.get<PaginatedLocalitiesResponse>(ENDPOINTS.LOCALITIES.GET_PAGINATED, { params })
-    return response.data
+    return response.data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
 }
 
 export const fetchLocalityById = async (id: number): Promise<locality> => {

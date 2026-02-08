@@ -5,7 +5,7 @@ import { ENDPOINTS } from "../config/endpoints-url"
 
 export const fetchCountries = async (params: CountryFilter): Promise<PaginatedCountriesResponse> => {
     const response = await apiClient.get<PaginatedCountriesResponse>(ENDPOINTS.COUNTRIES.GET_PAGINATED, { params })
-    return response.data
+    return response.data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
 }
 
 export const fetchCountryById = async (id: string): Promise<Country> => {
