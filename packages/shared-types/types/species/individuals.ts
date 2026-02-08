@@ -175,10 +175,10 @@ export interface IndividualFile {
 export interface Individual {
     id: number;
     code: string | null;
-    weight: string;
+    weight: string | null;
     slaughteredWeight: string | null;
-    svl: string;
-    tailLength: string;
+    svl: string | null;
+    tailLength: string | null;
     hasEggs: boolean;
     identDate: string;
     identTime: string;
@@ -205,4 +205,27 @@ export interface IndividualResponse {
     currentPage: number;
     totalPages: number;
     totalItems: number;
+}
+
+// For details
+export interface Person extends BaseEntity {
+    firstname: string;
+    lastname: string;
+    email: string | null;
+    phone: string | null;
+    ctiVitae: string | null;
+    image: string | null;
+}
+
+export interface PersonRelation {
+    id: number;
+    createdAt: string;
+    person: Person;
+}
+
+export interface IndividualDetails extends Omit<Individual, 'identifiers' | 'sex' | 'activity' | 'museum'> {
+    sex: Sex | null;
+    activity: Activity | null;
+    museum: Museum | null;
+    identifiers: PersonRelation[];
 }
