@@ -1,8 +1,12 @@
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { ROUTES } from '@/config/routes'
 import { cn } from '@/lib/utils'
 import { Individual } from '@repo/shared-types'
+
 import { ArrowRight, Calendar, MapPin, Ruler, Activity } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { CollectionImagePlaceholder } from './CollectionImagePlaceholder'
 
 interface CollectionCardProps {
     item: Individual
@@ -10,30 +14,35 @@ interface CollectionCardProps {
 }
 
 export function CollectionCard({ item, view }: CollectionCardProps) {
+    const tCommon = useTranslations('Common')
     // Logic to determine image URL
     const imageUrl = item.files.images?.[0]?.name || '/images/placeholder.jpg'
 
     // Accessing names and details
-    const scientificName = item.species?.scientificName || 'Sin identificación'
-    const commonName = item.species?.commonName || 'Sin nombre común'
+    const scientificName = item.species?.scientificName || tCommon('noIdentification')
+    const commonName = item.species?.commonName || tCommon('noCommonName')
     const familyName = item.species?.genus?.family?.name || ''
-    const location = item.ocurrence?.event?.locality?.name || 'Ubicación desconocida'
+    const location = item.ocurrence?.event?.locality?.name || tCommon('unknownLocation')
     const date = item.ocurrence?.event?.date || item.createdAt
-    const sex = item.sex?.name || 'Desconocido'
-    const activity = item.activity?.name || 'No registrada'
-    const description = item.species?.description || 'No hay descripción disponible para esta especie.'
+    const sex = item.sex?.name || tCommon('unknown')
+    const activity = item.activity?.name || tCommon('notRegistered')
+    const description = item.species?.description || tCommon('noDescription')
 
     if (view === 'list') {
         return (
             <div className="group flex flex-col md:flex-row gap-4 p-4 bg-white rounded-xl border border-gray-100 transition-all duration-300">
                 {/* Image Section */}
                 <div className="relative w-full md:w-56 h-48 md:h-auto flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                    <Image
-                        src={imageUrl}
-                        alt={scientificName}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {item.files.images?.[0]?.name ? (
+                        <Image
+                            src={item.files.images[0].name}
+                            alt={scientificName}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                    ) : (
+                        <CollectionImagePlaceholder />
+                    )}
                 </div>
 
                 {/* Content Section */}
@@ -76,10 +85,10 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
 
                     <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50 md:border-none">
                         <div className="text-xs text-gray-400">
-                            Registrado: {new Date(item.createdAt).toLocaleDateString()}
+                            {tCommon('registered')}: {new Date(item.createdAt).toLocaleDateString()}
                         </div>
                         <button className="text-sm font-medium text-primary flex items-center gap-1 group/btn hover:underline">
-                            Ver detalles
+                            {tCommon('viewDetails')}
                             <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
                         </button>
                     </div>
@@ -95,7 +104,7 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
             <div className="h-full flex flex-col group cursor-pointer">
                 {/* Image Card */}
                 <div className="relative h-64 w-full overflow-hidden rounded-xl mb-6 bg-slate-100">
-                    <Link href={`/collections/${individual.id}`}>
+                    <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
                         {individual.files.images &&
                             individual.files.images.length > 0 ? (
                             <Image
@@ -108,16 +117,14 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                         ) : (
-                            <div className="flex items-center justify-center h-full text-slate-400">
-                                <span className="text-sm">Sin imagen</span>
-                            </div>
+                            <CollectionImagePlaceholder />
                         )}
                     </Link>
                 </div>
 
                 {/* Content */}
                 <div className="flex flex-col flex-grow">
-                    <Link href={`/collections/${individual.id}`}>
+                    <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
                         <h3 className="text-xl font-medium text-slate-900 mb-3 leading-snug group-hover:text-slate-600 transition-colors">
                             {individual.species.scientificName}
                             <span className="block text-slate-500 text-lg font-normal mt-1">
@@ -128,19 +135,19 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
 
                     <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
                         {individual.species.description ||
-                            'No hay descripción disponible para esta especie.'}
+                            tCommon('noDescription')}
                     </p>
 
                     <div className="mt-auto">
                         <Link
-                            href={`/collections/${individual.id}`}
+                            href={`${ROUTES.COLLECTIONS}/${individual.id}`}
                             className="flex items-center gap-3 group/link"
                         >
                             <div className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition-colors duration-300 group-hover:bg-slate-900 group-hover:border-slate-900">
                                 <ArrowRight className="h-4 w-4 text-stone-600 transition-colors duration-300 group-hover:text-white" />
                             </div>
                             <span className="text-sm font-medium text-slate-900 transition-all duration-300 group-hover:font-bold">
-                                Leer más
+                                {tCommon('readMore')}
                             </span>
                         </Link>
                     </div>
@@ -155,12 +162,16 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
             "group relative overflow-hidden rounded-2xl bg-white border hover:shadow-xl transition-all duration-300",
             "aspect-square"
         )}>
-            <Image
-                src={imageUrl}
-                alt={scientificName}
-                fill
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
-            />
+            {item.files.images?.[0]?.name ? (
+                <Image
+                    src={item.files.images[0].name}
+                    alt={scientificName}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+            ) : (
+                <CollectionImagePlaceholder />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
             <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
                 <h3 className="text-white font-bold text-lg leading-tight mb-1 truncate">

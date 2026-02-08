@@ -1,6 +1,7 @@
 'use server'
 import { apiClient } from '../client'
-import { IndividualFilter, IndividualResponse } from '@repo/shared-types'
+import { IndividualDetails, IndividualFilter, IndividualResponse } from '@repo/shared-types'
+import { ENDPOINTS } from "../config/endpoints-url"
 
 const cleanFilters = <T extends object>(filters: T): Partial<T> => {
     const cleaned: Partial<T> = {};
@@ -41,6 +42,19 @@ export const fetchIndividuals = async (filters: IndividualFilter): Promise<Indiv
                 totalPages: 1, // Avoid 0 if generic pagination breaks, but 0 is usually safer. Set 1 to be neutral. Or 0.
                 totalItems: 0
             }
+        }
+        throw error;
+    }
+}
+
+export const fetchIndividualByUuid = async (uuid: string): Promise<IndividualDetails | null> => {
+    try {
+        const { data } = await apiClient.get<IndividualDetails>(ENDPOINTS.INDIVIDUALS.GET_BY_ID(uuid))
+        return data || null
+    } catch (error: any) {
+        // Handle 403 Forbidden gracefully -> return empty results
+        if (error.response?.status === 403) {
+            return null
         }
         throw error;
     }

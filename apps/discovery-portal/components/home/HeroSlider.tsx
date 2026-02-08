@@ -22,22 +22,22 @@ export function HeroSlider() {
       id: 1,
       image:
         'https://vertebrados.iiap.gob.pe/_next/static/media/rana.d741fb18.webp',
-      title: 'Colección Científica de Vertebrados',
-      subtitle: 'Descubre la biodiversidad de la Amazonía Peruana',
+      title: t('slides.slide1.title'),
+      subtitle: t('slides.slide1.subtitle'),
     },
     {
       id: 2,
       image:
         'https://vertebrados.iiap.gob.pe/_next/static/media/iguana.b3c16d1d.webp',
-      title: 'Investigación y Conservación',
-      subtitle: 'Comprometidos con el estudio de nuestra fauna silvestre',
+      title: t('slides.slide2.title'),
+      subtitle: t('slides.slide2.subtitle'),
     },
     {
       id: 3,
       image:
         'https://vertebrados.iiap.gob.pe/_next/static/media/reptil.a1cef8f3.webp',
-      title: 'Anfibios y Reptiles',
-      subtitle: 'Explora nuestro catálogo taxonómico actualizado',
+      title: t('slides.slide3.title'),
+      subtitle: t('slides.slide3.subtitle'),
     },
   ]
 

@@ -17,6 +17,104 @@
         "description": "Acesse a coleção científica mais completa de anfíbios e répteis do IIAP. Informações taxonômicas e geográficas para pesquisa.",
         "searchPlaceholder": "Buscar espécie...",
         "actionButton": "Personalizar busca",
-        "explore": "Explorar"
+        "explore": "Explorar",
+        "slides": {
+            "slide1": {
+                "title": "Coleção Científica de Vertebrados",
+                "subtitle": "Descubra a biodiversidade da Amazônia Peruana"
+            },
+            "slide2": {
+                "title": "Pesquisa e Conservação",
+                "subtitle": "Comprometidos com o estudo da nossa vida selvagem"
+            },
+            "slide3": {
+                "title": "Anfíbios e Répteis",
+                "subtitle": "Explore nosso catálogo taxonômico atualizado"
+            }
+        }
+    },
+    "Home": {
+        "stats": {
+            "error": "Não foi possível carregar as estatísticas.",
+            "subLabels": {
+                "collection": "COLEÇÃO IIAP",
+                "data": "DADOS CIENTÍFICOS",
+                "active": "ESPÉCIMES ATIVOS"
+            },
+            "unknown": "Desconhecido"
+        },
+        "multimedia": {
+            "tag": "Multimedia",
+            "title": "Galeria de imagens",
+            "subtitle": "Últimos registros",
+            "cta": "Ver galeria completa"
+        }
+    },
+    "Common": {
+        "viewDetails": "Ver detalhes",
+        "readMore": "Ler mais",
+        "viewAll": "Ver tudo",
+        "noImage": "Sem imagem",
+        "noDescription": "Nenhuma descrição disponível para esta espécie.",
+        "unknown": "Desconhecido",
+        "unknownLocation": "Localização desconhecida",
+        "noCommonName": "Sem nome comum",
+        "noIdentification": "Sem identificação",
+        "notRegistered": "Não registrado",
+        "active": "Ativo",
+        "inactive": "Inativo",
+        "registered": "Registrado",
+        "noRecords": "Nenhum registro encontrado"
+    },
+    "Collections": {
+        "latestTitle": "Últimas Coleções",
+        "scientificName": "Nome Científico",
+        "commonName": "Nome Comum",
+        "family": "Família",
+        "location": "Localização",
+        "museum": "Museu",
+        "forestType": "Tipos de Floresta",
+        "date": "Data",
+        "actions": "Ações",
+        "image": "Imagem",
+        "Detail": {
+            "title": "Detalhe do Espécime",
+            "notFound": "Espécime não encontrado",
+            "backToCollections": "Voltar para coleções",
+            "share": "Compartilhar",
+            "record": "Registro",
+            "photos": "fotos",
+            "audioRecordings": "Gravações de Áudio",
+            "distributionMap": "Mapa de Distribuição",
+            "taxonomy": "Taxonomia",
+            "kingdom": "Reino",
+            "class": "Classe",
+            "order": "Ordem",
+            "family": "Família",
+            "genus": "Gênero",
+            "scientificName": "Nome Científico",
+            "commonName": "Nome Comum",
+            "collectionData": "Dados da Coleção",
+            "catalogNumber": "Número de Catálogo",
+            "institutionCode": "Código da Instituição",
+            "collectionCode": "Código da Coleção",
+            "basisOfRecord": "Base do Registro",
+            "status": "Status",
+            "eventLocation": "Evento e Localização",
+            "country": "País",
+            "department": "Departamento",
+            "province": "Província",
+            "district": "Distrito",
+            "locality": "Localidade",
+            "date": "Data",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "biologyAttributes": "Biologia e Atributos",
+            "sex": "Sexo",
+            "lifeStage": "Estágio de Vida",
+            "preparations": "Preparações",
+            "svl": "CRC (Comprimento Rostro-Cloacal)",
+            "weight": "Peso"
+        }
     }
 }
