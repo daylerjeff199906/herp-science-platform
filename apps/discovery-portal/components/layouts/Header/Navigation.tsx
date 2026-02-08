@@ -1,17 +1,18 @@
 'use client'
 
 import React from 'react'
-import { Link, usePathname } from '../../../i18n/routing'
+import { Link, usePathname } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { ChevronDown } from 'lucide-react'
 import { NavItem } from './types'
+import { ROUTES } from '@/config/routes'
 
 export const navItems: { label: string; href: string; children?: NavItem[] }[] = [
-    { label: 'home', href: '/' },
-    { label: 'collections', href: '/collections' },
-    { label: 'gallery', href: '/gallery' },
-    { label: 'viewer', href: '/viewer' },
-    { label: 'deposit', href: '/deposit' },
+    { label: 'home', href: ROUTES.HOME },
+    { label: 'collections', href: ROUTES.COLLECTIONS },
+    { label: 'gallery', href: ROUTES.GALLERY },
+    { label: 'viewer', href: ROUTES.VIEWER },
+    { label: 'deposit', href: ROUTES.DEPOSIT },
 ]
 
 export function Navigation({

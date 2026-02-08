@@ -2,7 +2,9 @@
 
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { ROUTES } from '@/config/routes'
+import { useTranslations } from 'next-intl'
 import { useIndividuals } from '@repo/networking'
 import {
     Carousel,
@@ -16,6 +18,9 @@ import { Skeleton } from '@repo/ui/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
 
 export const LatestCollections = () => {
+    const tCommon = useTranslations('Common')
+    const tCollections = useTranslations('Collections')
+
     const { data, isLoading } = useIndividuals({
         page: 1,
         pageSize: 8,
@@ -58,7 +63,7 @@ export const LatestCollections = () => {
                 <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                     <div className="flex items-center gap-6">
                         <h2 className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight">
-                            Últimas Colecciones
+                            {tCollections('latestTitle')}
                         </h2>
                     </div>
 
@@ -66,8 +71,8 @@ export const LatestCollections = () => {
                         asChild
                         className="rounded-full bg-slate-800 hover:bg-slate-700 text-white px-8 py-6 text-sm font-medium"
                     >
-                        <Link href="/collections" className="flex items-center gap-2">
-                            Ver todo
+                        <Link href={ROUTES.COLLECTIONS} className="flex items-center gap-2">
+                            {tCommon('viewAll')}
                             <ArrowRight className="h-4 w-4" />
                         </Link>
                     </Button>
@@ -94,7 +99,7 @@ export const LatestCollections = () => {
                     <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                         <div className="flex items-center gap-6">
                             <h2 className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight">
-                                Últimas Colecciones
+                                {tCollections('latestTitle')}
                             </h2>
                             <div className="hidden md:flex gap-2">
                                 <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 transition-colors" />
@@ -106,8 +111,8 @@ export const LatestCollections = () => {
                             asChild
                             className="rounded-full bg-slate-800 hover:bg-slate-700 text-white px-8 py-6 text-sm font-medium"
                         >
-                            <Link href="/collections" className="flex items-center gap-2">
-                                Ver todo
+                            <Link href={ROUTES.COLLECTIONS} className="flex items-center gap-2">
+                                {tCommon('viewAll')}
                                 <ArrowRight className="h-4 w-4" />
                             </Link>
                         </Button>
@@ -122,7 +127,7 @@ export const LatestCollections = () => {
                                 <div className="h-full flex flex-col group cursor-pointer">
                                     {/* Image Card */}
                                     <div className="relative h-64 w-full overflow-hidden rounded-xl mb-6 bg-slate-100">
-                                        <Link href={`/collections/${individual.id}`}>
+                                        <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
                                             {individual.files.images &&
                                                 individual.files.images.length > 0 ? (
                                                 <Image
@@ -136,7 +141,7 @@ export const LatestCollections = () => {
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center h-full text-slate-400">
-                                                    <span className="text-sm">Sin imagen</span>
+                                                    <span className="text-sm">{tCommon('noImage')}</span>
                                                 </div>
                                             )}
                                         </Link>
@@ -144,7 +149,7 @@ export const LatestCollections = () => {
 
                                     {/* Content */}
                                     <div className="flex flex-col flex-grow">
-                                        <Link href={`/collections/${individual.id}`}>
+                                        <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
                                             <h3 className="text-xl font-medium text-slate-900 mb-3 leading-snug group-hover:text-slate-600 transition-colors">
                                                 {individual.species.scientificName}
                                                 <span className="block text-slate-500 text-lg font-normal mt-1">
@@ -155,19 +160,19 @@ export const LatestCollections = () => {
 
                                         <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
                                             {individual.species.description ||
-                                                'No hay descripción disponible para esta especie.'}
+                                                tCommon('noDescription')}
                                         </p>
 
                                         <div className="mt-auto">
                                             <Link
-                                                href={`/collections/${individual.id}`}
+                                                href={`${ROUTES.COLLECTIONS}/${individual.id}`}
                                                 className="flex items-center gap-3 group/link"
                                             >
                                                 <div className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition-colors duration-300 group-hover:bg-slate-900 group-hover:border-slate-900">
                                                     <ArrowRight className="h-4 w-4 text-stone-600 transition-colors duration-300 group-hover:text-white" />
                                                 </div>
                                                 <span className="text-sm font-medium text-slate-900 transition-all duration-300 group-hover:font-bold">
-                                                    Leer más
+                                                    {tCommon('readMore')}
                                                 </span>
                                             </Link>
                                         </div>

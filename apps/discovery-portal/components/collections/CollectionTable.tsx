@@ -1,41 +1,45 @@
 'use client'
 
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { ROUTES } from '@/config/routes'
 import { Individual } from '@repo/shared-types'
 import { Eye } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface CollectionTableProps {
     data: Individual[]
 }
 
 export function CollectionTable({ data }: CollectionTableProps) {
-    console.log(data)
+    const tCollections = useTranslations('Collections')
+    const tCommon = useTranslations('Common')
+
+    if (data.length === 0) {
+        return <div className="p-8 text-center text-gray-500">{tCommon('noRecords')}</div>
+    }
+
     return (
         <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
                         <tr>
-                            <th className="px-6 py-4 w-24">Imagen</th>
-                            <th className="px-6 py-4">Nombre Científico</th>
-                            <th className="px-6 py-4">Nombre Común</th>
-                            <th className="px-6 py-4">Familia</th>
-                            <th className="px-6 py-4">Ubicación</th>
-                            <th className="px-6 py-4">
-                                Museo
-                            </th>
-                            <th className="px-6 py-4">
-                                Tipo de bosques
-                            </th>
-                            <th className="px-6 py-4">Fecha</th>
-                            <th className="px-6 py-4 text-center">Acciones</th>
+                            <th className="px-6 py-4 w-24">{tCollections('image')}</th>
+                            <th className="px-6 py-4">{tCollections('scientificName')}</th>
+                            <th className="px-6 py-4">{tCollections('commonName')}</th>
+                            <th className="px-6 py-4">{tCollections('family')}</th>
+                            <th className="px-6 py-4">{tCollections('location')}</th>
+                            <th className="px-6 py-4">{tCollections('museum')}</th>
+                            <th className="px-6 py-4">{tCollections('forestType')}</th>
+                            <th className="px-6 py-4">{tCollections('date')}</th>
+                            <th className="px-6 py-4 text-center">{tCollections('actions')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {data.map((item) => {
                             const imageUrl = item.files.images?.[0]?.name || '/images/placeholder.jpg'
-                            const scientificName = item.species?.scientificName || 'Sin identificación'
+                            const scientificName = item.species?.scientificName || tCommon('noIdentification')
                             const commonName = item.species?.commonName || '-'
                             const familyName = item.species?.genus?.family?.name || '-'
                             const location = item.ocurrence?.event?.locality?.name || '-'
@@ -86,9 +90,9 @@ export function CollectionTable({ data }: CollectionTableProps) {
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         <Link
-                                            href={`/collections/${item.id}`}
+                                            href={`${ROUTES.COLLECTIONS}/${item.id}`}
                                             className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                                            title="Ver detalles"
+                                            title={tCommon('viewDetails')}
                                         >
                                             <Eye size={16} />
                                         </Link>
@@ -99,11 +103,6 @@ export function CollectionTable({ data }: CollectionTableProps) {
                     </tbody>
                 </table>
             </div>
-            {data.length === 0 && (
-                <div className="p-8 text-center text-gray-500">
-                    No se encontraron registros
-                </div>
-            )}
         </div>
     )
 }

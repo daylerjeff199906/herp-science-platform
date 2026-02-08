@@ -17,7 +17,21 @@
         "description": "Access the most complete scientific collection of amphibians and reptiles from IIAP. Taxonomic and geographic information for research.",
         "searchPlaceholder": "Search species...",
         "actionButton": "Customize search",
-        "explore": "Explore"
+        "explore": "Explore",
+        "slides": {
+            "slide1": {
+                "title": "Vertebrate Scientific Collection",
+                "subtitle": "Discover the biodiversity of the Peruvian Amazon"
+            },
+            "slide2": {
+                "title": "Research and Conservation",
+                "subtitle": "Committed to the study of our wildlife"
+            },
+            "slide3": {
+                "title": "Amphibians and Reptiles",
+                "subtitle": "Explore our updated taxonomic catalog"
+            }
+        }
     },
     "Home": {
         "stats": {
@@ -28,7 +42,14 @@
             "published": "Published",
             "species_count": "Visible Individuals",
             "amphibians": "Amphibians",
-            "reptiles": "Reptiles"
+            "reptiles": "Reptiles",
+            "error": "Could not load statistics.",
+            "subLabels": {
+                "collection": "IIAP COLLECTION",
+                "data": "SCIENTIFIC DATA",
+                "active": "ACTIVE SPECIMENS"
+            },
+            "unknown": "Unknown"
         },
         "services": {
             "tag": "WHAT WE DO",
@@ -57,5 +78,31 @@
                 }
             }
         }
+    },
+    "Common": {
+        "viewDetails": "View details",
+        "readMore": "Read more",
+        "viewAll": "View all",
+        "noImage": "No image",
+        "noDescription": "No description available for this species.",
+        "unknown": "Unknown",
+        "unknownLocation": "Unknown location",
+        "noCommonName": "No common name",
+        "noIdentification": "No identification",
+        "notRegistered": "Not registered",
+        "registered": "Registered",
+        "noRecords": "No records found"
+    },
+    "Collections": {
+        "latestTitle": "Latest Collections",
+        "scientificName": "Scientific Name",
+        "commonName": "Common Name",
+        "family": "Family",
+        "location": "Location",
+        "museum": "Museum",
+        "forestType": "Forest Types",
+        "date": "Date",
+        "actions": "Actions",
+        "image": "Image"
     }
 }

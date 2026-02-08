@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import { Link, usePathname } from '../../../i18n/routing'
+import { Link, usePathname } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { Menu, X } from 'lucide-react'
 import { navItems } from './Navigation'

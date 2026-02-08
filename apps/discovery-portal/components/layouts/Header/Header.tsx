@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Link, usePathname } from '../../../i18n/routing'
+import { Link, usePathname } from '@/i18n/routing'
 import { useTranslations } from 'next-intl'
 import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { ROUTES } from '@/config/routes'
 
 export function Header() {
     const [scrolled, setScrolled] = useState(false)
@@ -35,7 +36,7 @@ export function Header() {
             <div className="container mx-auto px-4 md:px-6">
                 <div className="flex items-center justify-between">
                     {/* Logo Area */}
-                    <Link href="/" className="relative z-50 flex items-center gap-2 group">
+                    <Link href={ROUTES.HOME} className="relative z-50 flex items-center gap-2 group">
                         <div className="relative w-10 h-10 overflow-hidden rounded-lg">
                             <LogoRender
                                 className={`w-full h-full object-contain transition-all duration-300 ${scrolled ? 'brightness-0 invert' : 'brightness-0 invert'
@@ -61,7 +62,7 @@ export function Header() {
                         />
 
                         <Link
-                            href="/login"
+                            href={ROUTES.LOGIN}
                             className={`
                 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0
                 ${scrolled

@@ -17,7 +17,21 @@
         "description": "Accede a la colección científica más completa de anfibios y reptiles del IIAP. Información taxonómica y geográfica para la investigación.",
         "searchPlaceholder": "Buscar especie...",
         "actionButton": "Personalizar búsqueda",
-        "explore": "Explorar"
+        "explore": "Explorar",
+        "slides": {
+            "slide1": {
+                "title": "Colección Científica de Vertebrados",
+                "subtitle": "Descubre la biodiversidad de la Amazonía Peruana"
+            },
+            "slide2": {
+                "title": "Investigación y Conservación",
+                "subtitle": "Comprometidos con el estudio de nuestra fauna silvestre"
+            },
+            "slide3": {
+                "title": "Anfibios y Reptiles",
+                "subtitle": "Explora nuestro catálogo taxonómico actualizado"
+            }
+        }
     },
     "Home": {
         "services": {
@@ -62,7 +76,14 @@
             "published": "Publicados",
             "species_count": "Individuos Visibles",
             "amphibians": "Anfibios",
-            "reptiles": "Reptiles"
+            "reptiles": "Reptiles",
+            "error": "No se pudieron cargar las estadísticas.",
+            "subLabels": {
+                "collection": "COLECCIÓN IIAP",
+                "data": "DATOS CIENTÍFICOS",
+                "active": "ESPECÍMENES ACTIVOS"
+            },
+            "unknown": "Desconocido"
         },
         "multimedia": {
             "tag": "Multimedia",
@@ -75,5 +96,31 @@
             "title": "Descubre Herramientas Exclusivas para la Exploración Científica",
             "cta": "Ver todos los recursos"
         }
+    },
+    "Common": {
+        "viewDetails": "Ver detalles",
+        "readMore": "Leer más",
+        "viewAll": "Ver todo",
+        "noImage": "Sin imagen",
+        "noDescription": "No hay descripción disponible para esta especie.",
+        "unknown": "Desconocido",
+        "unknownLocation": "Ubicación desconocida",
+        "noCommonName": "Sin nombre común",
+        "noIdentification": "Sin identificación",
+        "notRegistered": "No registrada",
+        "registered": "Registrado",
+        "noRecords": "No se encontraron registros"
+    },
+    "Collections": {
+        "latestTitle": "Últimas Colecciones",
+        "scientificName": "Nombre Científico",
+        "commonName": "Nombre Común",
+        "family": "Familia",
+        "location": "Ubicación",
+        "museum": "Museo",
+        "forestType": "Tipo de bosques",
+        "date": "Fecha",
+        "actions": "Acciones",
+        "image": "Imagen"
     }
 }

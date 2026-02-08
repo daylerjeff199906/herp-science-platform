@@ -5,7 +5,8 @@ import { ArrowRight, ExternalLink, ImageIcon } from 'lucide-react'
 import { Button } from '@repo/ui/components/ui/button'
 import { useIndividuals } from '@repo/networking'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { ROUTES } from '@/config/routes'
 
 export function MultimediaSection() {
     const t = useTranslations('Home.multimedia')
@@ -49,7 +50,7 @@ export function MultimediaSection() {
                         variant="outline"
                         className="hidden md:flex gap-2 border-white/20 text-white hover:bg-[#ADDE60] hover:text-[#111] hover:border-[#ADDE60] rounded-full px-8 h-12 transition-all duration-300 uppercase tracking-wider text-sm bg-transparent"
                     >
-                        <Link href="/gallery">
+                        <Link href={ROUTES.GALLERY}>
                             {t('cta')}
                             <ArrowRight className="w-4 h-4" />
                         </Link>
@@ -64,7 +65,7 @@ export function MultimediaSection() {
                             className={`group relative overflow-hidden rounded-2xl bg-[#1a1a1a] border border-white/5 hover:border-[#ADDE60]/50 transition-all duration-500 cursor-pointer ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''
                                 } ${i === 3 ? 'md:col-span-2' : ''}`}
                         >
-                            <Link href={`/collections/${item.id}`} className="block h-full w-full">
+                            <Link href={`${ROUTES.COLLECTIONS}/${item.id}`} className="block h-full w-full">
                                 {/* Image Placeholder */}
                                 <div className="absolute inset-0 flex items-center justify-center bg-[#151515] group-hover:scale-105 transition-transform duration-700">
                                     {item.files.images && item.files.images.length > 0 ? (
@@ -102,7 +103,7 @@ export function MultimediaSection() {
                 {/* Mobile CTA */}
                 <div className="mt-12 md:hidden">
                     <Button asChild className="w-full gap-2 bg-[#ADDE60] text-[#111] hover:bg-[#9cc954] rounded-full h-12 uppercase tracking-wide font-bold">
-                        <Link href="/gallery">
+                        <Link href={ROUTES.GALLERY}>
                             {t('cta')}
                             <ArrowRight className="w-4 h-4" />
                         </Link>

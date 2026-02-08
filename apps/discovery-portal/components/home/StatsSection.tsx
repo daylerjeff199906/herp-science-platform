@@ -29,6 +29,7 @@ function StatCard({ value, label, subLabel }: { value: number; label: string; su
 }
 
 function TaxonColumn({ title, data, total }: { title: string; data: any; total: number }) {
+    const t = useTranslations('Home.stats')
     const orders = data.orders || []
 
     return (
@@ -42,7 +43,7 @@ function TaxonColumn({ title, data, total }: { title: string; data: any; total: 
 
             <div className="space-y-3">
                 {orders.map((order: OrderCount, idx: number) => {
-                    const orderName = Object.keys(order).find(k => k !== 'families') || 'Unknown';
+                    const orderName = Object.keys(order).find(k => k !== 'families') || t('unknown');
                     const count = order[orderName as keyof typeof order] as number;
 
                     return (
@@ -138,15 +139,15 @@ export function StatsSection() {
                     <StatsSkeleton />
                 ) : error || !stats ? (
                     <div className="py-12 text-center text-gray-500">
-                        No se pudieron cargar las estadísticas.
+                        {t('error')}
                     </div>
                 ) : (
                     <>
                         {/* Global Counters */}
                         <div className="grid md:grid-cols-3 gap-6 mb-24">
-                            <StatCard label={t('total_records')} value={stats.allIndividuals} subLabel="IIAP COLLECTION" />
-                            <StatCard label={t('published')} value={stats.publishedIndividuals} subLabel="SCIENTIFIC DATA" />
-                            <StatCard label={t('species_count')} value={stats.publishedAmphibians.total + stats.publishedReptiles.total} subLabel="ACTIVE SPECIMENS" />
+                            <StatCard label={t('total_records')} value={stats.allIndividuals} subLabel={t('subLabels.collection')} />
+                            <StatCard label={t('published')} value={stats.publishedIndividuals} subLabel={t('subLabels.data')} />
+                            <StatCard label={t('species_count')} value={stats.publishedAmphibians.total + stats.publishedReptiles.total} subLabel={t('subLabels.active')} />
                         </div>
 
                         {/* Breakdown Columns */}
