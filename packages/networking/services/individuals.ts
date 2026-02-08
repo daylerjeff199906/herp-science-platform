@@ -31,7 +31,7 @@ export const fetchIndividuals = async (filters: IndividualFilter): Promise<Indiv
     const payload = cleanFilters(filters);
     try {
         const { data } = await apiClient.post<IndividualResponse>('/individuals/query', payload)
-        return data
+        return data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
     } catch (error: any) {
         // Handle 403 Forbidden gracefully -> return empty results
         if (error.response?.status === 403) {

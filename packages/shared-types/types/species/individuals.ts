@@ -1,4 +1,5 @@
 import { PaginationParams } from "../core";
+import { Museum } from "../institutions";
 import { Sex } from "./sexes";
 
 
@@ -62,16 +63,6 @@ export interface Activity extends BaseEntity {
 
 export interface ForestType extends BaseEntity {
     name: string;
-}
-
-export interface Institution extends BaseEntity {
-    name: string;
-}
-
-export interface Museum extends BaseEntity {
-    name: string;
-    acronym: string;
-    institution: Institution;
 }
 
 export interface Person {

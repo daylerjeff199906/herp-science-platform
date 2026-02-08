@@ -37,14 +37,24 @@ const request = async <T>(endpoint: string, options: RequestOptions = {}): Promi
 
   if (!response.ok) {
     if (response.status !== 403) {
-      const errorData = await response.json().catch(() => null)
-      console.error('API Error:', errorData || response.statusText)
+      try {
+        const errorData = await response.json().catch(() => null)
+        console.error('API Error:', errorData || response.statusText)
+      } catch (e) {
+        console.error('API Error:', response.statusText)
+      }
     }
-    throw response
+    // Return null data instead of throwing to prevent app crash
+    return { data: null as unknown as T }
   }
 
-  const data = await response.json()
-  return { data }
+  try {
+    const data = await response.json()
+    return { data }
+  } catch (error) {
+    console.error('API Error (Parse):', error)
+    return { data: null as unknown as T }
+  }
 }
 
 export const apiClient = {

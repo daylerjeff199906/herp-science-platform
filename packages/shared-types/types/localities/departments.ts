@@ -1,12 +1,10 @@
 import { Country } from './countries'
-import { PaginatedResponse } from '../core'
+import { PaginatedResponse, BaseEntity } from '../core'
 
-export interface department {
+export interface department extends BaseEntity {
   id: number
   name: string
   status: number
-  createdAt: string
-  updatedAt: string
   country: Country
 }
 

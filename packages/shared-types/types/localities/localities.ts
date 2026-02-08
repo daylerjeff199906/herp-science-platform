@@ -1,13 +1,11 @@
-import { PaginatedResponse } from '../core'
+import { PaginatedResponse, BaseEntity } from '../core'
 import { district } from './districts'
 
-export interface locality {
+export interface locality extends BaseEntity {
   id: number
   name: string
   description: string
   status: number
-  createdAt: string
-  updatedAt: string
   district: district
 }
 
