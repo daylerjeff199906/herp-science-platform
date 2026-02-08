@@ -10,6 +10,7 @@ interface CollectionTableProps {
 }
 
 export function CollectionTable({ data }: CollectionTableProps) {
+    console.log(data)
     return (
         <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <div className="overflow-x-auto">
@@ -17,11 +18,16 @@ export function CollectionTable({ data }: CollectionTableProps) {
                     <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
                         <tr>
                             <th className="px-6 py-4 w-24">Imagen</th>
-                            <th className="px-6 py-4">ID</th>
                             <th className="px-6 py-4">Nombre Científico</th>
                             <th className="px-6 py-4">Nombre Común</th>
                             <th className="px-6 py-4">Familia</th>
                             <th className="px-6 py-4">Ubicación</th>
+                            <th className="px-6 py-4">
+                                Museo
+                            </th>
+                            <th className="px-6 py-4">
+                                Tipo de bosques
+                            </th>
                             <th className="px-6 py-4">Fecha</th>
                             <th className="px-6 py-4 text-center">Acciones</th>
                         </tr>
@@ -36,9 +42,11 @@ export function CollectionTable({ data }: CollectionTableProps) {
                             const date = item.ocurrence?.event?.date
                                 ? new Date(item.ocurrence.event.date).toLocaleDateString()
                                 : '-'
+                            const museum = item.museum?.name || '-'
+                            const forestType = item.forestType?.name || '-'
 
                             return (
-                                <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                                <tr key={item.id} className="hover:bg-gray-50 transition-colors text-xs">
                                     <td className="px-6 py-3">
                                         <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
                                             <Image
@@ -48,9 +56,6 @@ export function CollectionTable({ data }: CollectionTableProps) {
                                                 className="object-cover"
                                             />
                                         </div>
-                                    </td>
-                                    <td className="px-6 py-4 font-medium text-gray-900">
-                                        {item.id}
                                     </td>
                                     <td className="px-6 py-4 font-medium text-gray-900 italic">
                                         {scientificName}
@@ -62,8 +67,18 @@ export function CollectionTable({ data }: CollectionTableProps) {
                                         {familyName}
                                     </td>
                                     <td className="px-6 py-4 text-gray-600">
-                                        <div className="max-w-[150px] truncate" title={location}>
+                                        <div className="max-w-[150px] line-clamp-2" title={location}>
                                             {location}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-600">
+                                        <div className="max-w-[150px] line-clamp-2" title={museum}>
+                                            {museum}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-gray-600">
+                                        <div className="max-w-[150px] line-clamp-2" title={forestType}>
+                                            {forestType}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-gray-600 whitespace-nowrap">
