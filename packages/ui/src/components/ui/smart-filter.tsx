@@ -20,7 +20,7 @@ import {
 
 // --- Types ---
 
-export type SmartFilterType = 'text' | 'switch' | 'check' | 'radio' | 'select' | 'async-select' | 'date-range'
+export type SmartFilterType = 'text' | 'switch' | 'check' | 'radio' | 'select' | 'async-select' | 'date-range' | 'list-search'
 
 export interface SmartFilterOption {
     label: string
@@ -37,6 +37,7 @@ export interface SmartFilterProps {
     placeholder?: string
     className?: string
     debounceMs?: number
+    hasMore?: boolean
 }
 
 // --- Hook: Debounce ---
@@ -150,7 +151,7 @@ const SelectFilter = ({
     const [loading, setLoading] = React.useState(false)
     const [search, setSearch] = React.useState('')
     const debouncedSearch = useDebounce(search, 300)
-    const [page, setPage] = React.useState(1)
+    const [_, setPage] = React.useState(1)
     const [hasMore, setHasMore] = React.useState(true)
 
     const isAsync = type === 'async-select'
@@ -273,6 +274,156 @@ const SelectFilter = ({
 }
 
 
+// 5. List Search Filter (Custom List with Search and Load More)
+const ListSearchFilter = ({
+    label,
+    value,
+    onChange,
+    options: initialOptions = [],
+    loadOptions,
+    placeholder,
+    className,
+    hasMore: initialHasMore = true
+}: SmartFilterProps) => {
+    const [options, setOptions] = React.useState<SmartFilterOption[]>(initialOptions)
+    const [loading, setLoading] = React.useState(false)
+    const [search, setSearch] = React.useState('')
+    const debouncedSearch = useDebounce(search, 300)
+    const [page, setPage] = React.useState(1)
+    const [hasMore, setHasMore] = React.useState(initialHasMore)
+    const [initialized, setInitialized] = React.useState(false)
+
+    // React to late-arriving initialOptions (async hooks in parent)
+    React.useEffect(() => {
+        if (initialOptions && initialOptions.length > 0 && !loading && search === '') {
+            setOptions(initialOptions)
+            setHasMore(initialHasMore)
+            setInitialized(true)
+        }
+    }, [initialOptions, initialHasMore])
+
+    // Initial Load & Search Effect
+    React.useEffect(() => {
+        let active = true
+        const fetchOptions = async () => {
+            if (!loadOptions) return
+            setLoading(true)
+            try {
+                // Determine if we are resetting (new search) or initial load
+                // If search changes, page resets to 1
+                const p = 1
+                const res = await loadOptions(debouncedSearch, p)
+                if (active) {
+                    setOptions(res.options)
+                    setHasMore(res.hasMore)
+                    setPage(p)
+                    setInitialized(true)
+                }
+            } catch (error) {
+                console.error("Error loading options", error)
+            } finally {
+                if (active) setLoading(false)
+            }
+        }
+
+        fetchOptions()
+
+        return () => { active = false }
+    }, [debouncedSearch]) // Removed loadOptions to avoid recreating effect if function identity changes
+
+    // Load More Handler
+    const handleLoadMore = async () => {
+        if (!loadOptions || loading || !hasMore) return
+        setLoading(true)
+        try {
+            const nextPage = page + 1
+            const res = await loadOptions(debouncedSearch, nextPage)
+            setOptions(prev => [...prev, ...res.options])
+            setHasMore(res.hasMore)
+            setPage(nextPage)
+        } catch (error) {
+            console.error("Error loading more options", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <div className={cn("space-y-2", className)}>
+            {label && <label className="text-xs font-semibold tracking-wider text-slate-500">{label}</label>}
+
+            {/* Search Input */}
+            <div className="relative">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                <Input
+                    placeholder={placeholder || "Buscar..."}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="pl-8 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-md"
+                />
+            </div>
+
+            {/* List */}
+            <div className="space-y-1 mt-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+                {/* Clear Selection */}
+                {value && (
+                    <div
+                        onClick={() => onChange(undefined)}
+                        className="flex items-center gap-2 p-1.5 rounded-md hover:bg-red-50 text-red-600 cursor-pointer text-xs font-medium transition-colors"
+                    >
+                        <X size={14} />
+                        <span>Limpiar selección</span>
+                    </div>
+                )}
+
+                {loading && !initialized && <div className="text-xs text-center p-2 text-muted-foreground">Cargando...</div>}
+
+                {options.length === 0 && initialized && !loading && (
+                    <div className="text-xs text-center p-2 text-muted-foreground">No hay resultados.</div>
+                )}
+
+                {options.map((opt) => {
+                    const isSelected = String(value) === String(opt.value)
+                    return (
+                        <div
+                            key={`${opt.value}-${opt.label}`}
+                            onClick={() => onChange(isSelected ? undefined : opt.value)}
+                            className={cn(
+                                "flex items-start gap-2 p-1 rounded-md cursor-pointer text-xs transition-colors group",
+                                isSelected ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50 text-slate-700"
+                            )}
+                        >
+                            <div className={cn(
+                                "mt-0.5 h-3 w-3 shrink-0 rounded-full border flex items-center justify-center transition-colors",
+                                isSelected ? "border-blue-600 bg-blue-600" : "border-slate-300 group-hover:border-slate-400"
+                            )}>
+                                {isSelected && <div className="h-1 w-1 rounded-full bg-white" />}
+                            </div>
+                            <span className="leading-tight text-xs">{opt.label}</span>
+                        </div>
+                    )
+                })}
+
+                {/* Loading Spinner for Load More */}
+                {loading && initialized && (
+                    <div className="text-xs text-center p-1 text-muted-foreground animate-pulse">Cargando más...</div>
+                )}
+
+                {/* Show More Button */}
+                {!loading && hasMore && initialized && (
+                    <button
+                        onClick={handleLoadMore}
+                        className="w-full text-xs text-blue-600 font-medium hover:underline py-1 mt-1 text-center"
+                    >
+                        Ver más
+                    </button>
+                )}
+            </div>
+        </div>
+    )
+}
+
+
 // --- Main Export ---
 
 export function SmartFilter(props: SmartFilterProps) {
@@ -290,6 +441,8 @@ export function SmartFilter(props: SmartFilterProps) {
         case 'select':
         case 'async-select':
             return <SelectFilter {...props} />
+        case 'list-search':
+            return <ListSearchFilter {...props} />
         default:
             return null
     }

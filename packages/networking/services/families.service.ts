@@ -1,3 +1,4 @@
+'use server'
 import { apiClient } from '../client'
 import { FamilyResponse, FamilyFilter, Family } from '@repo/shared-types';
 import { ENDPOINTS } from "../config/endpoints-url";

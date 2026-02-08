@@ -1,33 +1,59 @@
-import axios from 'axios'
-
-// 1. Leemos la variable.
-// Next.js inyectará el valor correspondiente dependiendo de qué App esté corriendo.
 const API_URL = process.env.NEXT_PUBLIC_API_URL
 
-// 2. Validación de seguridad (Buenas prácticas)
 if (!API_URL) {
-  // Esto hará que la app falle ruidosamente si olvidaste configurar el .env
-  // Es mejor que falle aquí a que falle con un error 404 raro después.
   throw new Error(
     'FATAL: La variable de entorno NEXT_PUBLIC_API_URL no está definida.'
   )
 }
 
-export const apiClient = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-})
+interface RequestOptions extends RequestInit {
+  params?: Record<string, any>
+}
 
-// Interceptor para manejar errores globales (opcional pero recomendado)
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Suppress logging for 403 Forbidden to assume it's handled by services (e.g. empty results)
-    if (error.response?.status !== 403) {
-      console.error('API Error:', error.response?.data || error.message)
+const request = async <T>(endpoint: string, options: RequestOptions = {}): Promise<{ data: T }> => {
+  const { params, ...fetchOptions } = options
+  let url = `${API_URL}${endpoint}`
+
+  if (params) {
+    const searchParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, String(value))
+      }
+    })
+    const queryString = searchParams.toString()
+    if (queryString) {
+      url += (url.includes('?') ? '&' : '?') + queryString
     }
-    return Promise.reject(error)
   }
-)
+
+  const response = await fetch(url, {
+    ...fetchOptions,
+    headers: {
+      'Content-Type': 'application/json',
+      ...fetchOptions.headers,
+    },
+  })
+
+  if (!response.ok) {
+    if (response.status !== 403) {
+      const errorData = await response.json().catch(() => null)
+      console.error('API Error:', errorData || response.statusText)
+    }
+    throw response
+  }
+
+  const data = await response.json()
+  return { data }
+}
+
+export const apiClient = {
+  get: <T>(url: string, options?: RequestOptions) =>
+    request<T>(url, { ...options, method: 'GET' }),
+  post: <T>(url: string, body: any, options?: RequestOptions) =>
+    request<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) }),
+  put: <T>(url: string, body: any, options?: RequestOptions) =>
+    request<T>(url, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+  delete: <T>(url: string, options?: RequestOptions) =>
+    request<T>(url, { ...options, method: 'DELETE' }),
+}

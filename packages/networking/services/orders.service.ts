@@ -1,3 +1,4 @@
+'use server'
 import { apiClient } from '../client'
 import { OrderResponse, OrderFilter, Order } from '@repo/shared-types';
 import { ENDPOINTS } from "../config/endpoints-url";

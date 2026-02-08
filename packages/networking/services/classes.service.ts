@@ -1,9 +1,11 @@
+'use server'
 import { apiClient } from '../client'
 import { ClassResponse, ClassFilter, Class } from '@repo/shared-types';
 import { ENDPOINTS } from "../config/endpoints-url";
 
 export const fetchClasses = async (params: ClassFilter): Promise<ClassResponse> => {
     const response = await apiClient.get<ClassResponse>(ENDPOINTS.CLASSES.GET_PAGINATED, { params });
+    console.log(response.data)
     return response.data;
 }
 
