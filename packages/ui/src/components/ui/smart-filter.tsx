@@ -364,7 +364,7 @@ const ListSearchFilter = ({
             </div>
 
             {/* List */}
-            <div className="space-y-1 mt-2 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+            <div className="space-y-1 mt-2 max-h-[100px] overflow-y-auto pr-1 custom-scrollbar">
                 {/* Clear Selection */}
                 {value && (
                     <div
