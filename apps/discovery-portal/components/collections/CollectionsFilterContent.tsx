@@ -10,10 +10,7 @@ import {
     fetchOrders, fetchOrderById,
     fetchFamilies, fetchFamilyById,
     fetchGenera, fetchGenusById,
-    useClasses,
-    useOrders,
-    useFamilies,
-    useGenera
+    useClasses
 } from '@repo/networking';
 import { useQuery } from '@tanstack/react-query';
 
@@ -84,9 +81,24 @@ export const CollectionsFilterContent = () => {
 
     // 2. Initial Data Hooks (Fetch first page for immediate display on open)
     const { data: initialClasses } = useClasses({ pageSize: 20 })
-    const { data: initialOrders } = useOrders({ pageSize: 20, classId: classId ? Number(classId) : undefined, })
-    const { data: initialFamilies } = useFamilies({ pageSize: 20, orderId: orderId ? Number(orderId) : undefined })
-    const { data: initialGenera } = useGenera({ pageSize: 20, familyId: familyId ? Number(familyId) : undefined })
+
+    const { data: initialOrders } = useQuery({
+        queryKey: ['orders-initial', classId],
+        queryFn: () => fetchOrders({ pageSize: 20, classId: classId ? Number(classId) : undefined }),
+        enabled: !!classId
+    })
+
+    const { data: initialFamilies } = useQuery({
+        queryKey: ['families-initial', orderId],
+        queryFn: () => fetchFamilies({ pageSize: 20, orderId: orderId ? Number(orderId) : undefined }),
+        enabled: !!orderId
+    })
+
+    const { data: initialGenera } = useQuery({
+        queryKey: ['genera-initial', familyId],
+        queryFn: () => fetchGenera({ pageSize: 20, familyId: familyId ? Number(familyId) : undefined }),
+        enabled: !!familyId
+    })
 
     // Helper to map response data to options
     const mapToOptions = (data: any[] | undefined) => {
@@ -174,11 +186,13 @@ export const CollectionsFilterContent = () => {
                                     }
                                 }}
                                 placeholder="Buscar clase..."
+                                hasMore={initialClasses ? initialClasses.currentPage < initialClasses.totalPages : false}
                             />
 
                             {/* ORDEN (Depends on Class) */}
                             {classId ? (
                                 <SmartFilter
+                                    key={`order-${classId}`}
                                     type="list-search"
                                     label="Orden"
                                     value={orderId}
@@ -197,6 +211,7 @@ export const CollectionsFilterContent = () => {
                                         }
                                     }}
                                     placeholder="Buscar orden..."
+                                    hasMore={initialOrders ? initialOrders.currentPage < initialOrders.totalPages : false}
                                 />
                             ) : (
                                 <div className="space-y-1">
@@ -210,6 +225,7 @@ export const CollectionsFilterContent = () => {
                             {/* FAMILIA (Depends on Order) */}
                             {orderId ? (
                                 <SmartFilter
+                                    key={`family-${orderId}`}
                                     type="list-search"
                                     label="Familia"
                                     value={familyId}
@@ -228,6 +244,7 @@ export const CollectionsFilterContent = () => {
                                         }
                                     }}
                                     placeholder="Buscar familia..."
+                                    hasMore={initialFamilies ? initialFamilies.currentPage < initialFamilies.totalPages : false}
                                 />
                             ) : (
                                 <div className="space-y-1">
@@ -241,6 +258,7 @@ export const CollectionsFilterContent = () => {
                             {/* GENERO (Depends on Family) */}
                             {familyId ? (
                                 <SmartFilter
+                                    key={`genus-${familyId}`}
                                     type="list-search"
                                     label="Género"
                                     value={genusId}
@@ -259,6 +277,7 @@ export const CollectionsFilterContent = () => {
                                         }
                                     }}
                                     placeholder="Buscar género..."
+                                    hasMore={initialGenera ? initialGenera.currentPage < initialGenera.totalPages : false}
                                 />
                             ) : (
                                 <div className="space-y-1">

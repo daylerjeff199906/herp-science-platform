@@ -37,6 +37,7 @@ export interface SmartFilterProps {
     placeholder?: string
     className?: string
     debounceMs?: number
+    hasMore?: boolean
 }
 
 // --- Hook: Debounce ---
@@ -281,15 +282,25 @@ const ListSearchFilter = ({
     options: initialOptions = [],
     loadOptions,
     placeholder,
-    className
+    className,
+    hasMore: initialHasMore = true
 }: SmartFilterProps) => {
     const [options, setOptions] = React.useState<SmartFilterOption[]>(initialOptions)
     const [loading, setLoading] = React.useState(false)
     const [search, setSearch] = React.useState('')
     const debouncedSearch = useDebounce(search, 300)
     const [page, setPage] = React.useState(1)
-    const [hasMore, setHasMore] = React.useState(true)
+    const [hasMore, setHasMore] = React.useState(initialHasMore)
     const [initialized, setInitialized] = React.useState(false)
+
+    // React to late-arriving initialOptions (async hooks in parent)
+    React.useEffect(() => {
+        if (initialOptions && initialOptions.length > 0 && !loading && search === '') {
+            setOptions(initialOptions)
+            setHasMore(initialHasMore)
+            setInitialized(true)
+        }
+    }, [initialOptions, initialHasMore])
 
     // Initial Load & Search Effect
     React.useEffect(() => {
