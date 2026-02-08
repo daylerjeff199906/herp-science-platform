@@ -2,6 +2,7 @@ import { PaginatedResponse, BaseEntity } from '../core'
 import { district } from './districts'
 
 export interface locality extends BaseEntity {
+  id: number
   name: string
   description: string
   status: number

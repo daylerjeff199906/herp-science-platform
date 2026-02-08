@@ -2,6 +2,7 @@ import { PaginatedResponse, BaseEntity } from '../core'
 import { province } from './provinces'
 
 export interface district extends BaseEntity {
+  id: number
   name: string
   ubigeo: string
   status: number

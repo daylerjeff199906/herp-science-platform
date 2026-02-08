@@ -2,6 +2,7 @@ import { PaginatedResponse, BaseEntity } from '../core'
 import { department } from './departments'
 
 export interface province extends BaseEntity {
+  id: number
   name: string
   status: number
   department: department
