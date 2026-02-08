@@ -16,16 +16,20 @@
     "@repo/shared-types": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.18",
+    "@types/leaflet": "^1.9.21",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-autoplay": "^8.6.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.468.0",
     "next": "16.1.0",
     "next-intl": "^4.7.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-leaflet": "^5.0.0",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "yet-another-react-lightbox": "^3.28.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
