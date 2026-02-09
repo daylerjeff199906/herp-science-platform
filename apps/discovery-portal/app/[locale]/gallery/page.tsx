@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { useInfiniteIndividuals } from '@repo/networking/hooks/useIndividuals'
 import { GalleryIndividualCard } from '@/components/collections/GalleryIndividualCard'
-import { CollectionImagePlaceholder } from '@/components/collections/CollectionImagePlaceholder'
 import { useTranslations } from 'next-intl'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@repo/ui'
