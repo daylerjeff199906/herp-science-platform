@@ -94,7 +94,12 @@
         "active": "Active",
         "inactive": "Inactive",
         "registered": "Registered",
-        "noRecords": "No records found"
+        "noRecords": "No records found",
+        "noResults": "No results found",
+        "allLoaded": "All results loaded",
+        "loading": "Loading...",
+        "loadMore": "Load more",
+        "gallery": "Gallery"
     },
     "Collections": {
         "latestTitle": "Latest Collections",
