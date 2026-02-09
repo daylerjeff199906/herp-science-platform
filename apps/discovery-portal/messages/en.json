@@ -16,7 +16,7 @@
         "titleAccent": "Amazon Biodiversity",
         "description": "Access the most complete scientific collection of amphibians and reptiles from IIAP. Taxonomic and geographic information for research.",
         "searchPlaceholder": "Search species...",
-        "actionButton": "Customize search",
+        "actionButton": "Search collection",
         "explore": "Explore",
         "slides": {
             "slide1": {

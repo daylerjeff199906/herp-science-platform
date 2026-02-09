@@ -70,7 +70,7 @@ export function HeroSlider() {
                 />
               </div>
               {/* Overlay Gradient - Amazonian Green */}
-              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute inset-0 bg-black/20" />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -81,11 +81,11 @@ export function HeroSlider() {
           <div className="max-w-4xl space-y-8 md:space-y-10 animate-in fade-in slide-in-from-left-10 duration-700">
             {/* Text Content */}
             <div className="space-y-6">
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-none drop-shadow-md">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl text-white tracking-tight leading-none drop-shadow-md">
                 {t('titlePrefix')} <br />
                 <span className="text-[#ADDE60]">{t('titleAccent')}</span>
               </h1>
-              <p className="text-lg md:text-xl text-emerald-100/90 max-w-2xl leading-relaxed font-light">
+              <p className="text-lg text-emerald-100/90 max-w-2xl leading-relaxed font-light">
                 {t('description')}
               </p>
             </div>
