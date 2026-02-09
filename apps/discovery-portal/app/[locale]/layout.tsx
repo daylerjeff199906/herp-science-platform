@@ -40,7 +40,7 @@ export default async function RootLayout(props: Props) {
   const children = props.children;
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
         <NextIntlClientProvider messages={messages}>
           <Providers>
