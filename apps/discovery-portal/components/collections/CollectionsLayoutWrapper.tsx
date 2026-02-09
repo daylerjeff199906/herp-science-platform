@@ -4,9 +4,6 @@ import React, { useEffect, useState } from 'react'
 import { useCollectionsStore } from '@/stores/useCollectionsStore'
 import { CollectionsFilters } from './CollectionsFilters'
 import { cn } from '@repo/ui'
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Button } from '@repo/ui'
-import { Filter, SlidersHorizontal } from 'lucide-react'
-import { CollectionsFilterContent } from './CollectionsFilterContent'
 
 function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
     const { isSidebarOpen, toggleSidebar } = useCollectionsStore()
@@ -38,35 +35,7 @@ function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
                 "flex-1  transition-all duration-300 ease-in-out py-4",
                 "w-full"
             )}>
-                {/* Trigger for Collapsed Sidebar (Sticky) */}
-                {!isSidebarOpen && (
-                    <div className="hidden lg:block sticky top-24 z-20 ml-4 mb-4">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" className="gap-2 rounded-full shadow-md hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
-                                    <SlidersHorizontal size={16} />
-                                    <span>Filtros</span>
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="left" className="w-[400px] overflow-y-auto">
-                                <SheetHeader>
-                                    <div className="flex items-center justify-between">
-                                        <SheetTitle className="flex items-center gap-2">
-                                            <Filter size={20} className='text-primary' />
-                                            Filtros
-                                        </SheetTitle>
-                                        <Button variant="ghost" size="sm" onClick={() => toggleSidebar()}>
-                                            Restaurar Panel
-                                        </Button>
-                                    </div>
-                                </SheetHeader>
-                                <div className="py-6">
-                                    <CollectionsFilterContent />
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-                )}
+
 
                 <div className={cn(
                     "flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6",
