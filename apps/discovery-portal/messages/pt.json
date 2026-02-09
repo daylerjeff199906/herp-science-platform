@@ -65,7 +65,12 @@
         "active": "Ativo",
         "inactive": "Inativo",
         "registered": "Registrado",
-        "noRecords": "Nenhum registro encontrado"
+        "noRecords": "Nenhum registro encontrado",
+        "noResults": "Nenhum resultado encontrado",
+        "allLoaded": "Todos os resultados carregados",
+        "loading": "Carregando...",
+        "loadMore": "Carregar mais",
+        "gallery": "Galeria"
     },
     "Collections": {
         "latestTitle": "Últimas Coleções",
@@ -107,6 +112,7 @@
             "province": "Província",
             "district": "Distrito",
             "locality": "Localidade",
+            "location": "Localização",
             "date": "Data",
             "latitude": "Latitude",
             "longitude": "Longitude",

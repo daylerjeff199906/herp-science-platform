@@ -76,7 +76,7 @@ export function IndividualDetailGallery({ individual }: IndividualDetailGalleryP
 
                 {/* Thumbnails Grid (if more than 1 image) */}
                 {images.length > 1 && (
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-2">
                         {images.slice(1, 5).map((img, i) => (
                             <div
                                 key={img.id}

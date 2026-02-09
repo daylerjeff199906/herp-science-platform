@@ -63,7 +63,7 @@ export function IndividualDetailHeader({ individual }: IndividualDetailHeaderPro
                     {commonName && (
                         <div className="flex flex-wrap items-center justify-center gap-2 text-lg text-gray-600">
                             <span className="font-semibold">{t('commonName')}:</span>
-                            <span>{commonName}</span>
+                            <span className="text-primary text-xl">{commonName}</span>
                         </div>
                     )}
 
