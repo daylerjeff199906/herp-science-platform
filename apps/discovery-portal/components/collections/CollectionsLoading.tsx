@@ -3,14 +3,13 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { Skeleton } from '@repo/ui/components/ui/skeleton';
-import { cn } from '@/lib/utils';
 
 function GridSkeleton() {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="h-full flex flex-col group cursor-pointer">
-                    <Skeleton className="h-64 w-full rounded-xl mb-6 bg-slate-100" />
+                    <Skeleton className="h-64 w-full rounded-xl mb-6 bg-slate-100 dark:bg-gray-700" />
                     <div className="flex flex-col flex-grow">
                         <Skeleton className="h-7 w-3/4 mb-3 rounded-md" />
                         <Skeleton className="h-5 w-1/2 mb-6 rounded-md" />
@@ -34,7 +33,7 @@ function ListSkeleton() {
     return (
         <div className="flex flex-col space-y-4">
             {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex flex-col md:flex-row gap-4 p-4 bg-white rounded-xl border border-gray-100">
+                <div key={i} className="flex flex-col md:flex-row gap-4 p-4 bg-white rounded-xl border border-gray-100 dark:bg-gray-800 dark:border-gray-700">
                     <Skeleton className="w-full md:w-56 h-48 md:h-auto rounded-lg bg-gray-100" />
                     <div className="flex flex-col flex-1 gap-3 py-1">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
@@ -51,7 +50,7 @@ function ListSkeleton() {
                             <Skeleton className="h-4 w-2/3 rounded-md" />
                             <Skeleton className="h-4 w-1/2 rounded-md" />
                         </div>
-                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50 md:border-none">
+                        <div className="mt-auto pt-3 flex items-center justify-between border-t border-gray-50 md:border-none dark:border-gray-700">
                             <Skeleton className="h-3 w-32 rounded-md" />
                             <Skeleton className="h-4 w-24 rounded-md" />
                         </div>
@@ -66,7 +65,7 @@ function GallerySkeleton() {
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-1">
             {Array.from({ length: 15 }).map((_, i) => (
-                <div key={i} className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm">
+                <div key={i} className="aspect-square relative overflow-hidden bg-gray-100 rounded-sm dark:bg-gray-700">
                     <Skeleton className="h-full w-full" />
                 </div>
             ))}
@@ -76,10 +75,10 @@ function GallerySkeleton() {
 
 function TableSkeleton() {
     return (
-        <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                    <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-semibold">
+                    <thead className="bg-gray-50 text-xs uppercase text-gray-500 font-semibold dark:bg-gray-700 dark:text-gray-200">
                         <tr>
                             <th className="px-6 py-4 w-24"><Skeleton className="h-4 w-12" /></th>
                             <th className="px-6 py-4"><Skeleton className="h-4 w-24" /></th>

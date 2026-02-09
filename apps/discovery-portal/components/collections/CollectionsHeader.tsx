@@ -15,6 +15,7 @@ import {
 } from '@repo/ui'
 import { ViewToggler } from './ViewToggler'
 import { CollectionsFilterContent } from './CollectionsFilterContent'
+import { useCollectionsStore } from '@/stores/useCollectionsStore'
 
 import { cn } from '@/lib/utils'
 
@@ -22,6 +23,8 @@ export const CollectionsHeader = () => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+
+    const { isSidebarOpen, toggleSidebar } = useCollectionsStore()
 
     // --- Scroll State ---
     const [isScrolled, setIsScrolled] = React.useState(false)
@@ -71,10 +74,37 @@ export const CollectionsHeader = () => {
                     : "bg-transparent border-transparent"
             )}
         >
-            <div className="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4 px-4 sm:px-0">
-
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 px-4 sm:px-0">
                 {/* Left: Search Bar */}
-                <div className='w-full md:w-1/2 lg:w-1/3'>
+                <div className='w-full md:w-1/2 lg:w-1/3 flex items-center gap-2'>
+                    {!isSidebarOpen && (
+                        <div className="hidden lg:block">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="outline" className="gap-2 rounded-full shadow-sm bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700">
+                                        <SlidersHorizontal size={16} />
+                                        <span>Filtros</span>
+                                    </Button>
+                                </SheetTrigger>
+                                <SheetContent side="left" className="w-[400px] overflow-y-auto">
+                                    <SheetHeader>
+                                        <div className="flex items-center justify-between">
+                                            <SheetTitle className="flex items-center gap-2">
+                                                <Filter size={20} className='text-primary' />
+                                                Filtros
+                                            </SheetTitle>
+                                            <Button variant="ghost" size="sm" onClick={() => toggleSidebar()}>
+                                                Restaurar Panel
+                                            </Button>
+                                        </div>
+                                    </SheetHeader>
+                                    <div className="py-6">
+                                        <CollectionsFilterContent />
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
+                    )}
                     <SmartFilter
                         type="text"
                         placeholder="Buscar especie, código..."

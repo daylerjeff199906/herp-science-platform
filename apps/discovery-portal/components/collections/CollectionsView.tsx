@@ -48,8 +48,8 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                         <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                             <SlidersHorizontal className="text-gray-400" size={32} />
                         </div>
-                        <h3 className="text-xl font-semibold text-gray-900">No se encontraron resultados</h3>
-                        <p className="text-gray-500 max-w-sm mt-2">Intenta ajustar los filtros para encontrar lo que buscas.</p>
+                        <h3 className="text-xl font-semibold">No se encontraron resultados</h3>
+                        <p className="text-foreground max-w-sm mt-2">Intenta ajustar los filtros para encontrar lo que buscas.</p>
                     </div>
                 ) : (
                     <>

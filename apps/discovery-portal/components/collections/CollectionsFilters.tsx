@@ -34,10 +34,7 @@ export const CollectionsFilters = () => {
                     <PanelLeftClose size={18} />
                 </Button>
             </div>
-
-            <div className='rounded-xl border border-gray-100 dark:border-gray-800 p-4'>
-                <CollectionsFilterContent />
-            </div>
+            <CollectionsFilterContent />
         </div>
     );
 };

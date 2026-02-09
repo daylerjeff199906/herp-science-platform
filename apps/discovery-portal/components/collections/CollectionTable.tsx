@@ -17,14 +17,14 @@ export function CollectionTable({ data }: CollectionTableProps) {
     const tCommon = useTranslations('Common')
 
     if (data.length === 0) {
-        return <div className="p-8 text-center">{tCommon('noRecords')}</div>
+        return <div className="p-8 text-center text-gray-500">{tCommon('noRecords')}</div>
     }
 
     return (
-        <div className="w-full overflow-hidden rounded-xl border border-border">
+        <div className="w-full overflow-hidden rounded-xl border shadow-sm">
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
-                    <thead className="text-xs uppercase font-semibold">
+                    <thead className="text-xs uppercase text-gray-500 font-semibold">
                         <tr>
                             <th className="px-6 py-4 w-24">{tCollections('image')}</th>
                             <th className="px-6 py-4">{tCollections('scientificName')}</th>
@@ -37,7 +37,7 @@ export function CollectionTable({ data }: CollectionTableProps) {
                             <th className="px-6 py-4 text-center">{tCollections('actions')}</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                         {data.map((item) => {
                             const imageUrl = item.files.images?.[0]?.name
                             const scientificName = item.species?.scientificName || tCommon('noIdentification')
@@ -51,9 +51,9 @@ export function CollectionTable({ data }: CollectionTableProps) {
                             const forestType = item.forestType?.name || '-'
 
                             return (
-                                <tr key={item.id} className="transition-colors text-xs">
+                                <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-xs">
                                     <td className="px-6 py-3">
-                                        <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
+                                        <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-100 bg-transparent dark:border-gray-800">
                                             {imageUrl ? (
                                                 <Image
                                                     src={imageUrl}
