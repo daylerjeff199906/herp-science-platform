@@ -154,6 +154,7 @@
             "province": "Provincia",
             "district": "Distrito",
             "locality": "Localidad",
+            "location": "Ubicación",
             "date": "Fecha",
             "latitude": "Latitud",
             "longitude": "Longitud",

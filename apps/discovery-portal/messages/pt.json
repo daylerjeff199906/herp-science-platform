@@ -107,6 +107,7 @@
             "province": "Província",
             "district": "Distrito",
             "locality": "Localidade",
+            "location": "Localização",
             "date": "Data",
             "latitude": "Latitude",
             "longitude": "Longitude",
