@@ -136,6 +136,7 @@
             "province": "Province",
             "district": "District",
             "locality": "Locality",
+            "location": "Location",
             "date": "Date",
             "latitude": "Latitude",
             "longitude": "Longitude",
