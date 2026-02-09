@@ -47,15 +47,16 @@ export default function GalleryPage() {
     }
 
     return (
-        <div className="px-4 py-8 min-h-screen">
-            <h1 className="text-3xl font-bold mb-8 text-center">{tCommon('gallery')}</h1>
-
+        <div className="px-4 min-h-screen">
+            <div
+                className='h-24 bg-dark-900'
+            />
             {status === 'pending' ? (
                 <div className="flex justify-center py-20">
                     <Loader2 className="w-10 h-10 animate-spin text-primary" />
                 </div>
             ) : status === 'error' ? (
-                <div className="text-center text-red-500 py-20">
+                <div className="text-center text-red-500 py-20 min-h-screen flex items-center justify-center">
                     {tCommon('errorLoadingData')}
                 </div>
             ) : (
