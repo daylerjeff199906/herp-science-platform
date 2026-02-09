@@ -21,7 +21,7 @@ export function GalleryIndividualCard({ individual, onClick }: GalleryIndividual
 
     return (
         <div
-            className="group relative mb-4 break-inside-avoid rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
+            className="group relative mb-4 break-inside-avoid rounded-xl overflow-hidden cursor-pointer bg-gray-950 shadow-sm hover:shadow-md transition-all duration-300 animate-in fade-in zoom-in-95 duration-700 slide-in-from-bottom-8"
             onClick={onClick}
         >
             {/* Image */}
@@ -56,7 +56,7 @@ export function GalleryIndividualCard({ individual, onClick }: GalleryIndividual
 
             {/* Content (Visible on hover or always visible in a clean way) */}
             <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                <h3 className="text-white font-bold text-sm md:text-base leading-tight">
+                <h3 className="text-white font-bold text-sm md:text-base leading-tight italic">
                     {scientificName}
                 </h3>
                 {commonName && (

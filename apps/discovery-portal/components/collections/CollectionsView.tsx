@@ -7,6 +7,7 @@ import { SlidersHorizontal } from 'lucide-react'
 import { Individual, PaginatedResponse } from '@repo/shared-types'
 import { CollectionsHeader } from './CollectionsHeader'
 import { PaginationControls } from '@repo/ui'
+import { useCollectionsStore } from '@/stores/useCollectionsStore'
 
 interface CollectionsViewProps {
     data: PaginatedResponse<Individual>
@@ -16,6 +17,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const { isSidebarOpen } = useCollectionsStore()
 
     // View Handling
     const rawView = searchParams.get('view')
@@ -38,7 +40,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     }
 
     return (
-        <div className="flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6">
+        <>
             <CollectionsHeader />
             <div className="min-h-[500px] flex flex-col gap-6">
                 {items.length === 0 ? (
@@ -51,10 +53,25 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                     </div>
                 ) : (
                     <>
+                        {/* Pagination Controls */}
+                        <div className="mb-auto border-b border-gray-100 dark:border-gray-800">
+                            <PaginationControls
+                                data={data}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                enableUrlSync // Also enables reading initial page size from URL if logic permits
+                            />
+                        </div>
                         <div className={`
-                            ${view === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : ''}
+                            ${view === 'grid' ? (isSidebarOpen
+                                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
+                                : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6')
+                                : ''}
                             ${view === 'list' ? 'flex flex-col gap-4' : ''}
-                            ${view === 'gallery' ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4' : ''}
+                            ${view === 'gallery' ? (isSidebarOpen
+                                ? 'grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'
+                                : 'grid grid-cols-2 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-4')
+                                : ''}
                         `}>
                             {view === 'table' ? (
                                 <CollectionTable data={items} />
@@ -77,6 +94,6 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                     </>
                 )}
             </div>
-        </div>
+        </>
     )
 }

@@ -1,13 +1,15 @@
 'use client'
 
 import React, { useMemo } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
-import { Badge } from '@repo/ui';
+import { PanelLeftClose } from 'lucide-react';
+import { Badge, Button } from '@repo/ui';
 import { useSearchParams } from 'next/navigation';
 import { CollectionsFilterContent } from './CollectionsFilterContent';
+import { useCollectionsStore } from '@/stores/useCollectionsStore';
 
 export const CollectionsFilters = () => {
     const searchParams = useSearchParams()
+    const { toggleSidebar } = useCollectionsStore()
 
     const activeCount = useMemo(() => {
         let count = 0;
@@ -18,27 +20,24 @@ export const CollectionsFilters = () => {
     }, [searchParams])
 
     return (
-        <aside className="hidden lg:block flex-shrink-0 space-y-4">
-            <div className='p-4 rounded-xl border border-gray-100 sticky top-24'>
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold text-xs text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <div className="flex items-center gap-2 relative">
-                            {activeCount > 0 && (
-                                <Badge variant="default" className="bg-primary hover:bg-primary-600 rounded-full w-5 h-5.5 flex items-center justify-center absolute -top-4 -right-4 text-[10px]">
-                                    {activeCount}
-                                </Badge>
-                            )}
-                            <SlidersHorizontal size={14} />
-                        </div>
-                        {activeCount > 0 ? (
-                            <span className="text-xs text-gray-500 pl-3 dark:text-gray-400">Filtros</span>
-                        ) : (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Filtros</span>
-                        )}
-                    </h3>
-                </div>
+        <div className="space-y-4 px-4 pb-4">
+            <div className="flex items-center justify-between mb-2 mt-2">
+                <h2 className="font-semibold text-lg flex items-center gap-2">
+                    Filtros
+                    {activeCount > 0 && (
+                        <Badge variant="default" className="bg-primary hover:bg-primary-600 rounded-full w-5 h-5 flex items-center justify-center text-[10px] ml-1">
+                            {activeCount}
+                        </Badge>
+                    )}
+                </h2>
+                <Button variant="ghost" size="icon" onClick={toggleSidebar} title="Minimizar filtros">
+                    <PanelLeftClose size={18} />
+                </Button>
+            </div>
+
+            <div className='rounded-xl border border-gray-100 dark:border-gray-800 p-4'>
                 <CollectionsFilterContent />
             </div>
-        </aside>
+        </div>
     );
 };

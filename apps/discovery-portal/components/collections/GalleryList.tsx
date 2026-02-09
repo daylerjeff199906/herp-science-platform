@@ -105,7 +105,7 @@ export function GalleryList() {
 
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gray-950">
             <div
                 className='h-24 bg-dark-900'
             />

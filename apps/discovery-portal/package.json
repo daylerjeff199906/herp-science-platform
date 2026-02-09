@@ -30,7 +30,8 @@
     "react-leaflet": "^5.0.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "yet-another-react-lightbox": "^3.28.0"
+    "yet-another-react-lightbox": "^3.28.0",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
