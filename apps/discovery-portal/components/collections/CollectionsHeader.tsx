@@ -67,7 +67,7 @@ export const CollectionsHeader = () => {
             className={cn(
                 "sticky top-20 lg:top-20 z-30 transition-all duration-200",
                 isScrolled
-                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm py-4 lg:px-4 mb-6 rounded-xl dark:bg-gray-900/80 dark:border-gray-800"
+                    ? "bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm py-4 lg:px-4 mb-6 rounded-xl dark:bg-gray-900/80 dark:border-gray-800"
                     : "bg-transparent border-transparent"
             )}
         >
