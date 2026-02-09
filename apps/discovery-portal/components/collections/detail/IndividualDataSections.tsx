@@ -30,8 +30,8 @@ const DetailRow = ({ label, value, isLink = false }: { label: string, value: Rea
 }
 
 const SectionCard = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-6">
-        <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center gap-2">
+    <div className="rounded-xl border border-gray-200 overflow-hidden mb-6">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-2">
             <Icon className="w-5 h-5 text-gray-400" />
             <h3 className="font-semibold text-gray-900">{title}</h3>
         </div>

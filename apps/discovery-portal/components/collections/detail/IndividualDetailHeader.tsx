@@ -28,13 +28,13 @@ export function IndividualDetailHeader({ individual }: IndividualDetailHeaderPro
     ].filter(Boolean).join(' > ')
 
     return (
-        <div className="border-b border-gray-200 bg-white">
+        <div className="border-b">
             <div className="container mx-auto px-4 py-8">
                 {/* Top Navigation Bar */}
                 <div className="flex items-center justify-between mb-8">
                     <Link
                         href={ROUTES.COLLECTIONS}
-                        className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
+                        className="flex items-center text-sm font-medium transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         {t('backToCollections')}
@@ -55,7 +55,7 @@ export function IndividualDetailHeader({ individual }: IndividualDetailHeaderPro
                     </div>
 
                     {/* Scientific Name */}
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-slate-800 italic leading-tight">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif italic leading-tight">
                         {scientificName}
                     </h1>
 
