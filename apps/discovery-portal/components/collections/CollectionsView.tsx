@@ -66,7 +66,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                         </div>
 
                         {/* Pagination Controls */}
-                        <div className="mt-auto border-t border-gray-100">
+                        <div className="mt-auto border-t border-gray-100 dark:border-gray-800">
                             <PaginationControls
                                 data={data}
                                 onPageChange={handlePageChange}
