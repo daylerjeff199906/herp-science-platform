@@ -25,7 +25,7 @@ export function AboutSection() {
             <div className="space-y-6">
               <div className="flex items-center gap-3">
                 <span className="text-[#ADDE60] text-lg font-bold">+</span>
-                <span className="text-gray-400 font-medium uppercase tracking-widest text-sm">
+                <span className="text-gray-400 dark:text-gray-200 font-medium uppercase tracking-widest text-sm">
                   {t('tag')}
                 </span>
               </div>
@@ -34,7 +34,7 @@ export function AboutSection() {
                 {t('title')}
               </h2>
 
-              <div className="space-y-4 text-gray-400 text-lg leading-relaxed">
+              <div className="space-y-4 text-gray-500 dark:text-gray-200 text-lg leading-relaxed">
                 <p>{t('description')}</p>
                 <p>{t('description2')}</p>
               </div>

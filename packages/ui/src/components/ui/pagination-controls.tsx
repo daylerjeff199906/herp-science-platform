@@ -71,7 +71,7 @@ export function PaginationControls({
     if (totalItems === 0) return null;
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 select-none text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 select-none text-sm">
             {/* Left Side: Stats */}
             <div className="text-center sm:text-left">
                 Mostrando <span className="font-medium">{startItem}</span> - <span className="font-medium">{endItem}</span> de <span className="font-medium">{totalItems}</span> resultados
@@ -82,7 +82,7 @@ export function PaginationControls({
             <div className="flex flex-col sm:flex-row items-center gap-4">
                 {/* Page Size Selector */}
                 <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 whitespace-nowrap">Filas por página</span>
+                    <span className="text-xs whitespace-nowrap">Filas por página</span>
                     <select
                         value={pageSize}
                         onChange={(e) => handlePageSizeChange(e.target.value)}

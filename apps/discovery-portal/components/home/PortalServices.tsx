@@ -36,13 +36,13 @@ export function PortalServices() {
     ]
 
     return (
-        <section className="py-20 bg-white">
+        <section className="py-20">
             <div className="container px-4 md:px-6 mx-auto">
                 <div className="mb-12">
-                    <span className="text-gray-500 font-semibold tracking-wider uppercase text-sm mb-4 block">
+                    <span className="text-gray-500 dark:text-gray-200 font-semibold tracking-wider uppercase text-sm mb-4 block">
                         {t('tag')}
                     </span>
-                    <h2 className="text-4xl md:text-5xl font-light text-slate-700 leading-tight">
+                    <h2 className="text-4xl md:text-5xl font-light text-slate-700 dark:text-white leading-tight">
                         {t('title')} <br />
                         <span className="font-normal">{t('title2')}</span>
                     </h2>
@@ -53,7 +53,7 @@ export function PortalServices() {
                         <div
                             key={card.id}
                             className={`
-                relative p-8 border-gray-200 min-h-[320px] flex flex-col justify-between group transition-colors hover:bg-gray-50
+                relative p-8 border-gray-200 min-h-[320px] dark:border-gray-700 dark:hover:bg-gray-800 flex flex-col justify-between group transition-colors hover:bg-gray-50
                 border-t border-l 
                 ${(index + 1) % 3 === 0 ? 'lg:border-r' : ''} /* Right border for items 3, 6 (on desktop) */
                 ${index === 1 ? 'md:border-r lg:border-r-0' : ''} /* Mobile/Tablet borders */
@@ -65,8 +65,8 @@ export function PortalServices() {
               `}
                         >
                             <div>
-                                <h3 className="text-2xl font-light text-slate-700 mb-4">{card.title}</h3>
-                                <p className="text-gray-500 text-sm leading-relaxed">{card.description}</p>
+                                <h3 className="text-2xl font-light text-slate-700 dark:text-white mb-4">{card.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-200 text-sm leading-relaxed">{card.description}</p>
                             </div>
 
                             <div className="mt-8">

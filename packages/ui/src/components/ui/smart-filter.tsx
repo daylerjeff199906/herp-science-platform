@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cn } from "../../lib/utils"
-import { Check, ChevronsUpDown, Search, X } from "lucide-react"
+import { Check, ChevronsUpDown, Plus, Search, X } from "lucide-react"
 import { Input } from "./input"
 import { Switch } from "./switch"
 import { Checkbox } from "./checkbox"
@@ -74,7 +74,7 @@ const TextFilter = ({ value, onChange, placeholder, debounceMs = 300, className 
                 value={localValue}
                 onChange={(e) => setLocalValue(e.target.value)}
                 className={cn(
-                    "pl-9 rounded-lg bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-full",
+                    "pl-9 rounded-lg bg-slate-50 border-slate-200 focus:bg-white transition-colors rounded-full dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-900",
                     className
                 )}
             />
@@ -108,7 +108,7 @@ const CheckboxFilter = ({ label, value, onChange, className }: SmartFilterProps)
             />
             <label
                 htmlFor={`chk-${label}`}
-                className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700 cursor-pointer"
+                className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
             >
                 {label}
             </label>
@@ -120,12 +120,12 @@ const CheckboxFilter = ({ label, value, onChange, className }: SmartFilterProps)
 const RadioFilter = ({ label, value, onChange, options, className }: SmartFilterProps) => {
     return (
         <div className={cn("space-y-3", className)}>
-            {label && <h4 className="font-medium text-slate-900">{label}</h4>}
+            {label && <h4 className="font-medium">{label}</h4>}
             <RadioGroup value={String(value)} onValueChange={onChange} className="gap-2">
                 {options?.map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                         <RadioGroupItem value={String(opt.value)} id={`r-${opt.value}`} />
-                        <label htmlFor={`r-${opt.value}`} className="text-slate-600 cursor-pointer">
+                        <label htmlFor={`r-${opt.value}`} className="cursor-pointer">
                             {opt.label}
                         </label>
                     </div>
@@ -194,14 +194,14 @@ const SelectFilter = ({
 
     return (
         <div className="flex flex-col gap-1.5">
-            {label && <label className="text-xs font-semibold tracking-wider text-slate-500">{label}</label>}
+            {label && <label className="text-xs font-semibold tracking-wider text-foreground">{label}</label>}
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <div
                         role="combobox"
                         aria-expanded={open}
                         className={cn(
-                            "flex h-8 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-1 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer hover:bg-slate-50 transition-colors",
+                            "flex h-8 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-1 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer transition-colors",
                             className
                         )}
                         onClick={() => setOpen(!open)}
@@ -360,7 +360,7 @@ const ListSearchFilter = ({
                     placeholder={placeholder || "Buscar..."}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="pl-8 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-md"
+                    className="pl-8 h-8 text-xs bg-slate-50 border-slate-200 focus:bg-white rounded-md dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-900"
                 />
             </div>
 
@@ -370,7 +370,7 @@ const ListSearchFilter = ({
                 {value && (
                     <div
                         onClick={() => onChange(undefined)}
-                        className="flex items-center gap-2 p-1.5 rounded-md hover:bg-red-50 text-red-600 cursor-pointer text-xs font-medium transition-colors"
+                        className="flex items-center gap-2 p-1.5 rounded-md hover:bg-red-50 text-red-600 cursor-pointer text-xs font-medium transition-colors dark:hover:bg-red-900 dark:text-red-600"
                     >
                         <X size={14} />
                         <span>Limpiar selección</span>
@@ -391,7 +391,7 @@ const ListSearchFilter = ({
                             onClick={() => onChange(isSelected ? undefined : opt.value)}
                             className={cn(
                                 "flex items-start gap-2 p-1 rounded-md cursor-pointer text-xs transition-colors group",
-                                isSelected ? "bg-blue-50 text-blue-700" : "hover:bg-slate-50 text-slate-700"
+                                isSelected ? "bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-600" : "hover:bg-slate-50 text-slate-700 dark:hover:bg-slate-900 dark:text-slate-600"
                             )}
                         >
                             <div className={cn(
@@ -400,7 +400,7 @@ const ListSearchFilter = ({
                             )}>
                                 {isSelected && <div className="h-1 w-1 rounded-full bg-white" />}
                             </div>
-                            <span className="leading-tight text-xs">{opt.label}</span>
+                            <span className="leading-tight text-xs dark:text-slate-300">{opt.label}</span>
                         </div>
                     )
                 })}
@@ -414,8 +414,9 @@ const ListSearchFilter = ({
                 {!loading && hasMore && initialized && (
                     <button
                         onClick={handleLoadMore}
-                        className="w-full text-xs text-blue-600 font-medium hover:underline py-1 mt-1 text-center"
+                        className="w-full text-xs text-blue-600 font-medium hover:underline py-1 mt-1 text-start dark:text-blue-400 pl-1 flex items-center gap-3"
                     >
+                        <Plus size={14} />
                         Ver más
                     </button>
                 )}

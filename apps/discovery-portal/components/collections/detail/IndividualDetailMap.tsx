@@ -32,9 +32,9 @@ export function IndividualDetailMap({ individual }: IndividualDetailMapProps) {
     if (!hasCoordinates) return null
 
     return (
-        <Card className="rounded-xl bg-white">
-            <CardHeader className="bg-gray-50 rounded-t-xl">
-                <CardTitle className="text-lg font-semibold text-gray-900 px-1">
+        <Card className="rounded-xl">
+            <CardHeader className="rounded-t-xl">
+                <CardTitle className="text-lg font-semibold px-1">
                     {t('distributionMap')}
                 </CardTitle>
             </CardHeader>
@@ -43,7 +43,7 @@ export function IndividualDetailMap({ individual }: IndividualDetailMapProps) {
                 <div className="w-full h-[400px] rounded-xl overflow-hidden border border-gray-200 shadow-sm relative z-0">
                     <MapWithNoSSR lat={lat!} lng={lng!} popupText={individual.species.scientificName} />
                 </div>
-                <div className="mt-2 text-xs text-gray-500 flex justify-end gap-4 px-1">
+                <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex justify-end gap-4 px-1">
                     <span>Lat: {lat?.toFixed(5)}</span>
                     <span>Lng: {lng?.toFixed(5)}</span>
                 </div>
