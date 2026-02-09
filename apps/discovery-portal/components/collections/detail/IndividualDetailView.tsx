@@ -14,14 +14,14 @@ interface IndividualDetailViewProps {
 
 export function IndividualDetailView({ individual }: IndividualDetailViewProps) {
     return (
-        <div className="min-h-screen bg-primary/20 pb-20">
+        <div className="min-h-screen pb-20">
             {/* Header Sticky */}
             <IndividualDetailHeader individual={individual} />
 
             <div className="container mx-auto px-4 py-8 max-w-7xl">
                 <div className="space-y-8">
                     {/* Gallery */}
-                    <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="p-4 rounded-xl border border-gray-200">
                         <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-1">Multimedia</h3>
                         <IndividualDetailGallery individual={individual} />
                     </div>

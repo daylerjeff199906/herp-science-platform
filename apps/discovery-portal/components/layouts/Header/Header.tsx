@@ -7,6 +7,7 @@ import { LogoRender } from '@repo/ui/logo'
 import { Navigation } from './Navigation'
 import { MobileMenu } from './MobileMenu'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { ModeToggle } from '../ModeToggle'
 import { ROUTES } from '@/config/routes'
 
 export function Header() {
@@ -73,6 +74,8 @@ export function Header() {
                         >
                             {t('join')}
                         </Link>
+
+                        <ModeToggle />
                     </div>
 
                     {/* Mobile Menu Toggle */}

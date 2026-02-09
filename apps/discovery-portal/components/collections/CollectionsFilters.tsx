@@ -19,7 +19,7 @@ export const CollectionsFilters = () => {
 
     return (
         <aside className="hidden lg:block flex-shrink-0 space-y-4">
-            <div className='p-4 bg-white rounded-xl border border-gray-100 sticky top-24'>
+            <div className='p-4 rounded-xl border border-gray-100 sticky top-24'>
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-xs text-gray-900 flex items-center gap-2">
                         <div className="flex items-center gap-2 relative">

@@ -67,7 +67,7 @@ export const CollectionsHeader = () => {
             className={cn(
                 "sticky top-20 lg:top-20 z-30 transition-all duration-200",
                 isScrolled
-                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm py-4 lg:px-4 mb-6 rounded-xl"
+                    ? "bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm py-4 lg:px-4 mb-6 rounded-xl dark:bg-gray-900/80 dark:border-gray-800"
                     : "bg-transparent border-transparent"
             )}
         >
@@ -96,7 +96,7 @@ export const CollectionsHeader = () => {
                     {/* Download Button */}
                     <Button
                         variant="default" // Using default which is usually primary
-                        className="bg-black text-white hover:bg-gray-800 rounded-full gap-2 shadow-sm"
+                        className="bg-black text-white hover:bg-gray-800 rounded-full gap-2 shadow-sm dark:bg-white dark:text-black dark:hover:bg-gray-200"
                     >
                         <Download size={16} />
                         <span className="hidden sm:inline">Descargar</span>
@@ -106,11 +106,11 @@ export const CollectionsHeader = () => {
                     <div className="lg:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative bg-white">
+                                <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
                                     <SlidersHorizontal size={16} />
                                     <span>Filtros</span>
                                     {activeCount > 0 && (
-                                        <Badge className="bg-blue-600 h-5 w-5 p-0 flex items-center justify-center rounded-full absolute -top-1 -right-1">
+                                        <Badge className="bg-blue-600 h-5 w-5 p-0 flex items-center justify-center rounded-full absolute -top-1 -right-1 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
                                             {activeCount}
                                         </Badge>
                                     )}
@@ -119,7 +119,7 @@ export const CollectionsHeader = () => {
                             <SheetContent side="left" className="w-[300px] sm:w-[400px] overflow-y-auto">
                                 <SheetHeader className="mb-6">
                                     <SheetTitle className="flex items-center gap-2">
-                                        <Filter size={20} />
+                                        <Filter size={20} className='text-blue-600 dark:text-blue-600' />
                                         Filtros
                                     </SheetTitle>
                                 </SheetHeader>
@@ -129,8 +129,8 @@ export const CollectionsHeader = () => {
                                     <CollectionsFilterContent />
                                 </div>
 
-                                <div className="mt-8 pt-4 border-t sticky bottom-0 bg-background pb-4">
-                                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                                <div className="mt-8 pt-4 border-t sticky bottom-0 bg-background pb-4 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
+                                    <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
                                         Ver resultados
                                     </Button>
                                 </div>

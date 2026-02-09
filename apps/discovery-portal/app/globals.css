@@ -91,7 +91,7 @@ a {
   }
 
   .dark {
-    --background: oklch(0.31 0.03 150.45);
+    --background: oklch(17.976% 0.01125 151.114);
     --foreground: oklch(0.84 0.01 145.33);
     --card: oklch(0.35 0.03 149.75);
     --card-foreground: oklch(0.71 0.02 145.26);
@@ -138,12 +138,12 @@ a {
 
 
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-    body {
-      @apply bg-background text-foreground;
-    }
-  } 
+  body {
+    @apply bg-background text-foreground;
+  }
+}

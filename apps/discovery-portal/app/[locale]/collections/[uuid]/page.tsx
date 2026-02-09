@@ -39,7 +39,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     if (!individual) {
         return (
             <div className="container mx-auto py-24 text-center">
-                <h1 className="text-2xl font-bold text-gray-900">{t('notFound')}</h1>
+                <h1 className="text-2xl font-bold">{t('notFound')}</h1>
             </div>
         )
     }

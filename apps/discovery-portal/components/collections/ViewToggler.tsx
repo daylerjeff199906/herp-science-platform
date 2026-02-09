@@ -27,14 +27,14 @@ export function ViewToggler() {
     ] as const
 
     return (
-        <div className="flex items-center bg-gray-100 rounded-lg p-1 gap-1">
+        <div className="flex items-center bg-gray-100 rounded-lg p-1 gap-1 dark:bg-gray-800">
             {buttons.map((btn) => (
                 <button
                     key={btn.id}
                     onClick={() => onViewChange(btn.id)}
                     className={cn(
-                        'p-2 rounded-md transition-all duration-200 text-gray-500 hover:text-gray-900',
-                        currentView === btn.id && 'bg-white text-primary shadow-sm'
+                        'p-2 rounded-md transition-all duration-200 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100',
+                        currentView === btn.id && 'bg-white text-primary shadow-sm dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200'
                     )}
                     title={btn.label}
                 >

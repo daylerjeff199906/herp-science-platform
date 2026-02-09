@@ -16,7 +16,7 @@
         "titleAccent": "Biodiversidad Amazónica",
         "description": "Accede a la colección científica más completa de anfibios y reptiles del IIAP. Información taxonómica y geográfica para la investigación.",
         "searchPlaceholder": "Buscar especie...",
-        "actionButton": "Personalizar búsqueda",
+        "actionButton": "Consultar colección",
         "explore": "Explorar",
         "slides": {
             "slide1": {
@@ -31,7 +31,8 @@
                 "title": "Anfibios y Reptiles",
                 "subtitle": "Explora nuestro catálogo taxonómico actualizado"
             }
-        }
+        },
+        "unknown": "Desconocido"
     },
     "Home": {
         "services": {
