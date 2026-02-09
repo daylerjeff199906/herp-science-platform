@@ -20,9 +20,9 @@ interface IndividualDataSectionsProps {
 const DetailRow = ({ label, value, isLink = false }: { label: string, value: React.ReactNode, isLink?: boolean }) => {
     if (value === null || value === undefined || value === '') return null
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors px-4 -mx-4">
-            <dt className="text-sm font-medium text-gray-500 md:col-span-1">{label}</dt>
-            <dd className="text-sm text-gray-900 md:col-span-2 font-medium break-words">
+        <div className="grid grid-cols-1 md:grid-cols-3 py-3 border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors px-4 -mx-4 dark:border-gray-800 dark:hover:bg-gray-800">
+            <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 md:col-span-1">{label}</dt>
+            <dd className="text-sm md:col-span-2 font-medium break-words">
                 {value}
             </dd>
         </div>
@@ -32,8 +32,8 @@ const DetailRow = ({ label, value, isLink = false }: { label: string, value: Rea
 const SectionCard = ({ title, icon: Icon, children }: { title: string, icon: any, children: React.ReactNode }) => (
     <div className="rounded-xl border border-gray-200 overflow-hidden mb-6">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-2">
-            <Icon className="w-5 h-5 text-gray-400" />
-            <h3 className="font-semibold text-gray-900">{title}</h3>
+            <Icon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
         </div>
         <div className="p-6">
             <dl className="space-y-1">
