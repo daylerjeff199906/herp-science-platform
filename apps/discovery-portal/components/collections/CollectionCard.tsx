@@ -125,15 +125,15 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                 {/* Content */}
                 <div className="flex flex-col flex-grow">
                     <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
-                        <h3 className="text-xl font-medium text-slate-900 mb-3 leading-snug group-hover:text-slate-600 transition-colors">
+                        <h3 className="text-xl font-medium mb-3 leading-snug group-hover:text-slate-600 dark:text-white dark:group-hover:text-slate-400 transition-colors">
                             {individual.species.scientificName}
-                            <span className="block text-slate-500 text-lg font-normal mt-1">
+                            <span className="block text-foreground text-lg font-normal mt-1">
                                 {individual.species.commonName}
                             </span>
                         </h3>
                     </Link>
 
-                    <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
+                    <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed dark:text-slate-400">
                         {individual.species.description ||
                             tCommon('noDescription')}
                     </p>
@@ -143,10 +143,10 @@ export function CollectionCard({ item, view }: CollectionCardProps) {
                             href={`${ROUTES.COLLECTIONS}/${individual.id}`}
                             className="flex items-center gap-3 group/link"
                         >
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition-colors duration-300 group-hover:bg-slate-900 group-hover:border-slate-900">
-                                <ArrowRight className="h-4 w-4 text-stone-600 transition-colors duration-300 group-hover:text-white" />
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition-colors duration-300 group-hover:bg-slate-900 group-hover:border-slate-900 dark:border-slate-700 dark:group-hover:border-slate-900 dark:bg-slate-800">
+                                <ArrowRight className="h-4 w-4 text-stone-600 transition-colors duration-300 group-hover:text-white dark:text-white" />
                             </div>
-                            <span className="text-sm font-medium text-slate-900 transition-all duration-300 group-hover:font-bold">
+                            <span className="text-sm font-medium text-slate-900 transition-all duration-300 group-hover:font-bold dark:text-slate-400 dark:group-hover:text-white">
                                 {tCommon('readMore')}
                             </span>
                         </Link>

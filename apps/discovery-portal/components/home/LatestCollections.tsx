@@ -17,6 +17,7 @@ import { Button } from '@repo/ui/components/ui/button'
 import { Skeleton } from '@repo/ui/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
 import { CollectionImagePlaceholder } from '@/components/collections/CollectionImagePlaceholder'
+import { CollectionCard } from '../collections/CollectionCard'
 
 export const LatestCollections = () => {
     const tCommon = useTranslations('Common')
@@ -70,7 +71,7 @@ export const LatestCollections = () => {
 
                     <Button
                         asChild
-                        className="rounded-full bg-slate-800 hover:bg-slate-700 text-white px-8 py-6 text-sm font-medium"
+                        className="rounded-full bg-slate-800 hover:bg-slate-700 text-white px-8 py-6 text-sm font-medium dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white"
                     >
                         <Link href={ROUTES.COLLECTIONS} className="flex items-center gap-2">
                             {tCommon('viewAll')}
@@ -88,7 +89,7 @@ export const LatestCollections = () => {
     if (individuals.length === 0) return null
 
     return (
-        <section className="bg-white">
+        <section className="">
             <div className="container mx-auto py-16 px-4">
                 {/* Header with Title and Custom Navigation */}
                 <Carousel
@@ -99,12 +100,12 @@ export const LatestCollections = () => {
                 >
                     <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
                         <div className="flex items-center gap-6">
-                            <h2 className="text-4xl md:text-5xl font-medium text-slate-900 tracking-tight">
+                            <h2 className="text-4xl md:text-5xl font-medium tracking-tight">
                                 {tCollections('latestTitle')}
                             </h2>
                             <div className="hidden md:flex gap-2">
-                                <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 transition-colors" />
-                                <CarouselNext className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 transition-colors" />
+                                <CarouselPrevious className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 dark:hover:text-white dark:hover:border-white transition-colors" />
+                                <CarouselNext className="static translate-y-0 h-12 w-12 border-slate-300 text-slate-600 hover:bg-transparent hover:text-slate-900 hover:border-slate-900 dark:hover:text-white dark:hover:border-white transition-colors" />
                             </div>
                         </div>
 
@@ -125,60 +126,10 @@ export const LatestCollections = () => {
                                 key={individual.id}
                                 className="pl-6 md:basis-1/2 lg:basis-1/4"
                             >
-                                <div className="h-full flex flex-col group cursor-pointer">
-                                    {/* Image Card */}
-                                    <div className="relative h-64 w-full overflow-hidden rounded-xl mb-6 bg-slate-100">
-                                        <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
-                                            {individual.files.images &&
-                                                individual.files.images.length > 0 ? (
-                                                <Image
-                                                    src={
-                                                        individual.files.images[0]?.name ||
-                                                        '/placeholder.png'
-                                                    }
-                                                    alt={individual.species.scientificName}
-                                                    fill
-                                                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                                />
-                                            ) : (
-                                                <div className="h-full w-full">
-                                                    <CollectionImagePlaceholder />
-                                                </div>
-                                            )}
-                                        </Link>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex flex-col flex-grow">
-                                        <Link href={`${ROUTES.COLLECTIONS}/${individual.id}`}>
-                                            <h3 className="text-xl font-medium text-slate-900 mb-3 leading-snug group-hover:text-slate-600 transition-colors">
-                                                {individual.species.scientificName}
-                                                <span className="block text-slate-500 text-lg font-normal mt-1">
-                                                    {individual.species.commonName}
-                                                </span>
-                                            </h3>
-                                        </Link>
-
-                                        <p className="text-slate-500 text-sm mb-6 line-clamp-3 leading-relaxed">
-                                            {individual.species.description ||
-                                                tCommon('noDescription')}
-                                        </p>
-
-                                        <div className="mt-auto">
-                                            <Link
-                                                href={`${ROUTES.COLLECTIONS}/${individual.id}`}
-                                                className="flex items-center gap-3 group/link"
-                                            >
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 transition-colors duration-300 group-hover:bg-slate-900 group-hover:border-slate-900">
-                                                    <ArrowRight className="h-4 w-4 text-stone-600 transition-colors duration-300 group-hover:text-white" />
-                                                </div>
-                                                <span className="text-sm font-medium text-slate-900 transition-all duration-300 group-hover:font-bold">
-                                                    {tCommon('readMore')}
-                                                </span>
-                                            </Link>
-                                        </div>
-                                    </div>
-                                </div>
+                                <CollectionCard
+                                    item={individual}
+                                    view="grid"
+                                />
                             </CarouselItem>
                         ))}
                     </CarouselContent>
