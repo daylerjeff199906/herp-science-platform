@@ -31,7 +31,8 @@
                 "title": "Amphibians and Reptiles",
                 "subtitle": "Explore our updated taxonomic catalog"
             }
-        }
+        },
+        "unknown": "Unknown"
     },
     "Home": {
         "stats": {

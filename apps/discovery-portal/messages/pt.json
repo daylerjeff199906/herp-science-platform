@@ -31,7 +31,8 @@
                 "title": "Anfíbios e Répteis",
                 "subtitle": "Explore nosso catálogo taxonômico atualizado"
             }
-        }
+        },
+        "unknown": "Desconhecido"
     },
     "Home": {
         "stats": {

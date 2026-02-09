@@ -89,7 +89,7 @@ export const LatestCollections = () => {
     if (individuals.length === 0) return null
 
     return (
-        <section className="">
+        <section id="latest-collections" className="">
             <div className="container mx-auto py-16 px-4">
                 {/* Header with Title and Custom Navigation */}
                 <Carousel

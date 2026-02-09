@@ -9,6 +9,9 @@ import {
 import { Input } from '@repo/ui/components/ui/input'
 import { Button } from '@repo/ui/components/ui/button'
 import Autoplay from 'embla-carousel-autoplay'
+import { ROUTES } from '@/config/routes'
+import { Link } from '@/i18n/routing'
+import { HeroSearch } from './HeroSearch'
 import { useTranslations } from 'next-intl'
 
 export function HeroSlider() {
@@ -41,6 +44,13 @@ export function HeroSlider() {
     },
   ]
 
+  const handleScrollToCollections = () => {
+    const element = document.getElementById('latest-collections')
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <div className="relative w-full h-screen min-[1920px]:h-[920px] bg-emerald-950 overflow-hidden">
       {' '}
@@ -59,17 +69,13 @@ export function HeroSlider() {
               key={slide.id}
               className="pl-0 relative w-full h-full"
             >
-              {/* Image */}
               <div className="relative w-full h-full">
-                {' '}
-                {/* Wrapper div for Next/Image */}
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="object-cover transition-transform duration-1000 select-none w-full h-screen md:h-full"
                 />
               </div>
-              {/* Overlay Gradient - Amazonian Green */}
               <div className="absolute inset-0 bg-black/20" />
             </CarouselItem>
           ))}
@@ -94,32 +100,34 @@ export function HeroSlider() {
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center w-full">
               {/* Search Bar - Style match: Outline white, pill shape, icon right */}
               <div className="relative w-full max-w-md group">
-                <Input
-                  placeholder={t('searchPlaceholder')}
-                  className="w-full h-14 pl-6 pr-12 bg-transparent border-[1.5px] border-[#ADDE60]/30 hover:border-[#ADDE60] text-white placeholder:text-white/60 focus-visible:ring-1 focus-visible:ring-[#ADDE60] focus-visible:border-[#ADDE60] transition-all rounded-full text-lg"
-                />
-                <Search className="absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-[#ADDE60]/80 group-hover:text-[#ADDE60] transition-colors" />
+                <HeroSearch />
               </div>
 
               {/* Custom Action Button - Style match: Solid Green background, dark text */}
               <Button
+                asChild
                 size="lg"
                 className="h-14 pl-2 pr-6 bg-[#ADDE60] hover:bg-[#9cc954] text-emerald-950 font-bold text-lg rounded-full transition-all group shadow-[0_0_20px_rgba(173,222,96,0.3)] hover:shadow-[0_0_30px_rgba(173,222,96,0.5)]"
               >
-                <div className="bg-emerald-950 rounded-full p-2 mr-3 group-hover:scale-110 transition-transform">
-                  <ArrowRight className="w-4 h-4 text-[#ADDE60]" />
-                </div>
-                {t('actionButton')}
+                <Link href={ROUTES.COLLECTIONS}>
+                  <div className="bg-emerald-950 rounded-full p-2 mr-3 group-hover:scale-110 transition-transform">
+                    <ArrowRight className="w-4 h-4 text-[#ADDE60]" />
+                  </div>
+                  {t('actionButton')}
+                </Link>
               </Button>
             </div>
           </div>
         </div>
       </div>
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#ADDE60]/60 text-sm animate-pulse flex flex-col items-center gap-2">
-        <span className="uppercase tracking-widest text-xs font-medium">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#ADDE60]/60 text-sm animate-pulse flex flex-col items-center gap-2 z-30">
+        <button
+          onClick={handleScrollToCollections}
+          className="uppercase tracking-widest text-xs font-medium hover:text-[#ADDE60] transition-colors"
+        >
           {t('explore')}
-        </span>
+        </button>
         <div className="w-[1px] h-8 bg-gradient-to-b from-[#ADDE60]/60 to-transparent" />
       </div>
     </div>
