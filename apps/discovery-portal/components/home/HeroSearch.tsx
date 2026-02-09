@@ -72,7 +72,7 @@ export function HeroSearch({ placeholder, className }: HeroSearchProps) {
     const handleSearch = () => {
         if (!query.trim()) return
         setIsOpen(false)
-        router.push(`${ROUTES.COLLECTIONS}?search=${encodeURIComponent(query)}`)
+        router.push(`${ROUTES.COLLECTIONS}?searchTerm=${encodeURIComponent(query)}`)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
