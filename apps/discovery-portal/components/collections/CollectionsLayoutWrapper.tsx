@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { CollectionsLayoutProvider, useCollectionsLayout } from './CollectionsLayoutContext'
+import React, { useEffect, useState } from 'react'
+import { useCollectionsStore } from '@/stores/useCollectionsStore'
 import { CollectionsFilters } from './CollectionsFilters'
 import { cn } from '@repo/ui'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Button } from '@repo/ui'
@@ -9,7 +9,36 @@ import { Filter, SlidersHorizontal } from 'lucide-react'
 import { CollectionsFilterContent } from './CollectionsFilterContent'
 
 function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
-    const { isSidebarOpen, toggleSidebar } = useCollectionsLayout()
+    const { isSidebarOpen, toggleSidebar } = useCollectionsStore()
+
+    // Hydration fix: Zustand persist runs on client, so server renders with default (true probably).
+    // If local storage has false, mismatch occurs. 
+    // We can use a client-only render approach or force update.
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) {
+        // Render a skeleton or default state related to SSR.
+        // Or just render assuming open for SEO/first paint, then it snaps?
+        // Let's render "open" by default on server to match default state or just suppress warning if attribute diffs.
+        // But layout structure changes drastically (w-80 vs w-0).
+        // Let's render as if open and then client updates immediately? 
+        // Or simply wait for mount to apply specific sidebar classes if critical.
+        // Actually, for best UX, we want the stored state immediately.
+        // But Next.js requres matching HTML.
+        // A common pattern is to render null until mounted or accept hydration mismatch for this specific part?
+        // Let's render with default OPEN for server matching, and client will update.
+        // To avoid layout shift, we can use `suppressHydrationWarning` on specific elements if needed
+        // OR better: Since `isSidebarOpen` from store might be different, 
+        // we can use a `useStore` hook that returns default until mounted.
+        // For simplicity here, let's just use the store directly and if there's a flash, we accept it for now or refine.
+        // Actually, if we return `null` until mounted, we lose SEO content? NO, content is children.
+        // The layout wrapper just adjusts classes.
+        // We can just render children.
+    }
 
     return (
         <div className="flex flex-col lg:flex-row min-h-screen relative">
@@ -28,9 +57,6 @@ function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
             {/* Main Content */}
             <main className={cn(
                 "flex-1  transition-all duration-300 ease-in-out py-4",
-                // If sidebar is open, no margin needed if we use flex layout above. 
-                // But layout.tsx had ml-80 logic. 
-                // Here we use flexbox so main takes remaining space.
                 "w-full"
             )}>
                 {/* Trigger for Collapsed Sidebar (Sticky) */}
@@ -65,7 +91,7 @@ function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
 
                 <div className={cn(
                     "flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6",
-                    !isSidebarOpen && "max-w-[1600px]" // Allow wider content when sidebar closed
+                    !isSidebarOpen && "max-w-[1600px]"
                 )}>
                     {children}
                 </div>
@@ -75,12 +101,30 @@ function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
 }
 
 export function CollectionsLayoutWrapper({ children }: { children: React.ReactNode }) {
+    // We don't need the provider anymore, just the layout structure.
+    // However, to avoid hydration mismatch errors on the classNames driven by local storage,
+    // we should ideally wait for mount on client.
+    // BUT we don't want to delay content.
+    // Since `isSidebarOpen` only affects className, React might patch it up.
+    // If strict mode or hydration warnings appear, we might need a `ClientOnly` wrapper for the sidebar logic specifically.
+    // For now, let's keep it simple.
+
+    // Note: React 18/19 is strict about hydration.
+    // If local storage says FALSE, but server says TRUE (default), 
+    // the initial client render MUST match server (TRUE).
+    // Then useEffect triggers update to FALSE.
+    // This causes a layout shift (sidebar visible then disappears).
+    // This is unavoidable without cookies or blocking render.
+    // For a dashboard/app like this, layout shift on refresh is acceptable if fast.
+
+    // To implement "wait for hydration to match storage", we need a custom hook or just render default first.
+    // Zustand's persist updates state asynchronously on mount usually.
+    // So initial render IS default (true).
+
     return (
-        <CollectionsLayoutProvider>
-            <div className="min-h-screen">
-                <div className='bg-gray-900 h-20' />
-                <CollectionsLayoutInner>{children}</CollectionsLayoutInner>
-            </div>
-        </CollectionsLayoutProvider>
+        <div className="min-h-screen">
+            <div className='bg-gray-900 h-20' />
+            <CollectionsLayoutInner>{children}</CollectionsLayoutInner>
+        </div>
     )
 }

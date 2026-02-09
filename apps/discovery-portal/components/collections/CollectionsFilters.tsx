@@ -5,11 +5,11 @@ import { PanelLeftClose } from 'lucide-react';
 import { Badge, Button } from '@repo/ui';
 import { useSearchParams } from 'next/navigation';
 import { CollectionsFilterContent } from './CollectionsFilterContent';
-import { useCollectionsLayout } from './CollectionsLayoutContext';
+import { useCollectionsStore } from '@/stores/useCollectionsStore';
 
 export const CollectionsFilters = () => {
     const searchParams = useSearchParams()
-    const { toggleSidebar } = useCollectionsLayout()
+    const { toggleSidebar } = useCollectionsStore()
 
     const activeCount = useMemo(() => {
         let count = 0;

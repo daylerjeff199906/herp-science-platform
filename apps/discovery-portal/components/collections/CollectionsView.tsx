@@ -7,7 +7,7 @@ import { SlidersHorizontal } from 'lucide-react'
 import { Individual, PaginatedResponse } from '@repo/shared-types'
 import { CollectionsHeader } from './CollectionsHeader'
 import { PaginationControls } from '@repo/ui'
-import { useCollectionsLayout } from './CollectionsLayoutContext'
+import { useCollectionsStore } from '@/stores/useCollectionsStore'
 
 interface CollectionsViewProps {
     data: PaginatedResponse<Individual>
@@ -17,7 +17,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    const { isSidebarOpen } = useCollectionsLayout()
+    const { isSidebarOpen } = useCollectionsStore()
 
     // View Handling
     const rawView = searchParams.get('view')
