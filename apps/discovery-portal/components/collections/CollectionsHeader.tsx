@@ -119,7 +119,7 @@ export const CollectionsHeader = () => {
                             <SheetContent side="left" className="w-[300px] sm:w-[400px] overflow-y-auto">
                                 <SheetHeader className="mb-6">
                                     <SheetTitle className="flex items-center gap-2">
-                                        <Filter size={20} />
+                                        <Filter size={20} className='text-blue-600 dark:text-blue-600' />
                                         Filtros
                                     </SheetTitle>
                                 </SheetHeader>
