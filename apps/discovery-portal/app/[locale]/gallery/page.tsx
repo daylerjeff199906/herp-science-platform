@@ -15,11 +15,6 @@ export async function generateMetadata({ params: { locale } }: { params: { local
 
 export default function GalleryPage() {
     return (
-        <div className="px-4 min-h-screen">
-            <div
-                className='h-24 bg-dark-900'
-            />
-            <GalleryList />
-        </div>
+        <GalleryList />
     )
 }
