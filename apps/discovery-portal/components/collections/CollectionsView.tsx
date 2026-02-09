@@ -38,7 +38,7 @@ export function CollectionsView({ data }: CollectionsViewProps) {
     }
 
     return (
-        <div className="flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6">
+        <>
             <CollectionsHeader />
             <div className="min-h-[500px] flex flex-col gap-6">
                 {items.length === 0 ? (
@@ -77,6 +77,6 @@ export function CollectionsView({ data }: CollectionsViewProps) {
                     </>
                 )}
             </div>
-        </div>
+        </>
     )
 }

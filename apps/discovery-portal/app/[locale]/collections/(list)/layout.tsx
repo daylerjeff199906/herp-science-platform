@@ -13,7 +13,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <CollectionsFilters />
         </aside>
         <main className="flex-1 lg:ml-80 py-4">
-          {children}
+          <div className="flex flex-col gap-6 w-full container mx-auto px-4 lg:px-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>
