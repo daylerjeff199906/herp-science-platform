@@ -8,6 +8,7 @@ import { IndividualAudioSection } from './IndividualAudioSection'
 import { IndividualDetailMap } from './IndividualDetailMap'
 import { DetailSection } from './DetailSection'
 import { DetailRow } from './DetailRow'
+import { ExternalDataHarvester } from './ExternalDataHarvester'
 import { useTranslations } from 'next-intl'
 import { cn } from '@repo/ui'
 import {
@@ -17,7 +18,8 @@ import {
     Microscope,
     Volume2,
     Image as ImageIcon, // Renamed to avoid conflict if needed
-    Info
+    Info,
+    Globe
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
@@ -44,6 +46,7 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
         { id: 'taxonomy', label: t('taxonomy'), icon: Tag },
         { id: 'location', label: t('location'), icon: MapPin }, // Use 'location' key if available or generic
         { id: 'occurrence', label: t('collectionData'), icon: Database }, // mapped to collection data roughly
+        { id: 'external', label: t('externalData'), icon: Globe },
         { id: 'biology', label: t('biologyAttributes'), icon: Microscope },
         { id: 'audio', label: t('audioRecordings'), icon: Volume2, hidden: !individual.files.audios?.length },
     ].filter(s => !s.hidden)
@@ -176,6 +179,11 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
                             <DetailRow label={t('basisOfRecord')} value="PreservedSpecimen" />
                             <DetailRow label={t('date')} value={individual.ocurrence?.event?.date ? new Date(individual.ocurrence.event.date).toLocaleDateString() : null} />
                         </DetailSection>
+
+                        {/* External Data Harvester */}
+                        <div id="external" className="scroll-mt-24">
+                            <ExternalDataHarvester individual={individual} />
+                        </div>
 
                         {/* Biology Attributes */}
                         <DetailSection id="biology" title={t('biologyAttributes')}>
