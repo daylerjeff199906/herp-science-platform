@@ -3,7 +3,7 @@ export const ROUTES = {
     HOME: '/',
     COLLECTIONS: '/collections',
     GALLERY: '/gallery',
-    VIEWER: '/viewer',
+    VIEWER: '/visor',
     DEPOSIT: '/deposit',
     LOGIN: '/login',
     REGISTER: '/register',

@@ -19,7 +19,11 @@ import { useCollectionsStore } from '@/stores/useCollectionsStore'
 
 import { cn } from '@/lib/utils'
 
-export const CollectionsHeader = () => {
+interface IProps {
+    hiddenActions?: boolean
+}
+
+export const CollectionsHeader = ({ hiddenActions }: IProps) => {
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -116,64 +120,68 @@ export const CollectionsHeader = () => {
                 </div>
 
                 {/* Right: Actions */}
-                <div className="flex flex-wrap items-center justify-start gap-3 w-full md:w-auto">
+                {
+                    !hiddenActions && (
+                        <div className="flex flex-wrap items-center justify-start gap-3 w-full md:w-auto">
 
-                    {/* View Toggler */}
-                    <div className="hidden sm:block">
-                        <ViewToggler />
-                    </div>
+                            {/* View Toggler */}
+                            <div className="hidden sm:block">
+                                <ViewToggler />
+                            </div>
 
-                    {/* Download Button */}
-                    <Button
-                        variant="default" // Using default which is usually primary
-                        className="bg-black text-white hover:bg-gray-800 rounded-full gap-2 shadow-sm dark:bg-white dark:text-black dark:hover:bg-gray-200"
-                    >
-                        <Download size={16} />
-                        <span className="hidden sm:inline">Descargar</span>
-                    </Button>
+                            {/* Download Button */}
+                            <Button
+                                variant="default" // Using default which is usually primary
+                                className="bg-black text-white hover:bg-gray-800 rounded-full gap-2 shadow-sm dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            >
+                                <Download size={16} />
+                                <span className="hidden sm:inline">Descargar</span>
+                            </Button>
 
-                    {/* Mobile Filter Trigger (Hidden on Desktop) */}
-                    <div className="lg:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
-                                    <SlidersHorizontal size={16} />
-                                    <span>Filtros</span>
-                                    {activeCount > 0 && (
-                                        <Badge className="bg-blue-600 h-5 w-5 p-0 flex items-center justify-center rounded-full absolute -top-1 -right-1 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
-                                            {activeCount}
-                                        </Badge>
-                                    )}
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="left" className="w-[300px] sm:w-[400px] overflow-y-auto">
-                                <SheetHeader className="mb-6">
-                                    <SheetTitle className="flex items-center gap-2">
-                                        <Filter size={20} className='text-blue-600 dark:text-blue-600' />
-                                        Filtros
-                                    </SheetTitle>
-                                </SheetHeader>
+                            {/* Mobile Filter Trigger (Hidden on Desktop) */}
+                            <div className="lg:hidden">
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button variant="outline" className="gap-2 rounded-full border-gray-300 relative bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
+                                            <SlidersHorizontal size={16} />
+                                            <span>Filtros</span>
+                                            {activeCount > 0 && (
+                                                <Badge className="bg-blue-600 h-5 w-5 p-0 flex items-center justify-center rounded-full absolute -top-1 -right-1 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
+                                                    {activeCount}
+                                                </Badge>
+                                            )}
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-[300px] sm:w-[400px] overflow-y-auto">
+                                        <SheetHeader className="mb-6">
+                                            <SheetTitle className="flex items-center gap-2">
+                                                <Filter size={20} className='text-blue-600 dark:text-blue-600' />
+                                                Filtros
+                                            </SheetTitle>
+                                        </SheetHeader>
 
-                                <div className="py-4">
-                                    {/* Reuse the filter content component */}
-                                    <CollectionsFilterContent />
-                                </div>
+                                        <div className="py-4">
+                                            {/* Reuse the filter content component */}
+                                            <CollectionsFilterContent />
+                                        </div>
 
-                                <div className="mt-8 pt-4 border-t sticky bottom-0 bg-background pb-4 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
-                                    <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
-                                        Ver resultados
-                                    </Button>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
+                                        <div className="mt-8 pt-4 border-t sticky bottom-0 bg-background pb-4 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-200">
+                                            <Button className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-700">
+                                                Ver resultados
+                                            </Button>
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
+                            </div>
 
-                    {/* Mobile View Toggler (if we want it to show on very small screens, or we can just rely on the hidden sm:block above being sufficient, but usually good to have access) */}
-                    <div className="sm:hidden">
-                        <ViewToggler />
-                    </div>
+                            {/* Mobile View Toggler (if we want it to show on very small screens, or we can just rely on the hidden sm:block above being sufficient, but usually good to have access) */}
+                            <div className="sm:hidden">
+                                <ViewToggler />
+                            </div>
 
-                </div>
+                        </div>
+                    )
+                }
             </div>
         </div>
     )
