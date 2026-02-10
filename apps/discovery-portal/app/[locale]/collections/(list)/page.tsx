@@ -57,6 +57,8 @@ export default async function Page(props: IProps) {
     page,
     pageSize,
     hasImages,
+    hasCoordinates,
+    hasSounds
   } = searchParams as unknown as IIndividualFilterParams
   const view = searchParams.view || undefined
 
@@ -94,6 +96,8 @@ export default async function Page(props: IProps) {
     orderType: orderType as 'ASC' | 'DESC' | undefined,
     ocurrenceId: occurrenceId ? Number(occurrenceId) : undefined,
     hasImages: hasImages ? Number(hasImages) : view === 'gallery' ? 1 : undefined,
+    hasCoordinates: hasCoordinates ? Number(hasCoordinates) : undefined,
+    hasSounds: hasSounds ? Number(hasSounds) : undefined,
   })
   return <>
     <CollectionsView data={res} />

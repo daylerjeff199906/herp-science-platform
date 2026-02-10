@@ -23,7 +23,7 @@ export interface IIndividualFilterParams {
     orderType?: 'ASC' | 'DESC'
     page?: string
     pageSize?: string,
-    hasImages?: string
+    hasImages?: string,
+    hasSounds?: string,
+    hasCoordinates?: string,
 }
-
-export type SearchParams = { [key: string]: string | string[] | undefined }
