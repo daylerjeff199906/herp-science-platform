@@ -145,7 +145,7 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
 
                         {/* Taxonomy Section */}
                         <DetailSection id="taxonomy" title={t('taxonomy')}>
-                            <DetailRow label={t('kingdom')} value={individual.species.genus.family.order.class.name} />
+                            <DetailRow label={t('kingdom')} value={'Animalia'} />
                             <DetailRow label={t('class')} value={individual.species.genus.family.order.class.name} />
                             <DetailRow label={t('order')} value={individual.species.genus.family.order.name} />
                             <DetailRow label={t('family')} value={individual.species.genus.family.name} />
