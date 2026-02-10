@@ -133,3 +133,15 @@ Learn more about the power of Turborepo:
 - [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
 - [Configuration Options](https://turborepo.dev/docs/reference/configuration)
 - [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+
+#App Screems
+Filters Collections
+<img width="1875" height="942" alt="Captura de pantalla (2)" src="https://github.com/user-attachments/assets/5d0ed48f-5981-44c9-969f-d892205528d4" />
+<img width="1920" height="941" alt="Captura de pantalla (3)" src="https://github.com/user-attachments/assets/89e16f1e-1108-45af-bea7-56ec2fdc8b58" />
+
+Gallery
+<img width="1920" height="958" alt="Captura de pantalla (4)" src="https://github.com/user-attachments/assets/d3ffcc92-b4a2-4790-8a65-d39a213c6a40" />
+
+Viewer
+<img width="1920" height="926" alt="Captura de pantalla (5)" src="https://github.com/user-attachments/assets/622ed4aa-1654-42ed-ae9c-691731cb2b6e" />
+
