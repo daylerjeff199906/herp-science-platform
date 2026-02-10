@@ -38,8 +38,7 @@ function CollectionsLayoutInner({ children }: { children: React.ReactNode }) {
 
 
                 <div className={cn(
-                    "flex flex-col gap-6 w-full px-4 lg:px-6",
-                    !isSidebarOpen && "ml-80"
+                    "flex flex-col gap-6 w-full px-4 lg:px-6"
                 )}>
                     {children}
                 </div>
