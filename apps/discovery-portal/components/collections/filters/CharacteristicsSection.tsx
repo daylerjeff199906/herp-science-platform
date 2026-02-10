@@ -42,6 +42,13 @@ export const CharacteristicsSection: React.FC<CharacteristicsSectionProps> = ({ 
                     <SmartFilter
                         className="text-xs py-1"
                         type="check"
+                        label="Con audios"
+                        value={searchParams.get('hasSounds') === '1'}
+                        onChange={(val) => onUpdate({ hasSounds: val ? '1' : null })}
+                    />
+                    <SmartFilter
+                        className="text-xs py-1"
+                        type="check"
                         label="Con Código Genético"
                         value={searchParams.get('barcode') === '1'}
                         onChange={(val) => onUpdate({ barcode: val ? '1' : null })}
