@@ -6,6 +6,7 @@ import { ROUTES } from '@/config/routes'
 import { IndividualDetails } from '@repo/shared-types'
 import { ArrowLeft, Share2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { CitationGenerator } from './CitationGenerator'
 
 interface IndividualDetailHeaderProps {
     individual: IndividualDetails
@@ -40,9 +41,12 @@ export function IndividualDetailHeader({ individual }: IndividualDetailHeaderPro
                         {t('backToCollections')}
                     </Link>
 
-                    <button className="p-2 text-gray-400 hover:text-gray-900 transition-colors" title={t('share')}>
-                        <Share2 className="w-5 h-5" />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <CitationGenerator individual={individual} />
+                        <button className="p-2 text-gray-400 hover:text-gray-900 transition-colors" title={t('share')}>
+                            <Share2 className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* Centered Title Section */}
