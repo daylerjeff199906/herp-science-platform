@@ -19,6 +19,15 @@ import {
     Image as ImageIcon, // Renamed to avoid conflict if needed
     Info
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const MapWithNoSSR = dynamic(
+    () => import('./IndividualMapComponent'),
+    {
+        loading: () => <div className="w-full h-full bg-muted animate-pulse" />,
+        ssr: false
+    }
+)
 
 interface IndividualDetailViewProps {
     individual: IndividualDetails
@@ -77,7 +86,10 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
     }, [sections])
 
     // Helper to check for coordinates
-    const hasCoordinates = individual.ocurrence?.event?.latitude && individual.ocurrence?.event?.longitude
+    const lat = individual.ocurrence?.event?.latitude ? parseFloat(individual.ocurrence.event.latitude) : null
+    const lng = individual.ocurrence?.event?.longitude ? parseFloat(individual.ocurrence.event.longitude) : null
+
+    const hasCoordinates = lat !== null && lng !== null && !isNaN(lat) && !isNaN(lng)
 
     return (
         <div className="min-h-screen pb-20 bg-background">
@@ -88,7 +100,18 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
                 <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-start">
 
                     {/* Sidebar Navigation - Visible on LG+ */}
-                    <aside className="hidden lg:block lg:col-span-3 sticky top-24 space-y-1">
+                    <aside className="hidden lg:block lg:col-span-3 sticky top-24 space-y-4">
+                        {/* Mini Map */}
+                        {hasCoordinates && (
+                            <div className="rounded-xl border border-border bg-card overflow-hidden h-48 relative shadow-sm">
+                                <MapWithNoSSR lat={lat!} lng={lng!} popupText={individual.species.scientificName} />
+                                <div className="absolute top-2 right-2 z-10">
+                                    <span className="bg-background/80 backdrop-blur-sm text-xs font-medium px-2 py-1 rounded-md shadow-sm border border-border">
+                                        Mapa
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                         <div className="rounded-xl border border-border bg-card overflow-hidden py-2">
                             {sections.map((section) => (
                                 <button
@@ -122,7 +145,7 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
 
                         {/* Taxonomy Section */}
                         <DetailSection id="taxonomy" title={t('taxonomy')}>
-                            <DetailRow label={t('kingdom')} value={individual.species.genus.family.order.class.name} />
+                            <DetailRow label={t('kingdom')} value={'Animalia'} />
                             <DetailRow label={t('class')} value={individual.species.genus.family.order.class.name} />
                             <DetailRow label={t('order')} value={individual.species.genus.family.order.name} />
                             <DetailRow label={t('family')} value={individual.species.genus.family.name} />
@@ -151,7 +174,6 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
                             <DetailRow label={t('institutionCode')} value={individual.museum?.acronym} />
                             <DetailRow label={t('collectionCode')} value={individual.museum?.name} />
                             <DetailRow label={t('basisOfRecord')} value="PreservedSpecimen" />
-                            <DetailRow label={t('status')} value={individual.status === 1 ? tCommon('active') : tCommon('inactive')} />
                             <DetailRow label={t('date')} value={individual.ocurrence?.event?.date ? new Date(individual.ocurrence.event.date).toLocaleDateString() : null} />
                         </DetailSection>
 
