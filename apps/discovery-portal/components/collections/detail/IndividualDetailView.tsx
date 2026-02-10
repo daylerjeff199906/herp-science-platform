@@ -151,7 +151,6 @@ export function IndividualDetailView({ individual }: IndividualDetailViewProps) 
                             <DetailRow label={t('institutionCode')} value={individual.museum?.acronym} />
                             <DetailRow label={t('collectionCode')} value={individual.museum?.name} />
                             <DetailRow label={t('basisOfRecord')} value="PreservedSpecimen" />
-                            <DetailRow label={t('status')} value={individual.status === 1 ? tCommon('active') : tCommon('inactive')} />
                             <DetailRow label={t('date')} value={individual.ocurrence?.event?.date ? new Date(individual.ocurrence.event.date).toLocaleDateString() : null} />
                         </DetailSection>
 
