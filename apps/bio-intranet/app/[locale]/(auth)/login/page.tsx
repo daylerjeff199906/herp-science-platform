@@ -22,7 +22,7 @@ export default function LoginPage() {
     const t = useTranslations('Auth');
 
     return (
-        <div className="mx-auto grid gap-6 w-full max-w-md">
+        <div className="mx-auto grid gap-6 w-full max-w-sm">
             <div className="grid gap-2 text-center">
                 <h1 className="text-3xl font-bold">{t('login')}</h1>
                 <p className="text-muted-foreground">
