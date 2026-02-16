@@ -145,37 +145,35 @@ export default function SignupForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 w-full">
-                <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input placeholder={t('firstNamePlaceholder')} {...field} disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input placeholder={t('lastNamePlaceholder')} {...field} disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input placeholder={t('firstNamePlaceholder')} {...field} disabled={isPending} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input placeholder={t('lastNamePlaceholder')} {...field} disabled={isPending} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
                     name="email"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }) => (
                         <FormItem>
                             <FormControl>
                                 <Input placeholder={t('emailPlaceholder')} type="email" {...field} disabled={isPending} />
@@ -188,7 +186,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="password"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }) => (
                         <FormItem>
                             <FormControl>
                                 <PasswordInput
@@ -210,7 +208,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="confirmPassword"
-                    render={({ field }: { field: any }) => (
+                    render={({ field }) => (
                         <FormItem>
                             <FormControl>
                                 <PasswordInput placeholder={t('confirmPasswordPlaceholder')} {...field} disabled={isPending} />

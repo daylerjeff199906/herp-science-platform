@@ -83,7 +83,7 @@ export default function LoginPage() {
                     <FormField
                         control={form.control}
                         name="email"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormControl>
                                     <Input
@@ -101,7 +101,7 @@ export default function LoginPage() {
                     <FormField
                         control={form.control}
                         name="password"
-                        render={({ field }: { field: any }) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <div className="flex items-center justify-end">
                                     <Link

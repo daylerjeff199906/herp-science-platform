@@ -20,7 +20,7 @@ import {
 import { Input } from '@repo/ui/components/ui/input'
 
 const forgotPasswordSchema = z.object({
-    email: z.string().email(),
+    email: z.string(),
 })
 
 type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>
