@@ -29,6 +29,8 @@ export default async function Layout({
             <PageHeader
                 title="Crear Individuo"
                 description="Crea un nuevo individuo en el sistema."
+                showBackButton={true}
+                backUrl={ROUTES.CORE.INDIVIDUALS}
             />
             {children}
         </LayoutWrapper>

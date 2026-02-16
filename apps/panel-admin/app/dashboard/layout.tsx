@@ -17,6 +17,15 @@ const navMain: {
   }[]
 }[] = [
     {
+      title: 'Principal',
+      url: '#',
+      icon: 'Database',
+      items: [
+        { title: 'Individuos', url: ROUTES.CORE.INDIVIDUALS },
+        { title: 'Identificadores', url: ROUTES.CORE.IDENTIFIERS },
+      ],
+    },
+    {
       title: 'Taxonomía',
       url: '#',
       icon: 'Layers',
@@ -53,15 +62,7 @@ const navMain: {
         { title: 'Tipos de Bosque', url: ROUTES.ENTITIES.FOREST_TYPES },
       ],
     },
-    {
-      title: 'Principal',
-      url: '#',
-      icon: 'Database',
-      items: [
-        { title: 'Individuos', url: ROUTES.CORE.INDIVIDUALS },
-        { title: 'Identificadores', url: ROUTES.CORE.IDENTIFIERS },
-      ],
-    },
+
   ]
 
 export default async function DashboardLayout({

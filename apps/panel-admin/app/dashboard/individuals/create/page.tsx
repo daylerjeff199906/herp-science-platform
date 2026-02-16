@@ -24,12 +24,12 @@ export default async function CreateIndividualPage() {
     return (
         <div className="max-w-4xl">
             <CreateGeneralForm
-                sexes={sexes?.map(sex => ({ id: sex.id, name: sex.name }))}
-                forestTypes={forestTypes?.map(forestType => ({ id: forestType.id, name: forestType.name }))}
-                museums={museums?.map(museum => ({ id: museum.id, name: museum.name }))}
-                species={species?.map(species => ({ id: species.id, name: species.commonName }))}
-                activities={activities?.map(activity => ({ id: activity.id, name: activity.name }))}
-                occurrences={occurrences?.map(occurrence => ({ id: occurrence.id, name: occurrence.name }))}
+                sexes={sexes?.map(sex => ({ id: Number(sex.id), name: sex.name }))}
+                forestTypes={forestTypes?.map(forestType => ({ id: Number(forestType.id), name: forestType.name }))}
+                museums={museums?.map(museum => ({ id: Number(museum.id), name: museum.name }))}
+                species={species?.map(species => ({ id: Number(species.id), name: species.commonName }))}
+                activities={activities?.map(activity => ({ id: Number(activity.id), name: activity.name }))}
+                occurrences={occurrences?.map(occurrence => ({ id: Number(occurrence.id), name: occurrence.name }))}
             />
         </div>
     );
