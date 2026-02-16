@@ -1,4 +1,12 @@
 
+import {
+    ClerkProvider,
+    SignInButton,
+    SignUpButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+} from "@clerk/nextjs";
 import "./globals.css";
 import { Inter } from "next/font/google"; // Using Inter as the premium font
 import { cn } from "@/lib/utils";
@@ -16,13 +24,24 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-            <body className={cn(
-                "min-h-screen bg-background font-sans antialiased",
-                inter.variable
-            )}>
-                {children}
-            </body>
-        </html>
+        <ClerkProvider>
+            <html lang="en">
+                <body className={cn(
+                    "min-h-screen bg-background font-sans antialiased",
+                    inter.variable
+                )}>
+                    <header className="flex justify-end p-4 border-b">
+                        <SignedOut>
+                            <SignInButton />
+                            <SignUpButton />
+                        </SignedOut>
+                        <SignedIn>
+                            <UserButton />
+                        </SignedIn>
+                    </header>
+                    {children}
+                </body>
+            </html>
+        </ClerkProvider>
     );
 }
