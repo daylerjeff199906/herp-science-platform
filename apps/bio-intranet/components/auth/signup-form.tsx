@@ -6,7 +6,7 @@ import { PasswordStrength } from '@/components/auth/password-strength';
 import { PasswordInput } from '@/components/auth/password-input';
 import { useTranslations } from 'next-intl';
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert';
-import { AlertCircle, CheckCircle2, Mail, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@repo/ui/components/ui/button';
 import { useForm, type ControllerRenderProps } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -125,7 +125,6 @@ export default function SignupForm() {
                         {t('accountCreated') || '¡Cuenta Creada!'}
                     </h2>
                     <div className="flex items-center justify-center gap-2 text-muted-foreground">
-                        <Mail className="w-5 h-5" />
                         <p className="text-sm">
                             {t('checkEmailConfirm') || 'Por favor revisa tu correo electrónico para confirmar tu cuenta.'}
                         </p>
@@ -133,7 +132,6 @@ export default function SignupForm() {
                 </div>
 
                 <Alert className="max-w-md bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
-                    <AlertCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     <AlertDescription className="text-blue-800 dark:text-blue-300">
                         {t('emailSentNote') || 'Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam.'}
                     </AlertDescription>
