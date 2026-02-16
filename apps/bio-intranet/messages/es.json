@@ -1,0 +1,38 @@
+{
+    "Auth": {
+        "login": "Iniciar Sesión",
+        "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
+        "signup": "Registrarse",
+        "forgotPassword": "Olvidé mi contraseña",
+        "resetPassword": "Restablecer contraseña",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar contraseña",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "submit": "Enviar",
+        "createAccount": "Crear cuenta",
+        "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+        "dontHaveAccount": "¿No tienes una cuenta?",
+        "signIn": "Iniciar sesión",
+        "sendResetLink": "Enviar enlace de recuperación",
+        "updatePassword": "Actualizar contraseña",
+        "rememberPassword": "¿Recordaste tu contraseña?",
+        "logIn": "Ingresar",
+        "welcome": "Bienvenido",
+        "onboarding": "Incorporación",
+        "institution": "Institución / Universidad",
+        "degree": "Grado Académico / Título",
+        "fieldOfStudy": "Campo de Estudio / Especialidad",
+        "completeProfile": "Completar Perfil",
+        "accountCreated": "¡Cuenta Creada!",
+        "checkEmailConfirm": "Por favor revisa tu correo electrónico para confirmar tu cuenta",
+        "emailSentNote": "Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam",
+        "goToLogin": "Ir al Login"
+    },
+    "Dashboard": {
+        "title": "Panel de Control",
+        "welcomeMessage": "¡Bienvenido! Tu perfil académico ha sido creado exitosamente.",
+        "protectedArea": "Esta es el área protegida del panel de control."
+    }
+}
