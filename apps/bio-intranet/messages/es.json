@@ -1,6 +1,7 @@
 {
     "Auth": {
         "login": "Iniciar Sesión",
+        "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
         "signup": "Registrarse",
         "forgotPassword": "Olvidé mi contraseña",
         "resetPassword": "Restablecer contraseña",

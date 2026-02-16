@@ -1,6 +1,7 @@
 {
     "Auth": {
         "login": "Login",
+        "loginDescription": "Enter your email below to login to your account",
         "signup": "Sign Up",
         "forgotPassword": "Forgot Password",
         "resetPassword": "Reset Password",

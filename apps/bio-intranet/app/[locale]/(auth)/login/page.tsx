@@ -24,7 +24,7 @@ export default function LoginPage() {
             <div className="grid gap-2 text-center">
                 <h1 className="text-3xl font-bold">{t('login')}</h1>
                 <p className="text-muted-foreground">
-                    Enter your email below to login to your account
+                    {t('loginDescription')}
                 </p>
             </div>
             <form action={loginAction} className="grid gap-4">
