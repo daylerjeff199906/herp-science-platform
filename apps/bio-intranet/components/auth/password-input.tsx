@@ -44,6 +44,8 @@ function EyeOffIcon(props: React.SVGProps<SVGSVGElement>) {
     );
 }
 
+import { Input } from '@repo/ui/components/ui/input'
+
 export interface PasswordInputProps
     extends React.InputHTMLAttributes<HTMLInputElement> { }
 
@@ -52,9 +54,9 @@ export function PasswordInput({ className, ...props }: PasswordInputProps) {
 
     return (
         <div className="relative">
-            <input
+            <Input
                 type={showPassword ? 'text' : 'password'}
-                className={className}
+                className={className} // Input handles cn internally usually, but here we pass it through.
                 {...props}
             />
             <button

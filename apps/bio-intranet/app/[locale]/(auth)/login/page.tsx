@@ -1,75 +1,134 @@
 'use client'
 
-import { useActionState } from 'react'
-import { login } from './actions'
+import * as React from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import Link from 'next/link'
-import { PasswordInput } from '@/components/auth/password-input'
 import { useTranslations } from 'next-intl'
+import { login } from './actions'
+import { PasswordInput } from '@/components/auth/password-input'
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
-import { AlertCircle } from 'lucide-react'
+import { Button } from '@repo/ui/components/ui/button'
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from '@repo/ui/components/ui/form'
+import { Input } from '@repo/ui/components/ui/input'
+import { Loader2 } from 'lucide-react'
 
-const initialState = {
-    error: '',
-}
+const loginSchema = z.object({
+    email: z.string(),
+    password: z.string().min(1),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
-    const [loginState, loginAction, isLoginPending] = useActionState(async (state: any, payload: FormData) => {
-        const result = await login(payload);
-        if (result?.error) return { error: result.error };
-        return { error: '' };
-    }, initialState)
+    const t = useTranslations('Auth')
+    const [error, setError] = React.useState<string>('')
+    const [isPending, setIsPending] = React.useState(false)
 
-    const t = useTranslations('Auth');
+    const form = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+        },
+    })
+
+    const onSubmit = async (data: LoginFormValues) => {
+        setIsPending(true)
+        setError('')
+
+        const formData = new FormData()
+        formData.append('email', data.email)
+        formData.append('password', data.password)
+
+        try {
+            const result = await login(formData)
+            if (result?.error) {
+                setError(result.error)
+            }
+        } catch (err) {
+            console.error(err)
+            setError('An unexpected error occurred')
+        } finally {
+            setIsPending(false)
+        }
+    }
 
     return (
         <div className="mx-auto grid gap-6 w-full max-w-sm">
             <div className="grid gap-2 text-center">
-                <h1 className="text-3xl font-bold">{t('login')}</h1>
-                <p className="text-muted-foreground">
+                <h1 className="text-2xl font-bold">{t('login')}</h1>
+                <p className="text-muted-foreground text-sm">
                     {t('loginDescription')}
                 </p>
             </div>
-            <form action={loginAction} className="grid gap-4">
-                <div className="grid gap-2">
-                    <label htmlFor="email">{t('email')}</label>
-                    <input
-                        id="email"
+
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                    {error && (
+                        <Alert variant="destructive">
+                            <AlertDescription>
+                                {t.has(`Errors.${error}`) ? t(`Errors.${error}`) : error}
+                            </AlertDescription>
+                        </Alert>
+                    )}
+
+                    <FormField
+                        control={form.control}
                         name="email"
-                        type="email"
-                        placeholder="m@example.com"
-                        required
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormControl>
+                                    <Input
+                                        placeholder={t('emailPlaceholder')}
+                                        type="email"
+                                        disabled={isPending}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
-                </div>
-                <div className="grid gap-2">
-                    <div className="flex items-center">
-                        <label htmlFor="password">{t('password')}</label>
-                        <Link
-                            href="/forgot-password"
-                            className="ml-auto inline-block text-sm underline text-primary"
-                        >
-                            {t('forgotPassword')}?
-                        </Link>
-                    </div>
-                    <PasswordInput
-                        id="password"
+
+                    <FormField
+                        control={form.control}
                         name="password"
-                        required
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <div className="flex items-center justify-end">
+                                    <Link
+                                        href="/forgot-password"
+                                        className="text-xs text-primary underline-offset-4 hover:underline"
+                                    >
+                                        {t('forgotPassword')}?
+                                    </Link>
+                                </div>
+                                <FormControl>
+                                    <PasswordInput
+                                        placeholder={t('passwordPlaceholder')}
+                                        disabled={isPending}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
                     />
-                </div>
-                {loginState?.error && (
-                    <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>
-                            {loginState.error}
-                        </AlertDescription>
-                    </Alert>
-                )}
-                <button type="submit" disabled={isLoginPending} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                    {isLoginPending ? `${t('logIn')}...` : t('logIn')}
-                </button>
-            </form>
+
+                    <Button type="submit" className="w-full" disabled={isPending}>
+                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {t('logIn')}
+                    </Button>
+                </form>
+            </Form>
 
             <div className="text-center text-sm">
                 {t('dontHaveAccount')}{" "}

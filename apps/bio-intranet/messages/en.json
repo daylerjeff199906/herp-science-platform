@@ -2,14 +2,25 @@
     "Auth": {
         "login": "Login",
         "loginDescription": "Enter your email below to login to your account",
+        "errorTitle": "Error",
+        "signupDescription": "Enter your information to create an account",
+        "Errors": {
+            "Invalid login credentials": "Invalid login credentials or email not confirmed.",
+            "Email not confirmed": "Please confirm your email before logging in."
+        },
         "signup": "Sign Up",
         "forgotPassword": "Forgot Password",
         "resetPassword": "Reset Password",
         "email": "Email",
+        "emailPlaceholder": "Enter your email address",
         "password": "Password",
+        "passwordPlaceholder": "Enter your password",
         "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm your password",
         "firstName": "First Name",
+        "firstNamePlaceholder": "First name",
         "lastName": "Last Name",
+        "lastNamePlaceholder": "Last name",
         "submit": "Submit",
         "createAccount": "Create Account",
         "alreadyHaveAccount": "Already have an account?",
@@ -29,6 +40,20 @@
         "checkEmailConfirm": "Please check your email to confirm your account",
         "emailSentNote": "We've sent you a confirmation link. Check your inbox and spam folder",
         "goToLogin": "Go to Login"
+    },
+    "Home": {
+        "nav": {
+            "title": "Bio Intranet",
+            "login": "Log In",
+            "join": "Join Us"
+        },
+        "hero": {
+            "titlePart1": "Join the IIAP Scientific Community:",
+            "titlePart2": "Your home for building a",
+            "titleHighlight": "scientific legacy",
+            "description": "You don't have to research alone. Inside Bio Intranet, connect with other researchers, access digital resources, and manage your academic profile integrated with IIAP services.",
+            "ctaPrimary": "Enter Bio Intranet"
+        }
     },
     "Dashboard": {
         "title": "Dashboard",

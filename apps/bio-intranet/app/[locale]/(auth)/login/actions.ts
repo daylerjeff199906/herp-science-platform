@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        return { error: 'Could not authenticate user' }
+        return { error: error.message }
     }
 
     // Verificar si el usuario ha completado el onboarding
@@ -63,7 +63,7 @@ export async function signup(formData: FormData) {
     })
 
     if (error) {
-        return { error: 'Could not create user' }
+        return { error: error.message }
     }
 
     revalidatePath('/', 'layout')

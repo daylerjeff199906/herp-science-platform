@@ -30,11 +30,13 @@ const AUTH_CONFIG = {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
     return (
-        <div className="w-full h-screen lg:grid lg:grid-cols-3">
-            {/* Formulario - Lado Izquierdo */}
-            <div className="flex items-center justify-center py-12 bg-background">
-                <div className="mx-auto grid w-full gap-6">
-                    {children}
+        <div className="w-full h-screen lg:grid lg:grid-cols-3 overflow-hidden">
+            {/* Formulario - Lado Izquierdo (Scrollable) */}
+            <div className="h-full overflow-y-auto bg-background">
+                <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto grid w-full gap-6 max-w-sm">
+                        {children}
+                    </div>
                 </div>
             </div>
 

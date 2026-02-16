@@ -2,14 +2,25 @@
     "Auth": {
         "login": "Iniciar Sesión",
         "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
+        "errorTitle": "Error",
+        "signupDescription": "Ingrese su información para crear una cuenta",
+        "Errors": {
+            "Invalid login credentials": "Las credenciales son inválidas o el correo electrónico no ha sido confirmado.",
+            "Email not confirmed": "Por favor, confirma tu correo electrónico antes de iniciar sesión."
+        },
         "signup": "Registrarse",
         "forgotPassword": "Olvidé mi contraseña",
         "resetPassword": "Restablecer contraseña",
         "email": "Correo electrónico",
+        "emailPlaceholder": "Ingresa tu correo electrónico",
         "password": "Contraseña",
+        "passwordPlaceholder": "Ingresa tu contraseña",
         "confirmPassword": "Confirmar contraseña",
+        "confirmPasswordPlaceholder": "Confirma tu contraseña",
         "firstName": "Nombre",
+        "firstNamePlaceholder": "Tu nombre",
         "lastName": "Apellido",
+        "lastNamePlaceholder": "Tus apellidos",
         "submit": "Enviar",
         "createAccount": "Crear cuenta",
         "alreadyHaveAccount": "¿Ya tienes una cuenta?",
@@ -29,6 +40,20 @@
         "checkEmailConfirm": "Por favor revisa tu correo electrónico para confirmar tu cuenta",
         "emailSentNote": "Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam",
         "goToLogin": "Ir al Login"
+    },
+    "Home": {
+        "nav": {
+            "title": "Bio Intranet",
+            "login": "Iniciar Sesión",
+            "join": "Únete"
+        },
+        "hero": {
+            "titlePart1": "Únete a la Comunidad Científica del IIAP:",
+            "titlePart2": "Tu espacio para construir un",
+            "titleHighlight": "legado científico",
+            "description": "No tienes que investigar solo. Dentro de la Bio Intranet, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
+            "ctaPrimary": "Ingresar a Bio Intranet"
+        }
     },
     "Dashboard": {
         "title": "Panel de Control",
