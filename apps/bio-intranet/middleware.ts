@@ -39,7 +39,7 @@ export default async function middleware(request: NextRequest) {
 
     // Paths that do not require authentication
     // Note: We check for localized paths too (e.g. /es/login)
-    const publicPathRegex = /^\/(en|es)?\/?(login|signup|auth|forgot-password|reset-password|onboarding|icon\.png|.*\.svg).*$/;
+    const publicPathRegex = /^\/(en|es)?\/?(login|signup|auth|forgot-password|reset-password|icon\.png|.*\.svg).*$/;
 
     if (!user && !pathname.match(publicPathRegex) && pathname !== '/' && !pathname.match(/^\/(en|es)$/)) {
         // Determine locale to redirect to
