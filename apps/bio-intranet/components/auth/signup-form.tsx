@@ -7,7 +7,6 @@ import { PasswordInput } from '@/components/auth/password-input';
 import { useTranslations } from 'next-intl';
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert';
 import { AlertCircle, CheckCircle2, Mail } from 'lucide-react';
-import Link from 'next/link';
 import { Button } from '@repo/ui/components/ui/button';
 
 export default function SignupForm() {
@@ -66,12 +65,6 @@ export default function SignupForm() {
                         {t('emailSentNote') || 'Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam.'}
                     </AlertDescription>
                 </Alert>
-
-                <Button asChild className="w-full max-w-md">
-                    <Link href="/login">
-                        {t('goToLogin') || 'Ir al Login'}
-                    </Link>
-                </Button>
             </div>
         );
     }
