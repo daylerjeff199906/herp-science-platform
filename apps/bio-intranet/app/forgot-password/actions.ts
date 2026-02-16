@@ -1,0 +1,21 @@
+'use server'
+
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+
+export async function forgotPassword(formData: FormData) {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+    const email = formData.get('email') as string
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?next=/reset-password`,
+    })
+
+    if (error) {
+        return { error: 'Could not send reset email' }
+    }
+
+    return { success: 'Check your email for the reset link' }
+}
