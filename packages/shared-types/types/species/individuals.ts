@@ -34,6 +34,8 @@ export interface TimeRangeFilter {
 export interface IndividualFilter extends PaginationParams {
     hasEggs?: number;
     hasImages?: number;
+    hasSounds?: number;
+    hasCoordinates?: number;
     barcode?: number;
     orderBy?: string;
     orderType?: 'ASC' | 'DESC';

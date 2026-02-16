@@ -5,6 +5,7 @@
             "collections": "Collections",
             "gallery": "Gallery",
             "viewer": "Viewer",
+            "visor": "Visor",
             "deposit": "How to deposit"
         },
         "menu": "Menu",
@@ -150,7 +151,20 @@
             "lifeStage": "Life Stage",
             "preparations": "Preparations",
             "svl": "SVL (Snout-Vent Length)",
-            "weight": "Weight"
+            "weight": "Weight",
+            "cite": "Cite",
+            "citeRecord": "Cite record",
+            "accessedOn": "Accessed on",
+            "from": "from",
+            "copy": "Copy",
+            "citationDisclaimer": "Please verify citation accuracy before use.",
+            "externalData": "External Data",
+            "gbifRecords": "GBIF Records",
+            "inaturalistObservations": "iNaturalist Observations",
+            "viewOnGbif": "View on GBIF",
+            "viewOnInaturalist": "View on iNaturalist",
+            "harvesting": "Searching external records...",
+            "foundRecords": "External records found"
         }
     }
 }

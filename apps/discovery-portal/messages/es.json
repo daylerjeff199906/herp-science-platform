@@ -5,7 +5,11 @@
             "collections": "Colecciones",
             "gallery": "Galería",
             "viewer": "Visor",
-            "deposit": "Cómo depositar"
+            "visor": "Visor",
+            "deposit": "Cómo depositar",
+            "login": "Iniciar sesión",
+            "register": "Registrarse",
+            "logout": "Cerrar sesión"
         },
         "menu": "Menú",
         "join": "Unirte",
@@ -168,7 +172,20 @@
             "lifeStage": "Etapa de Vida",
             "preparations": "Preparaciones",
             "svl": "LHC (Longitud Hocico-Cloaca)",
-            "weight": "Peso"
+            "weight": "Peso",
+            "cite": "Citar",
+            "citeRecord": "Citar registro",
+            "accessedOn": "Accedido el",
+            "from": "de",
+            "copy": "Copiar",
+            "citationDisclaimer": "Por favor verifique la exactitud de la cita antes de usarla en su publicación.",
+            "externalData": "Datos Externos",
+            "gbifRecords": "Registros en GBIF",
+            "inaturalistObservations": "Observaciones en iNaturalist",
+            "viewOnGbif": "Ver en GBIF",
+            "viewOnInaturalist": "Ver en iNaturalist",
+            "harvesting": "Buscando registros externos...",
+            "foundRecords": "Se encontraron registros externos"
         }
     }
 }
