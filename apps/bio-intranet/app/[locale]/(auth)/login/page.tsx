@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import { login } from './actions'
 import Link from 'next/link'
 import { PasswordInput } from '@/components/auth/password-input'
+import { useTranslations } from 'next-intl'
 
 const initialState = {
     error: '',
@@ -16,17 +17,19 @@ export default function LoginPage() {
         return { error: '' };
     }, initialState)
 
+    const t = useTranslations('Auth');
+
     return (
         <div className="mx-auto grid gap-6 w-full max-w-md">
             <div className="grid gap-2 text-center">
-                <h1 className="text-3xl font-bold">Login</h1>
+                <h1 className="text-3xl font-bold">{t('login')}</h1>
                 <p className="text-muted-foreground">
                     Enter your email below to login to your account
                 </p>
             </div>
             <form action={loginAction} className="grid gap-4">
                 <div className="grid gap-2">
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="email">{t('email')}</label>
                     <input
                         id="email"
                         name="email"
@@ -38,12 +41,12 @@ export default function LoginPage() {
                 </div>
                 <div className="grid gap-2">
                     <div className="flex items-center">
-                        <label htmlFor="password">Password</label>
+                        <label htmlFor="password">{t('password')}</label>
                         <Link
                             href="/forgot-password"
                             className="ml-auto inline-block text-sm underline text-primary"
                         >
-                            Forgot your password?
+                            {t('forgotPassword')}?
                         </Link>
                     </div>
                     <PasswordInput
@@ -59,14 +62,14 @@ export default function LoginPage() {
                     </div>
                 )}
                 <button type="submit" disabled={isLoginPending} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                    {isLoginPending ? 'Logging in...' : 'Login'}
+                    {isLoginPending ? `${t('logIn')}...` : t('logIn')}
                 </button>
             </form>
 
             <div className="text-center text-sm">
-                Don't have an account?{" "}
+                {t('dontHaveAccount')}{" "}
                 <Link href="/signup" className="underline text-primary">
-                    Sign up
+                    {t('signup')}
                 </Link>
             </div>
         </div>

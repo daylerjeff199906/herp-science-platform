@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { signup } from '@/app/(auth)/signup/actions';
+import { signup } from '@/app/[locale]/(auth)/login/actions';
 import { PasswordStrength } from '@/components/auth/password-strength';
 import { PasswordInput } from '@/components/auth/password-input';
 import Link from 'next/link';

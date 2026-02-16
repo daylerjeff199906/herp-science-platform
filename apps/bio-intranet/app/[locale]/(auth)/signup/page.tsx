@@ -1,21 +1,22 @@
-
 import SignupForm from '@/components/auth/signup-form';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 
-export default function SignupPage() {
+export default async function SignupPage() {
+    const t = await getTranslations('Auth');
     return (
         <div className="mx-auto grid gap-6">
             <div className="grid gap-2 text-center">
-                <h1 className="text-3xl font-bold">Sign Up</h1>
+                <h1 className="text-3xl font-bold">{t('signup')}</h1>
                 <p className="text-muted-foreground">
                     Enter your information to create an account
                 </p>
             </div>
             <SignupForm />
             <div className="text-center text-sm">
-                Already have an account?{" "}
+                {t('alreadyHaveAccount')}{" "}
                 <Link href="/login" className="underline text-primary">
-                    Log in
+                    {t('logIn')}
                 </Link>
             </div>
         </div>

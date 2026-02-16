@@ -74,17 +74,5 @@ export async function signup(prevState: SignupState, formData: FormData) {
         }
     }
 
-    // Redirect to onboarding after successful signup
-    // Note: If email confirmation is enabled, they might need to confirm first.
-    // Assuming for now they can proceed or will be blocked by middleware until confirmed if configured.
-    // Standard Supabase flow sends a confirmation email.
-    // For the prompt's flow "once created... send to onboarding", we might need to handle the session.
-    // If email confirmation is ON, no session is created yet. 
-    // Let's assume we want to redirect them to a "Check your email" page or if auto-confirm is on, straight to onboarding.
-
-    // If a session exists (auto-confirm or disabled email verify), redirect to onboarding.
-    // If not, redirect to a "verify email" page.
-    // For safety, let's redirect to a verification success page if no session.
-
     return { message: 'Success! Please check your email to confirm your account.' }
 }
