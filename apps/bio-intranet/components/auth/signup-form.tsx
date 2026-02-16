@@ -4,14 +4,13 @@ import { useActionState, useState } from 'react';
 import { signup } from '@/app/[locale]/(auth)/signup/actions';
 import { PasswordStrength } from '@/components/auth/password-strength';
 import { PasswordInput } from '@/components/auth/password-input';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
 export default function SignupForm() {
     const t = useTranslations('Auth');
     const [state, formAction, isPending] = useActionState(signup, null);
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [, setPassword] = useState('');
+    const [, setConfirmPassword] = useState('');
     const [checks, setChecks] = useState({
         length: false,
         uppercase: false,
