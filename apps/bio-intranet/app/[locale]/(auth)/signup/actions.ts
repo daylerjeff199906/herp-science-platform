@@ -30,6 +30,7 @@ export type SignupState = {
         form?: string[]
     }
     message?: string
+    success?: boolean
 } | null
 
 export async function signup(prevState: SignupState, formData: FormData) {
@@ -74,5 +75,8 @@ export async function signup(prevState: SignupState, formData: FormData) {
         }
     }
 
-    return { message: 'Success! Please check your email to confirm your account.' }
+    return {
+        success: true,
+        message: 'Success! Please check your email to confirm your account.'
+    }
 }

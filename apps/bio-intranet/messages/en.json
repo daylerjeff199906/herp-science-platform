@@ -24,7 +24,11 @@
         "institution": "Institution / University",
         "degree": "Degree / Title",
         "fieldOfStudy": "Field of Study",
-        "completeProfile": "Complete Profile"
+        "completeProfile": "Complete Profile",
+        "accountCreated": "Account Created!",
+        "checkEmailConfirm": "Please check your email to confirm your account",
+        "emailSentNote": "We've sent you a confirmation link. Check your inbox and spam folder",
+        "goToLogin": "Go to Login"
     },
     "Dashboard": {
         "title": "Dashboard",

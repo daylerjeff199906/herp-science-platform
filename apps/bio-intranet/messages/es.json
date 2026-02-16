@@ -24,7 +24,11 @@
         "institution": "Institución / Universidad",
         "degree": "Grado Académico / Título",
         "fieldOfStudy": "Campo de Estudio / Especialidad",
-        "completeProfile": "Completar Perfil"
+        "completeProfile": "Completar Perfil",
+        "accountCreated": "¡Cuenta Creada!",
+        "checkEmailConfirm": "Por favor revisa tu correo electrónico para confirmar tu cuenta",
+        "emailSentNote": "Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam",
+        "goToLogin": "Ir al Login"
     },
     "Dashboard": {
         "title": "Panel de Control",
