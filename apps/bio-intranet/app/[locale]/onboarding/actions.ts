@@ -9,6 +9,8 @@ const OnboardingSchema = z.object({
     institution: z.string().min(2, { message: "Institution name is required" }),
     degree: z.string().min(2, { message: "Degree is required" }),
     fieldOfStudy: z.string().min(2, { message: "Field of study is required" }),
+    bio: z.string().optional(),
+    birthYear: z.coerce.number().min(1900).max(new Date().getFullYear()).optional(),
 })
 
 export async function submitOnboarding(prevState: any, formData: FormData) {
@@ -19,6 +21,8 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
         institution: formData.get('institution'),
         degree: formData.get('degree'),
         fieldOfStudy: formData.get('fieldOfStudy'),
+        bio: formData.get('bio'),
+        birthYear: formData.get('birthYear'),
     })
 
     if (!validatedFields.success) {
@@ -33,28 +37,40 @@ export async function submitOnboarding(prevState: any, formData: FormData) {
         redirect('/login')
     }
 
-    // Check if profile exists (it should via trigger), but we are inserting into academic_profiles
-    // We need the user's profile ID which is the same as auth ID.
-
-    const { error } = await supabase
+    // Insert academic profile
+    const { error: academicError } = await supabase
         .from('academic_profiles')
         .insert({
             user_id: user.id,
             institution: validatedFields.data.institution,
             degree: validatedFields.data.degree,
             field_of_study: validatedFields.data.fieldOfStudy,
+            bio: validatedFields.data.bio,
         })
 
-    if (error) {
-        console.error(error)
+    if (academicError) {
+        console.error('Academic profile error:', academicError)
         return {
             message: 'Database Error: Failed to Create Academic Profile.',
         }
     }
 
-    // Update user metadata to indicate onboarding is complete if needed, 
-    // or just rely on existence of academic_profile record. 
-    // For simplicity, let's redirect.
+    // Update profile with bio, birth_year and mark onboarding as completed
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+            bio: validatedFields.data.bio,
+            birth_year: validatedFields.data.birthYear,
+            onboarding_completed: true,
+        })
+        .eq('id', user.id)
+
+    if (profileError) {
+        console.error('Profile update error:', profileError)
+        return {
+            message: 'Database Error: Failed to Update Profile.',
+        }
+    }
 
     redirect('/dashboard?welcome=true')
 }

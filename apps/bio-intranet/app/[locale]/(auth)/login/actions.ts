@@ -13,7 +13,7 @@ export async function login(formData: FormData) {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
     })
@@ -22,8 +22,32 @@ export async function login(formData: FormData) {
         return { error: 'Could not authenticate user' }
     }
 
+    // Verificar si el usuario ha completado el onboarding
+    if (data.user) {
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('onboarding_completed')
+            .eq('id', data.user.id)
+            .single()
+
+        if (profileError) {
+            console.error('Error fetching profile:', profileError)
+            revalidatePath('/', 'layout')
+            redirect('/dashboard')
+            return
+        }
+
+        // Si no ha completado el onboarding, redirigir a onboarding
+        if (!profile?.onboarding_completed) {
+            revalidatePath('/', 'layout')
+            redirect('/onboarding')
+            return
+        }
+    }
+
+    // Si ha completado el onboarding, redirigir al dashboard
     revalidatePath('/', 'layout')
-    redirect('/')
+    redirect('/dashboard')
 }
 
 export async function signup(formData: FormData) {
