@@ -1,0 +1,33 @@
+{
+    "Auth": {
+        "login": "Login",
+        "signup": "Sign Up",
+        "forgotPassword": "Forgot Password",
+        "resetPassword": "Reset Password",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "submit": "Submit",
+        "createAccount": "Create Account",
+        "alreadyHaveAccount": "Already have an account?",
+        "dontHaveAccount": "Don't have an account?",
+        "signIn": "Sign In",
+        "sendResetLink": "Send Reset Link",
+        "updatePassword": "Update Password",
+        "rememberPassword": "Remember your password?",
+        "logIn": "Log in",
+        "welcome": "Welcome",
+        "onboarding": "Onboarding",
+        "institution": "Institution / University",
+        "degree": "Degree / Title",
+        "fieldOfStudy": "Field of Study",
+        "completeProfile": "Complete Profile"
+    },
+    "Dashboard": {
+        "title": "Dashboard",
+        "welcomeMessage": "Welcome! Your academic profile has been created successfully.",
+        "protectedArea": "This is the protected dashboard area."
+    }
+}

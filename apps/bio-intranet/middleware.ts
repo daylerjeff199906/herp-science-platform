@@ -1,19 +1,58 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/utils/supabase/middleware'
+import createMiddleware from 'next-intl/middleware';
+import { type NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
-export async function middleware(request: NextRequest) {
-    return await updateSession(request)
+export default async function middleware(request: NextRequest) {
+    const handleI18n = createMiddleware({
+        locales: ['en', 'es'],
+        defaultLocale: 'es',
+        localePrefix: 'always'
+    });
+
+    const response = handleI18n(request);
+
+    const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            cookies: {
+                getAll() {
+                    return request.cookies.getAll();
+                },
+                setAll(cookiesToSet) {
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        request.cookies.set(name, value);
+                    });
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        response.cookies.set(name, value, options);
+                    });
+                },
+            },
+        }
+    );
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const pathname = request.nextUrl.pathname;
+
+    // Paths that do not require authentication
+    // Note: We check for localized paths too (e.g. /es/login)
+    const publicPathRegex = /^\/(en|es)?\/?(login|signup|auth|forgot-password|reset-password|onboarding|icon\.png|.*\.svg).*$/;
+
+    if (!user && !pathname.match(publicPathRegex) && pathname !== '/' && !pathname.match(/^\/(en|es)$/)) {
+        // Determine locale to redirect to
+        const localeMatch = pathname.match(/^\/(en|es)/);
+        const locale = localeMatch ? localeMatch[1] : 'es'; // Default to 'es'
+
+        const loginUrl = new URL(`/${locale}/login`, request.url);
+        return NextResponse.redirect(loginUrl);
+    }
+
+    return response;
 }
 
 export const config = {
-    matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
-         */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-    ],
-}
+    matcher: ['/((?!_next|api|_vercel|.*\\..*).*)']
+};

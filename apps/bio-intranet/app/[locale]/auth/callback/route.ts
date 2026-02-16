@@ -4,10 +4,12 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
 export async function GET(request: Request) {
-    const { searchParams, origin } = new URL(request.url)
+    const { pathname, searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
-    // if "next" is in param, use it as the redirect URL
     const next = searchParams.get('next') ?? '/'
+
+    // Extract locale - typically the first segment after /
+    const locale = pathname.split('/')[1] || 'es'
 
     if (code) {
         const cookieStore = await cookies()
@@ -19,5 +21,5 @@ export async function GET(request: Request) {
     }
 
     // return the user to an error page with instructions
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+    return NextResponse.redirect(`${origin}/${locale}/login?error=auth-code-error`)
 }
