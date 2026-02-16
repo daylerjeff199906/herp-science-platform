@@ -2,7 +2,6 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 const SignupSchema = z.object({
@@ -33,7 +32,7 @@ export type SignupState = {
     success?: boolean
 } | null
 
-export async function signup(prevState: SignupState, formData: FormData) {
+export async function signup(formData: FormData) {
     const validatedFields = SignupSchema.safeParse({
         firstName: formData.get('firstName'),
         lastName: formData.get('lastName'),
@@ -54,6 +53,9 @@ export async function signup(prevState: SignupState, formData: FormData) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
+    // Get the current locale from headers or default to 'es'
+    const locale = cookieStore.get('NEXT_LOCALE')?.value || 'es'
+
     const { error } = await supabase.auth.signUp({
         email,
         password,
@@ -62,7 +64,7 @@ export async function signup(prevState: SignupState, formData: FormData) {
                 first_name: firstName,
                 last_name: lastName,
             },
-            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/${locale}/auth/callback?next=/dashboard`,
         },
     })
 

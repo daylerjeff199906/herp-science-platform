@@ -78,7 +78,7 @@ export default function SignupForm() {
         formData.append('confirmPassword', data.confirmPassword);
 
         try {
-            const result = await signup(null, formData);
+            const result = await signup(formData);
 
             if (result?.success) {
                 setSuccess(true);

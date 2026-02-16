@@ -18,11 +18,14 @@ import {
     FormMessage,
 } from '@repo/ui/components/ui/form'
 import { Input } from '@repo/ui/components/ui/input'
+import { Checkbox } from '@repo/ui/components/ui/checkbox'
+import { Label } from '@repo/ui/components/ui/label'
 import { Loader2 } from 'lucide-react'
 
 const loginSchema = z.object({
     email: z.string(),
     password: z.string().min(1),
+    rememberMe: z.boolean().optional(),
 })
 
 type LoginFormValues = z.infer<typeof loginSchema>
@@ -37,6 +40,7 @@ export default function LoginPage() {
         defaultValues: {
             email: '',
             password: '',
+            rememberMe: false,
         },
     })
 
@@ -119,6 +123,28 @@ export default function LoginPage() {
                                     />
                                 </FormControl>
                                 <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="rememberMe"
+                        render={({ field }: { field: ControllerRenderProps<LoginFormValues, 'rememberMe'> }) => (
+                            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                        disabled={isPending}
+                                    />
+                                </FormControl>
+                                <Label
+                                    htmlFor="rememberMe"
+                                    className="text-sm font-normal leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                                >
+                                    {t('rememberMe')}
+                                </Label>
                             </FormItem>
                         )}
                     />

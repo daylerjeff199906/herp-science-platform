@@ -16,7 +16,9 @@ export async function GET(request: Request) {
         const supabase = createClient(cookieStore)
         const { error } = await supabase.auth.exchangeCodeForSession(code)
         if (!error) {
-            return NextResponse.redirect(`${origin}${next}`)
+            // Redirect to the specified next URL with locale
+            const redirectUrl = next.startsWith('/') ? `${origin}/${locale}${next}` : `${origin}/${locale}/${next}`
+            return NextResponse.redirect(redirectUrl)
         }
     }
 
