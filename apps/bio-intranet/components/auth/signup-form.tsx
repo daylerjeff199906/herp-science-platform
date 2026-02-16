@@ -5,6 +5,8 @@ import { signup } from '@/app/[locale]/(auth)/signup/actions';
 import { PasswordStrength } from '@/components/auth/password-strength';
 import { PasswordInput } from '@/components/auth/password-input';
 import { useTranslations } from 'next-intl';
+import { Alert, AlertDescription } from '@repo/ui/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 export default function SignupForm() {
     const t = useTranslations('Auth');
