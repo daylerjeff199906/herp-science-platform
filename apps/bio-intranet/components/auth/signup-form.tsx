@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react';
 import { signup } from '@/app/(auth)/signup/actions';
 import { PasswordStrength } from '@/components/auth/password-strength';
+import { PasswordInput } from '@/components/auth/password-input';
 import Link from 'next/link';
 
 export default function SignupForm() {
@@ -59,14 +60,14 @@ export default function SignupForm() {
 
             <div className="grid gap-2">
                 <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
-                <input id="password" name="password" type="password" required onChange={handlePasswordChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                <PasswordInput id="password" name="password" required onChange={handlePasswordChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10" />
                 <PasswordStrength checks={checks} />
             </div>
             {(state?.errors as any)?.password && <p className="text-destructive text-sm">{(state?.errors as any).password}</p>}
 
             <div className="grid gap-2">
                 <label htmlFor="confirmPassword" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Confirm Password</label>
-                <input id="confirmPassword" name="confirmPassword" type="password" required onChange={(e) => setConfirmPassword(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                <PasswordInput id="confirmPassword" name="confirmPassword" required onChange={(e) => setConfirmPassword(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10" />
             </div>
             {(state?.errors as any)?.confirmPassword && <p className="text-destructive text-sm">{(state?.errors as any).confirmPassword}</p>}
 
@@ -74,13 +75,6 @@ export default function SignupForm() {
                 Create an account
             </button>
             {state?.message && <p className="text-destructive text-sm">{state.message}</p>}
-
-            <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link href="/login" className="underline">
-                    Sign in
-                </Link>
-            </div>
         </form>
     );
 }

@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { login } from './actions'
 import Link from 'next/link'
+import { PasswordInput } from '@/components/auth/password-input'
 
 const initialState = {
     error: '',
@@ -16,7 +17,7 @@ export default function LoginPage() {
     }, initialState)
 
     return (
-        <div className="mx-auto grid gap-6">
+        <div className="mx-auto grid gap-6 w-full max-w-md">
             <div className="grid gap-2 text-center">
                 <h1 className="text-3xl font-bold">Login</h1>
                 <p className="text-muted-foreground">
@@ -45,12 +46,11 @@ export default function LoginPage() {
                             Forgot your password?
                         </Link>
                     </div>
-                    <input
+                    <PasswordInput
                         id="password"
                         name="password"
-                        type="password"
                         required
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10"
                     />
                 </div>
                 {loginState?.error && (
