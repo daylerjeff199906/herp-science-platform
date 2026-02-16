@@ -10,8 +10,8 @@ import { IndividualForm } from '@/components/forms/individual-form';
 import { SmartFilter, FilterField } from '@/components/ui/smart-filter';
 import { PaginationCustom } from '@/components/ui/pagination-custom';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { 
-    changeStatusIndividual, 
+import {
+    changeStatusIndividual,
     deleteIndividual,
 } from '@/services/individuals';
 import { toast } from 'sonner';
@@ -47,7 +47,7 @@ export function IndividualsView({
         open: false,
         title: '',
         description: '',
-        onConfirm: () => {},
+        onConfirm: () => { },
         isLoading: false,
         variant: 'default',
     });
@@ -101,7 +101,7 @@ export function IndividualsView({
     const handleStatusChange = (individual: Individual) => {
         const newStatus = individual.status === 1 ? 0 : 1;
         const actionText = newStatus === 1 ? 'activar' : 'desactivar';
-        
+
         setConfirmDialog({
             open: true,
             title: `¿${newStatus === 1 ? 'Activar' : 'Desactivar'} individuo?`,
@@ -165,26 +165,7 @@ export function IndividualsView({
     };
 
     return (
-        <div className="space-y-4">
-            <div className="flex flex-col gap-4">
-                <div className="flex items-end justify-between">
-                    <div>
-                        <h1 className="text-xl font-bold tracking-tight">Individuos</h1>
-                        <p className="text-xs text-muted-foreground">
-                            Administra el registro de individuos del sistema.
-                        </p>
-                    </div>
-                    <Button onClick={handleAdd} className="text-xs">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Nuevo Individuo
-                    </Button>
-                </div>
-
-                <SmartFilter
-                    fields={filterFields}
-                    searchPlaceholder="Buscar por código, especie..."
-                />
-            </div>
+        <div className="flex flex-col gap-4">
 
             <IndividualsTable
                 data={individuals.data}

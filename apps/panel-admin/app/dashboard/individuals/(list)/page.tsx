@@ -6,12 +6,15 @@ import { IndividualsView } from './components/individuals-view';
 interface IPageProps {
     searchParams?: Promise<{
         page?: string;
+        pageSize?: string;
         searchTerm?: string;
         sexId?: string;
         hasEggs?: string;
         activityId?: string;
         museumId?: string;
         forestTypeId?: string;
+        orderBy?: string;
+        orderType?: 'ASC' | 'DESC';
     }>;
 }
 
@@ -20,15 +23,15 @@ export default async function Page(props: IPageProps) {
 
     const filter: IndividualFilter = {
         page: params?.page ? Number(params.page) : 1,
-        pageSize: 10,
+        pageSize: params?.pageSize ? Number(params.pageSize) : 20,
         searchTerm: params?.searchTerm,
         sexId: params?.sexId ? Number(params.sexId) : undefined,
         hasEggs: params?.hasEggs ? Number(params.hasEggs) : undefined,
         activityId: params?.activityId ? Number(params.activityId) : undefined,
         museumId: params?.museumId ? Number(params.museumId) : undefined,
         forestTypeId: params?.forestTypeId ? Number(params.forestTypeId) : undefined,
-        orderBy: 'createdAt',
-        orderType: 'DESC',
+        orderBy: params?.orderBy ? params.orderBy : 'id',
+        orderType: params?.orderType ? params.orderType : 'DESC',
     };
 
     const [individuals, sexes, museums] = await Promise.all([

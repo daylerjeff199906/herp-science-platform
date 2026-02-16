@@ -11,11 +11,11 @@ import {
     ColumnDef,
     flexRender,
 } from '@tanstack/react-table';
-import { Eye, Pencil, Power, Trash2, FileImage } from 'lucide-react';
+import { Eye, Power, Trash2, FileImage, Edit } from 'lucide-react';
 import { Individual } from '@repo/shared-types';
 import { Button } from '@/components/ui/button';
 import {
-    Table,
+
     TableBody,
     TableCell,
     TableHead,
@@ -97,8 +97,8 @@ export function IndividualsTable({
             cell: ({ row }) => (
                 <span className={cn(
                     'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-                    row.getValue('hasEggs') 
-                        ? 'bg-green-100 text-green-800' 
+                    row.getValue('hasEggs')
+                        ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
                 )}>
                     {row.getValue('hasEggs') ? 'Sí' : 'No'}
@@ -155,7 +155,7 @@ export function IndividualsTable({
                             className="h-8 w-8"
                             onClick={() => onEdit(individual)}
                         >
-                            <Pencil className="h-4 w-4" />
+                            <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                             variant="ghost"
@@ -195,16 +195,16 @@ export function IndividualsTable({
     });
 
     return (
-        <div className="rounded-md border bg-card text-card-foreground shadow-sm">
-            <div className="relative max-h-[600px] overflow-auto">
-                <Table>
-                    <TableHeader className="sticky top-0 z-10 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/60">
+        <div className="rounded-md border bg-card text-card-foreground rounded-lg">
+            <div className="relative max-h-[600px] overflow-auto rounded-lg">
+                <table className="w-full caption-bottom text-sm">
+                    <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead
                                         key={header.id}
-                                        className="h-10 px-3 py-2 text-left align-middle font-medium text-muted-foreground text-xs"
+                                        className="sticky top-0 z-20 h-10 px-3 py-2 text-left align-middle font-medium text-muted-foreground text-xs bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/60"
                                     >
                                         {header.isPlaceholder
                                             ? null
@@ -246,7 +246,7 @@ export function IndividualsTable({
                             </TableRow>
                         )}
                     </TableBody>
-                </Table>
+                </table>
             </div>
         </div>
     );

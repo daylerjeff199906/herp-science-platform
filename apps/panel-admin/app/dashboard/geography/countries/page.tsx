@@ -1,7 +1,6 @@
 import { fetchCountriesAdmin } from '@/services/countries'
 import { SearchParams } from '@repo/shared-types'
 import { CountriesView } from './components/countries-view'
-import { LayoutWrapper } from '@/components/layout-wrapper'
 
 interface IPageProps {
   searchParams?: Promise<SearchParams>
@@ -15,18 +14,8 @@ export default async function Page(props: IPageProps) {
     name: params?.name ? String(params.name) : undefined,
   })
 
-  return (
-    <LayoutWrapper
-      sectionTitle="Gestión de Países"
-      breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Ubicación', href: '#' },
-        { title: 'Países' },
-      ]}
-    >
-      <CountriesView countries={allCountries.data} />
-    </LayoutWrapper>
-  )
+  return <CountriesView countries={allCountries.data} />
 }
 
 export const dynamic = 'force-dynamic'
+
