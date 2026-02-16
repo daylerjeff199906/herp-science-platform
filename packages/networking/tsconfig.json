@@ -5,6 +5,7 @@
         "rootDir": "."
     },
     "include": [
-        "."
+        ".",
+        "../../apps/panel-admin/services/build-headers.ts"
     ]
 }

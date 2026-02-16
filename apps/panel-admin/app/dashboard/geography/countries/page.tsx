@@ -1,7 +1,7 @@
 import { fetchCountriesAdmin } from '@/services/countries'
 import { SearchParams } from '@repo/shared-types'
-// import { PaginationCustom } from '@/modules/core'
 import { CountriesView } from './components/countries-view'
+import { LayoutWrapper } from '@/components/layout-wrapper'
 
 interface IPageProps {
   searchParams?: Promise<SearchParams>
@@ -16,20 +16,17 @@ export default async function Page(props: IPageProps) {
   })
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight">Países</h1>
-        <p className="text-muted-foreground">Administra el catálogo de países del sistema.</p>
-      </div>
-
+    <LayoutWrapper
+      sectionTitle="Gestión de Países"
+      breadcrumbs={[
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Ubicación', href: '#' },
+        { title: 'Países' },
+      ]}
+    >
       <CountriesView countries={allCountries.data} />
-
-      <div className="mt-4">
-        {/* <PaginationCustom count={allCountries?.totalPages} page_size={10} /> */}
-      </div>
-    </div>
+    </LayoutWrapper>
   )
 }
 
 export const dynamic = 'force-dynamic'
-
