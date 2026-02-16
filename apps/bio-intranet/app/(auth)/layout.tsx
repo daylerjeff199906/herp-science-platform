@@ -6,9 +6,9 @@ export default function AuthLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="w-full h-screen lg:grid lg:grid-cols-2">
+        <div className="w-full h-screen lg:grid lg:grid-cols-3">
             <div className="flex items-center justify-center py-12 bg-background">
-                <div className="mx-auto grid w-[350px] gap-6">
+                <div className="mx-auto grid w-full gap-6">
                     <div className="flex flex-col space-y-2 text-center">
                         {/* Logo placeholder if needed, though pages might have their own headers. 
                  I'll wrap children in a way that centers them. */}
@@ -16,7 +16,7 @@ export default function AuthLayout({
                     {children}
                 </div>
             </div>
-            <div className="hidden bg-muted lg:block relative bg-primary">
+            <div className="hidden bg-muted lg:block relative bg-primary col-span-2">
                 <div className="relative z-20 flex h-full flex-col justify-between p-10 text-primary-foreground">
                     <div className="flex items-center text-lg font-medium">
                         <svg

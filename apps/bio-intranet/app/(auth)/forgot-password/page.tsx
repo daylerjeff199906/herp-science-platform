@@ -18,7 +18,7 @@ export default function ForgotPasswordPage() {
     }, initialState)
 
     return (
-        <div className="mx-auto grid w-[350px] gap-6">
+        <div className="mx-auto grid gap-6">
             <div className="grid gap-2 text-center">
                 <h1 className="text-3xl font-bold">Forgot Password</h1>
                 <p className="text-muted-foreground">
