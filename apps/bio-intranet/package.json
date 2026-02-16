@@ -10,6 +10,7 @@
         "check-types": "tsc --noEmit"
     },
     "dependencies": {
+        "@hookform/resolvers": "^5.2.2",
         "@repo/networking": "workspace:*",
         "@repo/shared-types": "workspace:*",
         "@repo/ui": "workspace:*",
@@ -20,8 +21,11 @@
         "next": "15.1.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
+        "react-hook-form": "^7.71.1",
+        "resend": "^6.9.2",
         "tailwind-merge": "^2.6.0",
-        "tailwindcss-animate": "^1.0.7"
+        "tailwindcss-animate": "^1.0.7",
+        "zod": "^4.3.5"
     },
     "devDependencies": {
         "@repo/eslint-config": "workspace:*",
