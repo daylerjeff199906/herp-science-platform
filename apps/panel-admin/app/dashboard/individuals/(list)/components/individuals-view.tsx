@@ -1,13 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
-import { Individual, IndividualFilter, IndividualResponse } from '@repo/shared-types';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Individual, IndividualResponse } from '@repo/shared-types';
 import { IndividualsTable } from './individuals-table';
-import { IndividualForm } from '@/components/forms/individual-form';
-import { SmartFilter, FilterField } from '@/components/ui/smart-filter';
 import { PaginationCustom } from '@/components/ui/pagination-custom';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import {
@@ -16,26 +11,15 @@ import {
 } from '@/services/individuals';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { Sex, Activity, Museum, ForestType } from '@repo/shared-types';
 
 interface IndividualsViewProps {
     individuals: IndividualResponse;
-    sexes: Sex[];
-    activities: Activity[];
-    museums: Museum[];
-    forestTypes: ForestType[];
 }
 
 export function IndividualsView({
     individuals,
-    sexes,
-    activities,
-    museums,
-    forestTypes,
 }: IndividualsViewProps) {
     const router = useRouter();
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
-    const [selectedIndividual, setSelectedIndividual] = useState<Individual | null>(null);
     const [confirmDialog, setConfirmDialog] = useState<{
         open: boolean;
         title: string;
@@ -51,52 +35,6 @@ export function IndividualsView({
         isLoading: false,
         variant: 'default',
     });
-
-    const filterFields: FilterField[] = [
-        {
-            key: 'sexId',
-            label: 'Sexo',
-            type: 'select',
-            placeholder: 'Filtrar por sexo',
-            options: sexes.map((s) => ({ value: s.id, label: s.name })),
-        },
-        {
-            key: 'hasEggs',
-            label: 'Huevos',
-            type: 'boolean',
-        },
-        {
-            key: 'activityId',
-            label: 'Actividad',
-            type: 'select',
-            placeholder: 'Filtrar por actividad',
-            options: activities.map((a) => ({ value: a.id, label: a.name })),
-        },
-        {
-            key: 'museumId',
-            label: 'Museo',
-            type: 'select',
-            placeholder: 'Filtrar por museo',
-            options: museums.map((m) => ({ value: m.id, label: m.name })),
-        },
-        {
-            key: 'forestTypeId',
-            label: 'Tipo de Bosque',
-            type: 'select',
-            placeholder: 'Filtrar por tipo de bosque',
-            options: forestTypes.map((f) => ({ value: f.id, label: f.name })),
-        },
-    ];
-
-    const handleAdd = () => {
-        setSelectedIndividual(null);
-        setIsSheetOpen(true);
-    };
-
-    const handleEdit = (individual: Individual) => {
-        setSelectedIndividual(individual);
-        setIsSheetOpen(true);
-    };
 
     const handleStatusChange = (individual: Individual) => {
         const newStatus = individual.status === 1 ? 0 : 1;
@@ -153,23 +91,11 @@ export function IndividualsView({
         });
     };
 
-    const handleSheetClose = () => {
-        setIsSheetOpen(false);
-        setSelectedIndividual(null);
-    };
-
-    const handleFormSuccess = () => {
-        setIsSheetOpen(false);
-        setSelectedIndividual(null);
-        router.refresh();
-    };
-
     return (
         <div className="flex flex-col gap-4">
 
             <IndividualsTable
                 data={individuals.data}
-                onEdit={handleEdit}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
             />
@@ -180,26 +106,6 @@ export function IndividualsView({
                 totalItems={individuals.totalItems}
                 pageSize={10}
             />
-
-            <Sheet open={isSheetOpen} onOpenChange={handleSheetClose}>
-                <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
-                    <SheetHeader>
-                        <SheetTitle className="text-sm">
-                            {selectedIndividual ? 'Editar Individuo' : 'Nuevo Individuo'}
-                        </SheetTitle>
-                    </SheetHeader>
-                    <div className="mt-6">
-                        <IndividualForm
-                            initialData={selectedIndividual}
-                            sexes={sexes}
-                            activities={activities}
-                            museums={museums}
-                            forestTypes={forestTypes}
-                            onSuccess={handleFormSuccess}
-                        />
-                    </div>
-                </SheetContent>
-            </Sheet>
 
             <ConfirmDialog
                 open={confirmDialog.open}

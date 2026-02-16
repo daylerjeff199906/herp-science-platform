@@ -8,7 +8,7 @@ import {
   IndividualDetails,
   Individual,
 } from '@repo/shared-types'
-import { fetchIndividualByUuid, fetchIndividualsAdmin } from '@repo/networking'
+import { fetchIndividualByUuidAdmin, fetchIndividualsAdmin } from '@repo/networking'
 
 const apiBase = ApiUrl.core.individuals
 
@@ -32,11 +32,12 @@ export async function fetchIndividuals(
   }
 }
 
-export async function fetchIndividualByUuidAdmin(
+export async function fetchIndividualByUuid(
   uuid: string
 ): Promise<IndividualDetails | null> {
   try {
-    const data = await fetchIndividualByUuid(uuid)
+    const header = await buildHeaders()
+    const data = await fetchIndividualByUuidAdmin(uuid, header)
     return data
   } catch (error) {
     console.error('Error fetching individual by UUID:', error)

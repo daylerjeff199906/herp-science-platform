@@ -34,23 +34,11 @@ export default async function Page(props: IPageProps) {
         orderType: params?.orderType ? params.orderType : 'DESC',
     };
 
-    const [individuals, sexes, museums] = await Promise.all([
-        fetchIndividuals(filter),
-        fetchSexes({ page: 1, pageSize: 100 }),
-        fetchMuseums({ page: 1, pageSize: 100 }),
-    ]);
-
-    // TODO: Implementar servicios para activities y forestTypes
-    const activities = { data: [] };
-    const forestTypes = { data: [] };
+    const individuals = await fetchIndividuals(filter);
 
     return (
         <IndividualsView
             individuals={individuals}
-            sexes={sexes.data}
-            activities={activities.data}
-            museums={museums.data}
-            forestTypes={forestTypes.data}
         />
     );
 }

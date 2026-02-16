@@ -1,58 +1,64 @@
+
 import { notFound } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { fetchIndividualByUuidAdmin } from '@/services/individuals'
-import { fetchSexes, fetchMuseums } from '@repo/networking'
-import { IndividualForm } from '@/components/forms/individual-form'
-import { LayoutWrapper } from '@/components/layout-wrapper'
-import { ROUTES } from '@/config'
+import { fetchIndividualByUuid } from '@/services/individuals'
+import {
+  fetchSexes,
+  fetchMuseums,
+  fetchForestTypes,
+  fetchSpecies
+} from '@repo/networking'
+import { GeneralInfoForm } from './general-info-form'
 
 interface PageProps {
   params: Promise<{ uuid: string }>
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function EditGeneralPage({ params }: PageProps) {
   const { uuid } = await params
 
-  const [individual, sexes, museums] = await Promise.all([
-    fetchIndividualByUuidAdmin(uuid),
-    fetchSexes({ page: 1, pageSize: 100 }),
-    fetchMuseums({ page: 1, pageSize: 100 }),
+  const [individual, sexes, museums, forestTypes, species] = await Promise.all([
+    fetchIndividualByUuid(uuid),
+    fetchSexes({ page: 1, pageSize: 100 }).then(res => res.data).catch(() => []),
+    fetchMuseums({ page: 1, pageSize: 100 }).then(res => res.data).catch(() => []),
+    fetchForestTypes({ page: 1, pageSize: 100 }).then(res => res.data).catch(() => []),
+    fetchSpecies({ page: 1, pageSize: 100 }).then(res => res.data).catch(() => [])
   ])
 
   if (!individual) {
     notFound()
   }
 
-  // TODO: Implementar servicios para activities y forestTypes
-  const activities = { data: [] }
-  const forestTypes = { data: [] }
+  // Map individual details to form initial values
+  const defaultValues = {
+    id: individual.id,
+    code: individual.code,
+    weight: individual.weight ? Number(individual.weight) : undefined,
+    slaughteredWeight: individual.slaughteredWeight ? Number(individual.slaughteredWeight) : undefined,
+    svl: individual.svl ? Number(individual.svl) : undefined,
+    tailLength: individual.tailLength ? Number(individual.tailLength) : undefined,
+    hasEggs: individual.hasEggs,
+    identDate: individual.identDate,
+    identTime: individual.identTime,
+    geneticBarcode: individual.geneticBarcode,
+    depositCodeGenbank: individual.depositCodeGenbank,
+    sexId: individual.sex?.id,
+    activityId: individual.activity?.id,
+    forestId: individual.forestType?.id,
+    museumId: individual.museum?.id,
+    speciesId: individual.species?.id,
+    occurrenceId: individual.ocurrence?.id,
+    status: individual.status || 1,
+  }
 
   return (
-    <LayoutWrapper
-      sectionTitle="Editar Individuo"
-      breadcrumbs={[
-        { title: 'Dashboard', href: '/dashboard' },
-        { title: 'Principal', href: '#' },
-        { title: 'Individuos', href: ROUTES.CORE.INDIVIDUALS },
-        { title: individual.code || 'Editar' },
-      ]}
-    >
-      <Card>
-        <CardHeader className="py-3">
-          <CardTitle className="text-sm font-semibold">
-            Información del Individuo
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <IndividualForm
-            initialData={individual}
-            sexes={sexes.data}
-            activities={activities.data}
-            museums={museums.data}
-            forestTypes={forestTypes.data}
-          />
-        </CardContent>
-      </Card>
-    </LayoutWrapper>
+    <GeneralInfoForm
+      initialData={defaultValues}
+      sexes={sexes}
+      museums={museums}
+      forestTypes={forestTypes}
+      species={species}
+      activities={[]} // TODO
+      occurrences={[]} // TODO
+    />
   )
 }

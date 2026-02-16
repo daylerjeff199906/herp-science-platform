@@ -1,8 +1,7 @@
 import { LayoutWrapper } from "@/components/layout-wrapper";
 import { PageHeader } from "@/components/page-header";
 import { fetchSexes, fetchMuseums } from '@repo/networking';
-import { IndividualsFilter } from "./components/individuals-filter";
-import { CreateIndividualButton } from "./components/create-individual-button";
+import { ROUTES } from "@/config";
 
 export default async function Layout({
     children,
@@ -20,23 +19,16 @@ export default async function Layout({
 
     return (
         <LayoutWrapper
-            sectionTitle="Gestión de Individuos"
+            sectionTitle="Crear Individuo"
             breadcrumbs={[
                 { title: 'Dashboard', href: '/dashboard' },
-                { title: 'Principal', href: '#' },
-                { title: 'Individuos' },
+                { title: 'Individuos', href: ROUTES.CORE.INDIVIDUALS },
+                { title: 'Crear' },
             ]}
         >
             <PageHeader
-                title="Individuos"
-                description="Administra el registro de individuos del sistema."
-                actions={<CreateIndividualButton />}
-            />
-            <IndividualsFilter
-                sexes={sexes.data}
-                activities={activities.data}
-                museums={museums.data}
-                forestTypes={forestTypes.data}
+                title="Crear Individuo"
+                description="Crea un nuevo individuo en el sistema."
             />
             {children}
         </LayoutWrapper>

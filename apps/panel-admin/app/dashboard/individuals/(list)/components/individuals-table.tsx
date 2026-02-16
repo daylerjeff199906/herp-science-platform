@@ -27,14 +27,12 @@ import { cn } from '@/lib/utils';
 
 interface IndividualsTableProps {
     data: Individual[];
-    onEdit: (individual: Individual) => void;
     onStatusChange: (individual: Individual) => void;
     onDelete: (individual: Individual) => void;
 }
 
 export function IndividualsTable({
     data,
-    onEdit,
     onStatusChange,
     onDelete,
 }: IndividualsTableProps) {
@@ -153,9 +151,11 @@ export function IndividualsTable({
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => onEdit(individual)}
+                            asChild
                         >
-                            <Edit className="h-4 w-4" />
+                            <Link href={`${ROUTES.CORE.INDIVIDUALS}/${individual.id}/edit`}>
+                                <Edit className="h-4 w-4" />
+                            </Link>
                         </Button>
                         <Button
                             variant="ghost"
