@@ -22,8 +22,12 @@ import {
 import { IndividualMultimediaFormValues } from '@/lib/schemas/individuals'
 import { Trash2, Plus } from 'lucide-react'
 
+interface MultimediaSectionFormValues {
+    images: IndividualMultimediaFormValues[]
+}
+
 interface MultimediaSectionProps {
-    form: UseFormReturn<IndividualMultimediaFormValues>
+    form: UseFormReturn<MultimediaSectionFormValues>
 }
 
 export function MultimediaSection({ form }: MultimediaSectionProps) {
@@ -127,7 +131,7 @@ export function MultimediaSection({ form }: MultimediaSectionProps) {
                 variant="outline"
                 size="sm"
                 className="mt-2"
-                onClick={() => append({ personId: undefined })}
+                onClick={() => append({ personId: undefined } as any)}
             >
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Imagen

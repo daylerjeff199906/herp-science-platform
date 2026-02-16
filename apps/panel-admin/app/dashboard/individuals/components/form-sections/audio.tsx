@@ -22,8 +22,12 @@ import {
 import { IndividualAudioFormValues } from '@/lib/schemas/individuals'
 import { Trash2, Plus } from 'lucide-react'
 
+interface AudioSectionFormValues {
+    audios: IndividualAudioFormValues[]
+}
+
 interface AudioSectionProps {
-    form: UseFormReturn<IndividualAudioFormValues>
+    form: UseFormReturn<AudioSectionFormValues>
 }
 
 export function AudioSection({ form }: AudioSectionProps) {
@@ -151,7 +155,7 @@ export function AudioSection({ form }: AudioSectionProps) {
                 variant="outline"
                 size="sm"
                 className="mt-2"
-                onClick={() => append({ personId: undefined })}
+                onClick={() => append({ personId: undefined } as any)}
             >
                 <Plus className="mr-2 h-4 w-4" />
                 Agregar Audio
