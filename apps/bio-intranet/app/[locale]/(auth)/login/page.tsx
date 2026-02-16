@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type ControllerRenderProps } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
@@ -83,7 +83,7 @@ export default function LoginPage() {
                     <FormField
                         control={form.control}
                         name="email"
-                        render={({ field }) => (
+                        render={({ field }: { field: ControllerRenderProps<LoginFormValues, 'email'> }) => (
                             <FormItem>
                                 <FormControl>
                                     <Input
@@ -101,7 +101,7 @@ export default function LoginPage() {
                     <FormField
                         control={form.control}
                         name="password"
-                        render={({ field }) => (
+                        render={({ field }: { field: ControllerRenderProps<LoginFormValues, 'password'> }) => (
                             <FormItem>
                                 <div className="flex items-center justify-end">
                                     <Link

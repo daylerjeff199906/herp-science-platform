@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert';
 import { AlertCircle, CheckCircle2, Mail, Loader2 } from 'lucide-react';
 import { Button } from '@repo/ui/components/ui/button';
-import { useForm } from 'react-hook-form';
+import { useForm, type ControllerRenderProps } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@repo/ui/components/ui/form';
@@ -17,7 +17,7 @@ import { Input } from '@repo/ui/components/ui/input';
 const formSchema = z.object({
     firstName: z.string().min(2, "First name must be at least 2 characters."),
     lastName: z.string().min(2, "Last name must be at least 2 characters."),
-    email: z.string().email("Invalid email address."),
+    email: z.string(),
     password: z.string().min(8, "Password must be at least 8 characters.")
         .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
         .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
@@ -148,7 +148,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="firstName"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<SignupFormValues, 'firstName'> }) => (
                         <FormItem>
                             <FormControl>
                                 <Input placeholder={t('firstNamePlaceholder')} {...field} disabled={isPending} />
@@ -160,7 +160,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="lastName"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<SignupFormValues, 'lastName'> }) => (
                         <FormItem>
                             <FormControl>
                                 <Input placeholder={t('lastNamePlaceholder')} {...field} disabled={isPending} />
@@ -173,7 +173,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="email"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<SignupFormValues, 'email'> }) => (
                         <FormItem>
                             <FormControl>
                                 <Input placeholder={t('emailPlaceholder')} type="email" {...field} disabled={isPending} />
@@ -186,7 +186,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="password"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<SignupFormValues, 'password'> }) => (
                         <FormItem>
                             <FormControl>
                                 <PasswordInput
@@ -208,7 +208,7 @@ export default function SignupForm() {
                 <FormField
                     control={form.control}
                     name="confirmPassword"
-                    render={({ field }) => (
+                    render={({ field }: { field: ControllerRenderProps<SignupFormValues, 'confirmPassword'> }) => (
                         <FormItem>
                             <FormControl>
                                 <PasswordInput placeholder={t('confirmPasswordPlaceholder')} {...field} disabled={isPending} />

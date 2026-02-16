@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type ControllerRenderProps } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                     <FormField
                         control={form.control}
                         name="email"
-                        render={({ field }) => (
+                        render={({ field }: { field: ControllerRenderProps<ForgotPasswordFormValues, 'email'> }) => (
                             <FormItem>
                                 <FormControl>
                                     <Input
