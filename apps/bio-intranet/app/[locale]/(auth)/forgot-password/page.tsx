@@ -3,6 +3,7 @@
 import { useActionState } from 'react'
 import { forgotPassword } from './actions'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 const initialState = {
     error: '',
@@ -10,6 +11,7 @@ const initialState = {
 }
 
 export default function ForgotPasswordPage() {
+    const t = useTranslations('Auth');
     const [state, action, isPending] = useActionState(async (state: any, payload: FormData) => {
         const result = await forgotPassword(payload);
         if (result?.error) return { error: result.error, success: '' };
@@ -20,14 +22,14 @@ export default function ForgotPasswordPage() {
     return (
         <div className="mx-auto grid gap-6">
             <div className="grid gap-2 text-center">
-                <h1 className="text-3xl font-bold">Forgot Password</h1>
+                <h1 className="text-3xl font-bold">{t('forgotPassword')}</h1>
                 <p className="text-muted-foreground">
                     Enter your email to reset your password
                 </p>
             </div>
             <form action={action} className="grid gap-4">
                 <div className="grid gap-2">
-                    <label htmlFor="email">Email</label>
+                    <label htmlFor="email">{t('email')}</label>
                     <input
                         id="email"
                         name="email"
@@ -42,13 +44,13 @@ export default function ForgotPasswordPage() {
                 {state?.success && <div className="text-sm font-medium text-green-600">{state.success}</div>}
 
                 <button type="submit" disabled={isPending} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                    {isPending ? 'Sending...' : 'Send Reset Link'}
+                    {isPending ? `${t('sendResetLink')}...` : t('sendResetLink')}
                 </button>
             </form>
             <div className="text-center text-sm">
-                Remember your password?{" "}
+                {t('rememberPassword')}{" "}
                 <Link href="/login" className="underline text-primary">
-                    Log in
+                    {t('logIn')}
                 </Link>
             </div>
         </div>

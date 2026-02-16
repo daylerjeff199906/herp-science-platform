@@ -1,12 +1,14 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { signup } from '@/app/[locale]/(auth)/login/actions';
+import { signup } from '@/app/[locale]/(auth)/signup/actions';
 import { PasswordStrength } from '@/components/auth/password-strength';
 import { PasswordInput } from '@/components/auth/password-input';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function SignupForm() {
+    const t = useTranslations('Auth');
     const [state, formAction, isPending] = useActionState(signup, null);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -34,11 +36,11 @@ export default function SignupForm() {
         <form action={formAction} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                    <label htmlFor="firstName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">First name</label>
+                    <label htmlFor="firstName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t('firstName')}</label>
                     <input id="firstName" name="firstName" placeholder="Max" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
                 </div>
                 <div className="grid gap-2">
-                    <label htmlFor="lastName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Last name</label>
+                    <label htmlFor="lastName" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t('lastName')}</label>
                     <input id="lastName" name="lastName" placeholder="Robinson" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
                 </div>
             </div>
@@ -46,7 +48,7 @@ export default function SignupForm() {
             {(state?.errors as any)?.lastName && <p className="text-destructive text-sm">{(state?.errors as any).lastName}</p>}
 
             <div className="grid gap-2">
-                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Email</label>
+                <label htmlFor="email" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t('email')}</label>
                 <input
                     id="email"
                     name="email"
@@ -59,14 +61,14 @@ export default function SignupForm() {
             {(state?.errors as any)?.email && <p className="text-destructive text-sm">{(state?.errors as any).email}</p>}
 
             <div className="grid gap-2">
-                <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Password</label>
+                <label htmlFor="password" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t('password')}</label>
                 <PasswordInput id="password" name="password" required onChange={handlePasswordChange} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10" />
                 <PasswordStrength checks={checks} />
             </div>
             {(state?.errors as any)?.password && <p className="text-destructive text-sm">{(state?.errors as any).password}</p>}
 
             <div className="grid gap-2">
-                <label htmlFor="confirmPassword" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Confirm Password</label>
+                <label htmlFor="confirmPassword" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">{t('confirmPassword')}</label>
                 <PasswordInput id="confirmPassword" name="confirmPassword" required onChange={(e) => setConfirmPassword(e.target.value)} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-10" />
             </div>
             {(state?.errors as any)?.confirmPassword && <p className="text-destructive text-sm">{(state?.errors as any).confirmPassword}</p>}
