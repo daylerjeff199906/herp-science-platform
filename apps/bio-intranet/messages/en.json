@@ -50,6 +50,11 @@
       "location": "Location",
       "birthDate": "Birth Date",
       "phone": "Phone",
+      "sex": "Sex",
+      "sexPlaceholder": "Select your sex",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
       "institution": "Institution",
       "institutionPlaceholder": "Enter the name of your institution",
       "dedication": "Dedication",
@@ -441,6 +446,15 @@
       "birthDate": {
         "label": "What is your birth date?",
         "placeholder": "Select your birth date"
+      },
+      "sex": {
+        "label": "Sex",
+        "placeholder": "Select your sex",
+        "options": {
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        }
       },
       "location": {
         "label": "Where are you currently located?",

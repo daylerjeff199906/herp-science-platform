@@ -24,6 +24,7 @@ export const PersonalInfoSchema = z.object({
       },
       { message: 'Onboarding.Errors.birthDateInvalid' }
     ),
+  sex: z.enum(['male', 'female', 'other']).optional(),
   location: z.string().optional(),
   phone: z
     .string()

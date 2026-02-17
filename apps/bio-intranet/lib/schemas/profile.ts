@@ -12,6 +12,7 @@ export const GeneralProfileSchema = z.object({
     bio: z.string().optional(),
     location: z.string().optional(),
     birthDate: z.string().optional(),
+    sex: z.enum(['male', 'female', 'other']).optional(),
     phone: z.string().optional(),
     // Extended fields
     dedication: z.string().optional(),

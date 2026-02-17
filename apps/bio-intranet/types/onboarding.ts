@@ -12,6 +12,7 @@ export interface Topic {
 
 export interface OnboardingInput {
   birthDate: string
+  sex?: 'male' | 'female' | 'other'
   location?: string
   phone?: string
   bio?: string
