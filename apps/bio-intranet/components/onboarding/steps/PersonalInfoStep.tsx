@@ -53,6 +53,7 @@ export function PersonalInfoStep({
             <SelectItem value="male">{t('Onboarding.PersonalInfo.sex.options.male')}</SelectItem>
             <SelectItem value="female">{t('Onboarding.PersonalInfo.sex.options.female')}</SelectItem>
             <SelectItem value="other">{t('Onboarding.PersonalInfo.sex.options.other')}</SelectItem>
+            <SelectItem value="prefer_not_to_say">{t('Onboarding.PersonalInfo.sex.options.prefer_not_to_say')}</SelectItem>
           </SelectContent>
         </Select>
       </div>

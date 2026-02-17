@@ -55,6 +55,7 @@
       "genderMale": "Male",
       "genderFemale": "Female",
       "genderOther": "Other",
+      "genderPreferNotToSay": "Prefer not to say",
       "institution": "Institution",
       "institutionPlaceholder": "Enter the name of your institution",
       "dedication": "Dedication",
@@ -453,7 +454,8 @@
         "options": {
           "male": "Male",
           "female": "Female",
-          "other": "Other"
+          "other": "Other",
+          "prefer_not_to_say": "Prefer not to say"
         }
       },
       "location": {

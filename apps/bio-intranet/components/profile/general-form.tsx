@@ -287,6 +287,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                             <SelectItem value="male">{t('form.genderMale')}</SelectItem>
                                             <SelectItem value="female">{t('form.genderFemale')}</SelectItem>
                                             <SelectItem value="other">{t('form.genderOther')}</SelectItem>
+                                            <SelectItem value="prefer_not_to_say">{t('form.genderPreferNotToSay')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
