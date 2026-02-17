@@ -11,7 +11,8 @@ import {
     Shield,
     GraduationCap,
     Globe,
-    Award
+    Award,
+    BadgeCheck
 } from "lucide-react"
 
 import {
@@ -37,6 +38,7 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     const tLang = useTranslations('Profile.language')
 
     const tProf = useTranslations('Profile.professionalActivity')
+    const tCert = useTranslations('Profile.certifications')
 
     const items = [
         {
@@ -62,6 +64,12 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             description: tProf('description'),
             url: `/${locale}/dashboard/profile/professional-activities`,
             icon: Award,
+        },
+        {
+            title: tCert('title'),
+            description: tCert('description'),
+            url: `/${locale}/dashboard/profile/certifications`,
+            icon: BadgeCheck,
         },
         {
             title: tLang('title'),
