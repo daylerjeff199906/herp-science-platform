@@ -215,9 +215,14 @@ function EmploymentItem({
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(emp)}>
-                            <Edit className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(emp)}>
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(emp)}>
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                 </div>
 
@@ -272,13 +277,6 @@ function EmploymentItem({
                             </motion.div>
                         )}
                     </AnimatePresence>
-                </div>
-
-                {/* Footer */}
-                <div className="p-4 pt-0 flex justify-end">
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(emp)}>
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
                 </div>
             </Card>
         </motion.div>

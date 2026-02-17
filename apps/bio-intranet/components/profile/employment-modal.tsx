@@ -157,6 +157,47 @@ export function EmploymentModal({
                                     </FormItem>
                                 )}
                             />
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-1 md:col-span-2">
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('city')}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('cityPlaceholder')} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="region_state"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('regionState')}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('regionStatePlaceholder')} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="country"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('country')}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('countryPlaceholder')} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="start_date"
