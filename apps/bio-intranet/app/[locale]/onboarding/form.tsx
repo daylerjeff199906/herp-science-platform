@@ -22,6 +22,7 @@ import {
   ProfessionalInfoStep,
   InterestsStep,
 } from '@/components/onboarding/steps'
+import { Logo } from '@/components/ui/logo'
 
 interface OnboardingFormProps {
   locale: string
@@ -145,9 +146,12 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
     <div className="w-full">
       {/* Header con Logo */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
-          <Leaf className="w-8 h-8 text-primary" />
-        </div>
+        <Logo
+          name={'B.E.A'}
+          textClassName="text-black"
+          imageClassName="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white"
+          size="lg"
+        />
         <h1 className="text-2xl font-bold tracking-tight mb-2">
           {t('Onboarding.title')}
         </h1>

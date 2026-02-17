@@ -93,7 +93,7 @@ export default function Page() {
 
             <footer className="py-6 w-full border-t">
                 <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} Instituto de Investigaciones de la Amazonía Peruana.</p>
+                    <p>&copy; {new Date().getFullYear()} {t('instituteName')}.</p>
                     <div className="flex gap-4">
                         <Link href="#" className="hover:underline">Privacidad</Link>
                         <Link href="#" className="hover:underline">Términos</Link>

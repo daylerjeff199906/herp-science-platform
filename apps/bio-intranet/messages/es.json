@@ -388,6 +388,7 @@
     }
   },
   "Auth": {
+    "tagline": "Gestión inteligente para la investigación científica. Organiza, colabora y descubre con la plataforma de gestión biológica más avanzada.",
     "login": "Iniciar Sesión",
     "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
     "errorTitle": "Error",
@@ -547,8 +548,9 @@
     "current": "Actualmente trabajando aquí"
   },
   "Home": {
+    "instituteName": "Instituto de Investigaciones de la Amazonía Peruana",
     "nav": {
-      "title": "Bio Intranet",
+      "title": "B.E.A IIAP",
       "login": "Iniciar Sesión",
       "join": "Únete"
     },
@@ -556,13 +558,13 @@
       "titlePart1": "Únete a la Comunidad Científica del IIAP:",
       "titlePart2": "Tu espacio para construir un",
       "titleHighlight": "legado científico",
-      "description": "No tienes que investigar solo. Dentro de la Bio Intranet, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
-      "ctaPrimary": "Ingresar a Bio Intranet"
+      "description": "No tienes que investigar solo. Dentro de B.E.A IIAP, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
+      "ctaPrimary": "Ingresar a B.E.A IIAP"
     }
   },
   "Dashboard": {
     "title": "Panel de Control",
-    "welcomeMessage": "¡Bienvenido a Bio Intranet! Tu perfil ha sido creado exitosamente.",
+    "welcomeMessage": "¡Bienvenido a B.E.A IIAP! Tu perfil ha sido creado exitosamente.",
     "protectedArea": "Esta es el área protegida del panel de control.",
     "welcomeBack": "¡Bienvenido de vuelta, {name}!"
   },
@@ -608,10 +610,10 @@
   },
   "Email": {
     "welcome": {
-      "subject": "¡Bienvenido a Bio Intranet!",
+      "subject": "¡Bienvenido a B.E.A IIAP!",
       "title": "¡Bienvenido a la comunidad!",
       "greeting": "Hola {name},",
-      "message": "Nos emociona tenerte como parte de la Bio Intranet. Tu perfil ha sido creado exitosamente y ahora puedes comenzar a conectar con otros investigadores.",
+      "message": "Nos emociona tenerte como parte de B.E.A IIAP. Tu perfil ha sido creado exitosamente y ahora puedes comenzar a conectar con otros investigadores.",
       "cta": "Ir al Dashboard",
       "footer": "Si tienes alguna pregunta, no dudes en contactarnos."
     }
