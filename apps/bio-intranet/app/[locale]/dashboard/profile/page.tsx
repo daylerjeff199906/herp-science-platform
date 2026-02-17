@@ -2,7 +2,6 @@ import { GeneralForm } from "@/components/profile/general-form"
 import { AvatarUpload } from "@/components/profile/avatar-upload"
 import { SocialLinksCard } from "@/components/profile/social-links-card"
 import { AdditionalEmailsCard } from "@/components/profile/additional-emails-card"
-import { LanguageWidget } from "@/components/profile/language-widget"
 import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import { getTranslations } from "next-intl/server"
@@ -86,7 +85,6 @@ export default async function ProfileGeneralPage({ params }: ProfileGeneralPageP
 
                 <SocialLinksCard links={profile?.social_links || []} locale={locale} />
                 <AdditionalEmailsCard emails={profile?.additional_emails || []} locale={locale} />
-                <LanguageWidget languages={languages || []} locale={locale} />
             </div>
         </div>
     )

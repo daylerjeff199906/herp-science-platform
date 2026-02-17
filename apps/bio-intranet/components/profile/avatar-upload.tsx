@@ -7,8 +7,8 @@ import {
     AvatarImage,
 } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Edit, Loader2, Upload } from 'lucide-react'
-import { getPresignedAvatarUrl, updateAvatar } from '@/app/[locale]/dashboard/profile/actions-r2'
+import { Edit, Loader2, Trash2, Upload } from 'lucide-react'
+import { updateAvatar } from '@/app/[locale]/dashboard/profile/actions-r2'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
 
@@ -41,37 +41,70 @@ export function AvatarUpload({ avatarUrl, firstName, lastName }: AvatarUploadPro
         setIsUploading(true)
 
         try {
-            // 1. Get presigned URL
-            const presignResult = await getPresignedAvatarUrl(file.type)
-            if (presignResult.error || !presignResult.signedUrl) {
-                throw new Error(presignResult.error || 'Failed to get upload URL')
-            }
+            const formData = new FormData()
+            formData.append('file', file)
+            formData.append('folder', 'avatars')
 
-            // 2. Upload to R2
-            const uploadResponse = await fetch(presignResult.signedUrl, {
-                method: 'PUT',
-                body: file,
-                headers: {
-                    'Content-Type': file.type,
-                },
+            // Upload to R2 via API
+            const response = await fetch('/api/r2/upload', {
+                method: 'POST',
+                body: formData
             })
 
-            if (!uploadResponse.ok) {
+            console.log(response)
+
+            if (!response.ok) {
                 throw new Error('Upload failed')
             }
 
-            // 3. Update profile
-            const updateResult = await updateAvatar(presignResult.publicUrl)
+            const data = await response.json()
+            const newUrl = data.url
+
+            // Update profile
+            const updateResult = await updateAvatar(newUrl)
             if (updateResult.error) {
                 throw new Error(updateResult.error)
             }
 
-            setPreviewUrl(presignResult.publicUrl)
+            // If there was an old avatar and it was on R2, we *could* delete it here 
+            // but for safety we'll just update the pointer.
+
+            setPreviewUrl(newUrl)
             toast.success(t('success'))
 
         } catch (error) {
             console.error(error)
             toast.error(t('error'))
+        } finally {
+            setIsUploading(false)
+            if (fileInputRef.current) fileInputRef.current.value = ''
+        }
+    }
+
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation() // Prevent triggering file input
+        if (!previewUrl) return
+
+        if (!confirm('Are you sure you want to remove your profile photo?')) return
+
+        setIsUploading(true)
+        try {
+            // Delete from R2
+            await fetch('/api/r2/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: previewUrl })
+            })
+
+            // Update Profile to null
+            const updateResult = await updateAvatar('') // Empty string or null? Update action handles string.
+            if (updateResult.error) throw new Error(updateResult.error)
+
+            setPreviewUrl(null)
+            toast.success('Avatar removed')
+        } catch (error) {
+            console.error(error)
+            toast.error('Error removing avatar')
         } finally {
             setIsUploading(false)
         }
@@ -81,18 +114,37 @@ export function AvatarUpload({ avatarUrl, firstName, lastName }: AvatarUploadPro
 
     return (
         <div className="relative group min-w-[100px] min-h-[100px] h-24 w-24">
-            <Avatar className="h-24 w-24 border-2 border-border">
+            <Avatar className="h-24 w-24 border-2 border-border cursor-pointer" onClick={() => fileInputRef.current?.click()}>
                 <AvatarImage src={previewUrl || ''} alt="Profile" className="object-cover" />
                 <AvatarFallback className="text-lg">{initials}</AvatarFallback>
             </Avatar>
 
-            <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer" onClick={() => fileInputRef.current?.click()}>
-                {isUploading ? (
-                    <Loader2 className="h-6 w-6 text-white animate-spin" />
-                ) : (
-                    <Edit className="h-6 w-6 text-white" />
-                )}
+            <div className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 gap-2 pointer-events-none">
+                {/* Pointer events none on container, enable on buttons */}
+                <div className="flex gap-2 pointer-events-auto">
+                    <Button
+                        size="icon"
+                        variant="secondary"
+                        className="h-8 w-8 rounded-full opacity-90 hover:opacity-100"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading}
+                    >
+                        {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Edit className="h-4 w-4" />}
+                    </Button>
+                    {previewUrl && (
+                        <Button
+                            size="icon"
+                            variant="destructive"
+                            className="h-8 w-8 rounded-full opacity-90 hover:opacity-100"
+                            onClick={handleDelete}
+                            disabled={isUploading}
+                        >
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
             </div>
+
             <input
                 type="file"
                 ref={fileInputRef}
