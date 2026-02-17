@@ -128,6 +128,52 @@
         "error": "Error al eliminar la educación"
       }
     },
+    "employment": {
+      "title": "Experiencia Laboral",
+      "description": "Gestiona tu experiencia profesional e historial de trabajo.",
+      "add": "Agregar Experiencia",
+      "addFirst": "Agrega tu primera experiencia laboral",
+      "emptyStateTitle": "No hay experiencia laboral agregada aún",
+      "emptyStateDescription": "Agrega tu trayectoria profesional para mostrar tu carrera.",
+      "edit": "Editar",
+      "present": "Presente",
+      "form": {
+        "createTitle": "Agregar Experiencia",
+        "editTitle": "Editar Experiencia",
+        "description": "Agrega detalles sobre tu experiencia profesional. Haz clic en guardar cuando termines.",
+        "organization": "Organización",
+        "organizationPlaceholder": "ej. Google",
+        "role": "Cargo",
+        "rolePlaceholder": "ej. Ingeniero de Software",
+        "department": "Departamento",
+        "departmentPlaceholder": "ej. Ingeniería",
+        "startDate": "Fecha de Inicio",
+        "endDate": "Fecha de Fin",
+        "isCurrent": "Posición Actual",
+        "isCurrentDescription": "Actualmente trabajo aquí. Esto ocultará el campo de fecha de finalización.",
+        "visibility": "Visibilidad",
+        "visibilityPlaceholder": "Seleccionar visibilidad",
+        "visibilityPublic": "Público",
+        "visibilityPublicDescription": "Visible para todos en la plataforma.",
+        "visibilityTrusted": "Solo Confianza",
+        "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
+        "visibilityPrivate": "Privado",
+        "visibilityPrivateDescription": "Solo visible para ti.",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "success": "Experiencia guardada exitosamente",
+        "error": "Error al guardar la experiencia"
+      },
+      "delete": {
+        "title": "Eliminar Experiencia",
+        "description": "¿Estás seguro de que quieres eliminar esta experiencia? Esta acción no se puede deshacer.",
+        "confirmInstruction": "Escribe DELETE para confirmar.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar",
+        "success": "Experiencia eliminada exitosamente",
+        "error": "Error al eliminar la experiencia"
+      }
+    },
     "messages": {
       "updateSuccess": "Perfil actualizado correctamente.",
       "updateError": "Error al actualizar el perfil.",
