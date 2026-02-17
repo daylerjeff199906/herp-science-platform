@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
             ContentType: file.type,
         }
 
-        const res = await r2Client.send(new PutObjectCommand(uploadParams))
+        await r2Client.send(new PutObjectCommand(uploadParams))
         const url = `${R2_PUBLIC_URL}/${fileName}`
 
         return NextResponse.json({ url })
