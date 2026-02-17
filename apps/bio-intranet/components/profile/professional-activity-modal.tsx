@@ -290,6 +290,9 @@ export function ProfessionalActivityModal({
                                                             <Globe className="h-4 w-4" />
                                                             {t('visibilityPublic')}
                                                         </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
+                                                            {t('visibilityPublicDescription')}
+                                                        </div>
                                                     </div>
                                                 </SelectItem>
                                                 <SelectItem value="trusted">
@@ -298,6 +301,9 @@ export function ProfessionalActivityModal({
                                                             <Users className="h-4 w-4" />
                                                             {t('visibilityTrusted')}
                                                         </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
+                                                            {t('visibilityTrustedDescription')}
+                                                        </div>
                                                     </div>
                                                 </SelectItem>
                                                 <SelectItem value="private">
@@ -305,6 +311,9 @@ export function ProfessionalActivityModal({
                                                         <div className="font-semibold flex items-center gap-2">
                                                             <Lock className="h-4 w-4" />
                                                             {t('visibilityPrivate')}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
+                                                            {t('visibilityPrivateDescription')}
                                                         </div>
                                                     </div>
                                                 </SelectItem>

@@ -255,6 +255,9 @@
         "error": "Error al eliminar"
       },
       "form": {
+        "add": "Añadir actividad",
+        "edit": "Editar actividad",
+        "visibilityPlaceholder": "Seleccionar visibilidad",
         "organization": "Organización",
         "organizationPlaceholder": "ej. Universidad Nacional",
         "role": "Rol / Cargo",
@@ -274,8 +277,11 @@
         "current": "Actualmente en curso",
         "visibility": "Visibilidad",
         "visibilityPublic": "Público",
-        "visibilityTrusted": "Socios",
+        "visibilityPublicDescription": "Visible para todos en la plataforma.",
+        "visibilityTrusted": "Solo Confianza",
+        "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
         "visibilityPrivate": "Privado",
+        "visibilityPrivateDescription": "Solo visible para ti.",
         "cancel": "Cancelar",
         "save": "Guardar",
         "success": "Guardado correctamente",

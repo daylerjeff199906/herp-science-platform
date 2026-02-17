@@ -251,6 +251,9 @@
         "error": "Error deleting"
       },
       "form": {
+        "add": "Add Activity",
+        "edit": "Edit Activity",
+        "visibilityPlaceholder": "Select visibility",
         "organization": "Organization",
         "organizationPlaceholder": "e.g. National University",
         "role": "Role / Position",
@@ -270,8 +273,11 @@
         "current": "Currently active",
         "visibility": "Visibility",
         "visibilityPublic": "Public",
+        "visibilityPublicDescription": "Visible to everyone on the platform.",
         "visibilityTrusted": "Trusted",
+        "visibilityTrustedDescription": "Visible only to your trusted contacts.",
         "visibilityPrivate": "Private",
+        "visibilityPrivateDescription": "Only visible to you.",
         "cancel": "Cancel",
         "save": "Save",
         "success": "Saved successfully",
