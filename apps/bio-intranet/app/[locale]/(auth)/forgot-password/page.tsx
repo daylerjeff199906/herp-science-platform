@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 import { Button } from '@repo/ui/components/ui/button'
 import {
-    Form,
     FormControl,
     FormField,
     FormItem,
@@ -71,47 +70,45 @@ export default function ForgotPasswordPage() {
                 </p>
             </div>
 
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                    {error && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                    )}
-                    {success && (
-                        <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
-                            <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-                            <AlertDescription className="text-green-800 dark:text-green-300">
-                                {success}
-                            </AlertDescription>
-                        </Alert>
-                    )}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+                {success && (
+                    <Alert className="bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        <AlertDescription className="text-green-800 dark:text-green-300">
+                            {success}
+                        </AlertDescription>
+                    </Alert>
+                )}
 
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }: { field: ControllerRenderProps<ForgotPasswordFormValues, 'email'> }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input
-                                        placeholder={t('emailPlaceholder')}
-                                        type="email"
-                                        disabled={isPending}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }: { field: ControllerRenderProps<ForgotPasswordFormValues, 'email'> }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input
+                                    placeholder={t('emailPlaceholder')}
+                                    type="email"
+                                    disabled={isPending}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
-                    <Button type="submit" className="w-full" disabled={isPending}>
-                        {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {t('sendResetLink')}
-                    </Button>
-                </form>
-            </Form>
+                <Button type="submit" className="w-full" disabled={isPending}>
+                    {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {t('sendResetLink')}
+                </Button>
+            </form>
 
             <div className="text-center text-sm">
                 {t('rememberPassword')}{" "}
