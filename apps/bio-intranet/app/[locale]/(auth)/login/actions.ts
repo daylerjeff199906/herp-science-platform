@@ -37,6 +37,7 @@ export async function login(formData: FormData) {
             return
         }
 
+
         // Si no ha completado el onboarding, redirigir a onboarding
         if (!profile?.onboarding_completed) {
             revalidatePath('/', 'layout')
@@ -44,6 +45,7 @@ export async function login(formData: FormData) {
             return
         }
     }
+
 
     // Si ha completado el onboarding, redirigir al dashboard
     revalidatePath('/', 'layout')

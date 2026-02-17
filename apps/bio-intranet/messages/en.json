@@ -1,64 +1,180 @@
 {
-    "Auth": {
-        "login": "Login",
-        "loginDescription": "Enter your email below to login to your account",
-        "errorTitle": "Error",
-        "signupDescription": "Enter your information to create an account",
-        "Errors": {
-            "Invalid login credentials": "Invalid login credentials or email not confirmed.",
-            "Email not confirmed": "Please confirm your email before logging in."
-        },
-        "signup": "Sign Up",
-        "forgotPassword": "Forgot Password",
-        "resetPassword": "Reset Password",
-        "email": "Email",
-        "emailPlaceholder": "Enter your email address",
-        "password": "Password",
-        "passwordPlaceholder": "Enter your password",
-        "confirmPassword": "Confirm Password",
-        "confirmPasswordPlaceholder": "Confirm your password",
-        "firstName": "First Name",
-        "firstNamePlaceholder": "First name",
-        "lastName": "Last Name",
-        "lastNamePlaceholder": "Last name",
-        "submit": "Submit",
-        "createAccount": "Create Account",
-        "alreadyHaveAccount": "Already have an account?",
-        "dontHaveAccount": "Don't have an account?",
-        "signIn": "Sign In",
-        "sendResetLink": "Send Reset Link",
-        "updatePassword": "Update Password",
-        "rememberPassword": "Remember your password?",
-        "logIn": "Log in",
-        "rememberMe": "Remember me",
-        "welcome": "Welcome",
-        "onboarding": "Onboarding",
-        "institution": "Institution / University",
-        "degree": "Degree / Title",
-        "fieldOfStudy": "Field of Study",
-        "completeProfile": "Complete Profile",
-        "accountCreated": "Account Created!",
-        "checkEmailConfirm": "Please check your email to confirm your account",
-        "emailSentNote": "We've sent you a confirmation link. Check your inbox and spam folder",
-        "goToLogin": "Go to Login"
+  "Auth": {
+    "login": "Login",
+    "loginDescription": "Enter your email below to login to your account",
+    "errorTitle": "Error",
+    "signupDescription": "Enter your information to create an account",
+    "Errors": {
+      "Invalid login credentials": "Invalid login credentials or email not confirmed.",
+      "Email not confirmed": "Please confirm your email before logging in."
     },
-    "Home": {
-        "nav": {
-            "title": "Bio Intranet",
-            "login": "Log In",
-            "join": "Join Us"
-        },
-        "hero": {
-            "titlePart1": "Join the IIAP Scientific Community:",
-            "titlePart2": "Your home for building a",
-            "titleHighlight": "scientific legacy",
-            "description": "You don't have to research alone. Inside Bio Intranet, connect with other researchers, access digital resources, and manage your academic profile integrated with IIAP services.",
-            "ctaPrimary": "Enter Bio Intranet"
+    "signup": "Sign Up",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "First name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Last name",
+    "submit": "Submit",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "signIn": "Sign In",
+    "sendResetLink": "Send Reset Link",
+    "updatePassword": "Update Password",
+    "rememberPassword": "Remember your password?",
+    "logIn": "Log in",
+    "rememberMe": "Remember me",
+    "welcome": "Welcome",
+    "onboarding": "Complete Profile",
+    "completeProfile": "Complete Profile",
+    "accountCreated": "Account Created!",
+    "checkEmailConfirm": "Please check your email to confirm your account",
+    "emailSentNote": "We've sent you a confirmation link. Check your inbox and spam folder",
+    "goToLogin": "Go to Login"
+  },
+  "Onboarding": {
+    "title": "Complete your profile",
+    "description": "Tell us a bit about yourself to personalize your experience",
+    "progress": "Step {current} of {total}",
+    "next": "Continue",
+    "back": "Back",
+    "finish": "Finish",
+    "skip": "Skip",
+    "saving": "Saving...",
+    "welcomeEmailSent": "We've sent you a welcome email!",
+    "Steps": {
+      "personal": "Personal Information",
+      "professional": "Professional Information",
+      "interests": "Interests"
+    },
+    "PersonalInfo": {
+      "birthDate": {
+        "label": "What is your birth date?",
+        "placeholder": "Select your birth date"
+      },
+      "location": {
+        "label": "Where are you currently located?",
+        "placeholder": "City, Country"
+      },
+      "phone": {
+        "label": "What is your phone number?",
+        "placeholder": "+1 234 567 890"
+      },
+      "bio": {
+        "label": "Tell us a bit about yourself",
+        "placeholder": "Write a brief bio about yourself, your interests, and your work..."
+      }
+    },
+    "ProfessionalInfo": {
+      "dedication": {
+        "label": "What is your main dedication?",
+        "placeholder": "Select your dedication",
+        "options": {
+          "full_time": "Full time",
+          "part_time": "Part time",
+          "freelance": "Freelance",
+          "student": "Student",
+          "researcher": "Researcher",
+          "professor": "Professor/Teacher",
+          "other": "Other"
         }
+      },
+      "currentPosition": {
+        "label": "What is your current position or role?",
+        "placeholder": "Ex: Principal Investigator, PhD Student..."
+      },
+      "institution": {
+        "label": "Which institution do you work or study at?",
+        "placeholder": "Institution name"
+      },
+      "website": {
+        "label": "Do you have a website or portfolio?",
+        "placeholder": "https://yoursite.com"
+      }
     },
-    "Dashboard": {
-        "title": "Dashboard",
-        "welcomeMessage": "Welcome! Your academic profile has been created successfully.",
-        "protectedArea": "This is the protected dashboard area."
+    "Interests": {
+      "topics": {
+        "label": "What topics interest you?",
+        "description": "Select the topics that you are most passionate about. You can choose several.",
+        "selected": "{count} topics selected"
+      },
+      "expertiseAreas": {
+        "label": "What areas do you have expertise in?",
+        "description": "Add specific areas where you have specialized knowledge",
+        "placeholder": "Ex: Data analysis, Molecular biology..."
+      },
+      "researchInterests": {
+        "label": "Describe your research interests",
+        "placeholder": "Tell us about your research lines, current projects, or areas you'd like to explore..."
+      }
+    },
+    "Errors": {
+      "birthDateRequired": "Birth date is required",
+      "birthDateInvalid": "Birth date is not valid",
+      "dedicationRequired": "Dedication is required",
+      "areasRequired": "Select at least one area of interest",
+      "topicsRequired": "Select at least one topic of interest",
+      "saveError": "There was an error saving your information. Please try again.",
+      "unauthorized": "You must be logged in to complete your profile"
     }
+  },
+  "Visibility": {
+    "public": "Public",
+    "trusted": "Trusted",
+    "private": "Private",
+    "descriptions": {
+      "public": "Visible to everyone",
+      "trusted": "Visible only to verified members",
+      "private": "Only visible to you"
+    }
+  },
+  "Education": {
+    "title": "Education",
+    "status": {
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "dropped": "Dropped"
+    }
+  },
+  "Employment": {
+    "title": "Work Experience",
+    "current": "Currently working here"
+  },
+  "Home": {
+    "nav": {
+      "title": "Bio Intranet",
+      "login": "Log In",
+      "join": "Join Us"
+    },
+    "hero": {
+      "titlePart1": "Join the IIAP Scientific Community:",
+      "titlePart2": "Your home for building a",
+      "titleHighlight": "scientific legacy",
+      "description": "You don't have to research alone. Inside Bio Intranet, connect with other researchers, access digital resources, and manage your academic profile integrated with IIAP services.",
+      "ctaPrimary": "Enter Bio Intranet"
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "welcomeMessage": "Welcome to Bio Intranet! Your profile has been created successfully.",
+    "protectedArea": "This is the protected dashboard area.",
+    "welcomeBack": "Welcome back, {name}!"
+  },
+  "Email": {
+    "welcome": {
+      "subject": "Welcome to Bio Intranet!",
+      "title": "Welcome to the community!",
+      "greeting": "Hello {name},",
+      "message": "We're excited to have you as part of Bio Intranet. Your profile has been created successfully and you can now start connecting with other researchers.",
+      "cta": "Go to Dashboard",
+      "footer": "If you have any questions, feel free to contact us."
+    }
+  }
 }

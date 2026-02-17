@@ -1,64 +1,180 @@
 {
-    "Auth": {
-        "login": "Iniciar Sesión",
-        "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
-        "errorTitle": "Error",
-        "signupDescription": "Ingrese su información para crear una cuenta",
-        "Errors": {
-            "Invalid login credentials": "Las credenciales son inválidas o el correo electrónico no ha sido confirmado.",
-            "Email not confirmed": "Por favor, confirma tu correo electrónico antes de iniciar sesión."
-        },
-        "signup": "Registrarse",
-        "forgotPassword": "Olvidé mi contraseña",
-        "resetPassword": "Restablecer contraseña",
-        "email": "Correo electrónico",
-        "emailPlaceholder": "Ingresa tu correo electrónico",
-        "password": "Contraseña",
-        "passwordPlaceholder": "Ingresa tu contraseña",
-        "confirmPassword": "Confirmar contraseña",
-        "confirmPasswordPlaceholder": "Confirma tu contraseña",
-        "firstName": "Nombre",
-        "firstNamePlaceholder": "Tu nombre",
-        "lastName": "Apellido",
-        "lastNamePlaceholder": "Tus apellidos",
-        "submit": "Enviar",
-        "createAccount": "Crear cuenta",
-        "alreadyHaveAccount": "¿Ya tienes una cuenta?",
-        "dontHaveAccount": "¿No tienes una cuenta?",
-        "signIn": "Iniciar sesión",
-        "sendResetLink": "Enviar enlace de recuperación",
-        "updatePassword": "Actualizar contraseña",
-        "rememberPassword": "¿Recordaste tu contraseña?",
-        "logIn": "Ingresar",
-        "rememberMe": "Recordarme",
-        "welcome": "Bienvenido",
-        "onboarding": "Incorporación",
-        "institution": "Institución / Universidad",
-        "degree": "Grado Académico / Título",
-        "fieldOfStudy": "Campo de Estudio / Especialidad",
-        "completeProfile": "Completar Perfil",
-        "accountCreated": "¡Cuenta Creada!",
-        "checkEmailConfirm": "Por favor revisa tu correo electrónico para confirmar tu cuenta",
-        "emailSentNote": "Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam",
-        "goToLogin": "Ir al Login"
+  "Auth": {
+    "login": "Iniciar Sesión",
+    "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
+    "errorTitle": "Error",
+    "signupDescription": "Ingrese su información para crear una cuenta",
+    "Errors": {
+      "Invalid login credentials": "Las credenciales son inválidas o el correo electrónico no ha sido confirmado.",
+      "Email not confirmed": "Por favor, confirma tu correo electrónico antes de iniciar sesión."
     },
-    "Home": {
-        "nav": {
-            "title": "Bio Intranet",
-            "login": "Iniciar Sesión",
-            "join": "Únete"
-        },
-        "hero": {
-            "titlePart1": "Únete a la Comunidad Científica del IIAP:",
-            "titlePart2": "Tu espacio para construir un",
-            "titleHighlight": "legado científico",
-            "description": "No tienes que investigar solo. Dentro de la Bio Intranet, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
-            "ctaPrimary": "Ingresar a Bio Intranet"
+    "signup": "Registrarse",
+    "forgotPassword": "Olvidé mi contraseña",
+    "resetPassword": "Restablecer contraseña",
+    "email": "Correo electrónico",
+    "emailPlaceholder": "Ingresa tu correo electrónico",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Confirma tu contraseña",
+    "firstName": "Nombre",
+    "firstNamePlaceholder": "Tu nombre",
+    "lastName": "Apellido",
+    "lastNamePlaceholder": "Tus apellidos",
+    "submit": "Enviar",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "sendResetLink": "Enviar enlace de recuperación",
+    "updatePassword": "Actualizar contraseña",
+    "rememberPassword": "¿Recordaste tu contraseña?",
+    "logIn": "Ingresar",
+    "rememberMe": "Recordarme",
+    "welcome": "Bienvenido",
+    "onboarding": "Completar Perfil",
+    "completeProfile": "Completar Perfil",
+    "accountCreated": "¡Cuenta Creada!",
+    "checkEmailConfirm": "Por favor revisa tu correo electrónico para confirmar tu cuenta",
+    "emailSentNote": "Te hemos enviado un enlace de confirmación. Revisa tu bandeja de entrada y spam",
+    "goToLogin": "Ir al Login"
+  },
+  "Onboarding": {
+    "title": "Completa tu perfil",
+    "description": "Cuéntanos un poco sobre ti para personalizar tu experiencia",
+    "progress": "Paso {current} de {total}",
+    "next": "Continuar",
+    "back": "Atrás",
+    "finish": "Finalizar",
+    "skip": "Omitir",
+    "saving": "Guardando...",
+    "welcomeEmailSent": "¡Te hemos enviado un correo de bienvenida!",
+    "Steps": {
+      "personal": "Información Personal",
+      "professional": "Información Profesional",
+      "interests": "Intereses"
+    },
+    "PersonalInfo": {
+      "birthDate": {
+        "label": "¿Cuál es tu fecha de nacimiento?",
+        "placeholder": "Selecciona tu fecha de nacimiento"
+      },
+      "location": {
+        "label": "¿Dónde te encuentras actualmente?",
+        "placeholder": "Ciudad, País"
+      },
+      "phone": {
+        "label": "¿Cuál es tu número de teléfono?",
+        "placeholder": "+51 999 999 999"
+      },
+      "bio": {
+        "label": "Cuéntanos un poco sobre ti",
+        "placeholder": "Escribe una breve biografía sobre ti, tus intereses y tu trabajo..."
+      }
+    },
+    "ProfessionalInfo": {
+      "dedication": {
+        "label": "¿Cuál es tu dedicación principal?",
+        "placeholder": "Selecciona tu dedicación",
+        "options": {
+          "full_time": "Tiempo completo",
+          "part_time": "Medio tiempo",
+          "freelance": "Freelance",
+          "student": "Estudiante",
+          "researcher": "Investigador",
+          "professor": "Profesor/Docente",
+          "other": "Otro"
         }
+      },
+      "currentPosition": {
+        "label": "¿Cuál es tu cargo o posición actual?",
+        "placeholder": "Ej: Investigador Principal, Doctorando..."
+      },
+      "institution": {
+        "label": "¿En qué institución trabajas o estudias?",
+        "placeholder": "Nombre de la institución"
+      },
+      "website": {
+        "label": "¿Tienes un sitio web o portfolio?",
+        "placeholder": "https://tusitio.com"
+      }
     },
-    "Dashboard": {
-        "title": "Panel de Control",
-        "welcomeMessage": "¡Bienvenido! Tu perfil académico ha sido creado exitosamente.",
-        "protectedArea": "Esta es el área protegida del panel de control."
+    "Interests": {
+      "topics": {
+        "label": "¿Qué temas te interesan?",
+        "description": "Selecciona los temas que más te apasionan. Puedes elegir varios.",
+        "selected": "{count} temas seleccionados"
+      },
+      "expertiseAreas": {
+        "label": "¿En qué áreas tienes experiencia?",
+        "description": "Agrega áreas específicas donde tienes conocimientos especializados",
+        "placeholder": "Ej: Análisis de datos, Biología molecular..."
+      },
+      "researchInterests": {
+        "label": "Describe tus intereses de investigación",
+        "placeholder": "Cuéntanos sobre tus líneas de investigación, proyectos actuales o áreas que te gustaría explorar..."
+      }
+    },
+    "Errors": {
+      "birthDateRequired": "La fecha de nacimiento es requerida",
+      "birthDateInvalid": "La fecha de nacimiento no es válida",
+      "dedicationRequired": "La dedicación es requerida",
+      "areasRequired": "Selecciona al menos un área de interés",
+      "topicsRequired": "Selecciona al menos un tema de interés",
+      "saveError": "Hubo un error al guardar tu información. Por favor, intenta de nuevo.",
+      "unauthorized": "Debes iniciar sesión para completar tu perfil"
     }
+  },
+  "Visibility": {
+    "public": "Público",
+    "trusted": "Confianza",
+    "private": "Privado",
+    "descriptions": {
+      "public": "Visible para todos",
+      "trusted": "Visible solo para miembros verificados",
+      "private": "Solo visible para ti"
+    }
+  },
+  "Education": {
+    "title": "Educación",
+    "status": {
+      "in_progress": "En curso",
+      "completed": "Completado",
+      "dropped": "Abandonado"
+    }
+  },
+  "Employment": {
+    "title": "Experiencia Laboral",
+    "current": "Actualmente trabajando aquí"
+  },
+  "Home": {
+    "nav": {
+      "title": "Bio Intranet",
+      "login": "Iniciar Sesión",
+      "join": "Únete"
+    },
+    "hero": {
+      "titlePart1": "Únete a la Comunidad Científica del IIAP:",
+      "titlePart2": "Tu espacio para construir un",
+      "titleHighlight": "legado científico",
+      "description": "No tienes que investigar solo. Dentro de la Bio Intranet, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
+      "ctaPrimary": "Ingresar a Bio Intranet"
+    }
+  },
+  "Dashboard": {
+    "title": "Panel de Control",
+    "welcomeMessage": "¡Bienvenido a Bio Intranet! Tu perfil ha sido creado exitosamente.",
+    "protectedArea": "Esta es el área protegida del panel de control.",
+    "welcomeBack": "¡Bienvenido de vuelta, {name}!"
+  },
+  "Email": {
+    "welcome": {
+      "subject": "¡Bienvenido a Bio Intranet!",
+      "title": "¡Bienvenido a la comunidad!",
+      "greeting": "Hola {name},",
+      "message": "Nos emociona tenerte como parte de la Bio Intranet. Tu perfil ha sido creado exitosamente y ahora puedes comenzar a conectar con otros investigadores.",
+      "cta": "Ir al Dashboard",
+      "footer": "Si tienes alguna pregunta, no dudes en contactarnos."
+    }
+  }
 }
