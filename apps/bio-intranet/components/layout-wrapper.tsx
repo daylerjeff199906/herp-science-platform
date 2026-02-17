@@ -16,15 +16,15 @@ export const LayoutWrapper = ({
   const t = useTranslations()
 
   return (
-    <SidebarInset>
+    <SidebarInset className="max-h-svh overflow-hidden">
       <SiteHeader sectionTitle={sectionTitle} />
-      <div className="p-4 flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
         {children}
+        <footer className="p-4 md:p-6 text-xs text-muted-foreground text-center mt-auto">
+          &copy; {new Date().getFullYear()} IIAP - Bio Intranet.{' '}
+          {t('footer.rights') || 'Todos los derechos reservados.'}
+        </footer>
       </div>
-      <footer className="p-4 md:p-6 text-xs text-muted-foreground text-center">
-        &copy; {new Date().getFullYear()} IIAP - Bio Intranet.{' '}
-        {t('footer.rights') || 'Todos los derechos reservados.'}
-      </footer>
     </SidebarInset>
   )
 }

@@ -4,7 +4,11 @@
     "description": "Gestiona tu perfil académico y profesional.",
     "general": {
       "title": "Detalles Generales",
-      "description": "Gestiona tu información personal básica."
+      "description": "Gestiona tu información personal básica.",
+      "accountDetails": "Detalles de la Cuenta",
+      "personalInfo": "Información Personal",
+      "professionalInfo": "Información Profesional",
+      "interests": "Intereses y Experiencia"
     },
     "academic": {
       "title": "Perfil Académico",

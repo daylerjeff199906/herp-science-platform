@@ -166,7 +166,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
                 {/* Account Details */}
                 <div className="rounded-lg p-6 border space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Account Details</h4>
+                    <h4 className="text-base font-bold text-foreground">{t('general.accountDetails')}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
                             control={form.control}
@@ -215,7 +215,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
                 {/* Personal Information */}
                 <div className="rounded-lg p-6 border shadow-sm space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Personal Information</h4>
+                    <h4 className="text-base font-bold text-foreground">{t('general.personalInfo')}</h4>
 
                     <FormField
                         control={form.control}
@@ -276,7 +276,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
                 {/* Professional Information */}
                 <div className="rounded-lg p-6 border shadow-sm space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Professional Information</h4>
+                    <h4 className="text-base font-bold text-foreground">{t('general.professionalInfo')}</h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField
@@ -292,12 +292,11 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {/* We can use constants here or hardcode common options */}
-                                            <SelectItem value="full_time">Full Time</SelectItem>
-                                            <SelectItem value="part_time">Part Time</SelectItem>
-                                            <SelectItem value="student">Student</SelectItem>
-                                            <SelectItem value="researcher">Researcher</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
+                                            <SelectItem value="full_time">{tOb('ProfessionalInfo.dedication.options.full_time')}</SelectItem>
+                                            <SelectItem value="part_time">{tOb('ProfessionalInfo.dedication.options.part_time')}</SelectItem>
+                                            <SelectItem value="student">{tOb('ProfessionalInfo.dedication.options.student')}</SelectItem>
+                                            <SelectItem value="researcher">{tOb('ProfessionalInfo.dedication.options.researcher')}</SelectItem>
+                                            <SelectItem value="other">{tOb('ProfessionalInfo.dedication.options.other')}</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -348,7 +347,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
                 {/* Interests */}
                 <div className="rounded-lg p-6 border shadow-sm space-y-6">
-                    <h4 className="text-base font-bold text-foreground">Interests & Expertise</h4>
+                    <h4 className="text-base font-bold text-foreground">{t('general.interests')}</h4>
 
                     <div>
                         <FormLabel className="mb-2 block">{t('form.expertiseAreas')}</FormLabel>
@@ -359,7 +358,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                             suggestions={suggestions}
                             label=""
                             description=""
-                            placeholder="Add expertise..."
+                            placeholder={tOb('Interests.expertiseAreas.placeholder')}
                             inputValue={expertiseInput}
                             onInputChange={setExpertiseInput}
                             showSuggestions={showSuggestions}
@@ -382,7 +381,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                     />
 
                     <div>
-                        <FormLabel className="mb-2 block">Areas of Interest (Topics)</FormLabel>
+                        <FormLabel className="mb-2 block">{tOb('Interests.topics.label')}</FormLabel>
                         <TopicSelector
                             topics={topics}
                             selectedTopics={selectedTopicIds}

@@ -43,8 +43,7 @@ export default async function ProfileLayout({
                                 <SidebarTrigger />
                                 <span className="font-semibold">Menu</span>
                             </div>
-
-                            <div className="w-full">
+                            <div className="w-full h-auto pb-4 lg:pb-6">
                                 {children}
                             </div>
                         </div>

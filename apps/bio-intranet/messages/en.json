@@ -4,7 +4,11 @@
     "description": "Manage your profile information.",
     "general": {
       "title": "General Details",
-      "description": "Manage your basic personal information."
+      "description": "Manage your basic personal information.",
+      "accountDetails": "Account Details",
+      "personalInfo": "Personal Information",
+      "professionalInfo": "Professional Information",
+      "interests": "Interests & Expertise"
     },
     "academic": {
       "title": "Academic Profile",

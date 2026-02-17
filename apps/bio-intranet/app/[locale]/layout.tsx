@@ -27,7 +27,7 @@ export default async function RootLayout({
     return (
         <html lang={locale} suppressHydrationWarning>
             <body className={cn(
-                "min-h-screen bg-background font-sans antialiased",
+                "bg-background font-sans antialiased",
                 inter.variable
             )}>
                 <ThemeProvider
