@@ -60,6 +60,7 @@ export function EducationModal({
     const defaultValues: EducationFormValues = {
         institution: initialData?.institution || '',
         title: initialData?.title || '',
+
         status: initialData?.status || 'completed',
         start_date: initialData?.start_date || '',
         end_date: initialData?.end_date || '',
@@ -135,6 +136,49 @@ export function EducationModal({
                                     </FormItem>
                                 )}
                             />
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 col-span-1 md:col-span-2">
+                                <FormField
+                                    control={form.control}
+                                    name="city"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('city') || 'City'}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('cityPlaceholder') || 'City'} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="region_state"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('regionState') || 'Region/State'}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('regionStatePlaceholder') || 'Region'} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="country"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('country') || 'Country'}</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={t('countryPlaceholder') || 'Country'} {...field} value={field.value || ''} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
                             <FormField
                                 control={form.control}
                                 name="title"

@@ -124,3 +124,57 @@ export async function deleteEducationAction(id: string) {
     revalidatePath('/dashboard/profile/education')
     return { success: true }
 }
+
+export async function toggleEducationFavoriteAction(id: string, is_favorite: boolean) {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'No autorizado' }
+    }
+
+    const { error } = await supabase
+        .from('education')
+        .update({ is_favorite })
+        .eq('id', id)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error updating education favorite:', error)
+        return { error: 'Error al actualizar' }
+    }
+
+    revalidatePath('/dashboard/profile/education')
+    return { success: true }
+}
+
+export async function updateEducationVisibilityAction(id: string, visibility: string) {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'No autorizado' }
+    }
+
+    const { error } = await supabase
+        .from('education')
+        .update({ visibility })
+        .eq('id', id)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error('Error updating education visibility:', error)
+        return { error: 'Error al actualizar visibilidad' }
+    }
+
+    revalidatePath('/dashboard/profile/education')
+    return { success: true }
+}

@@ -1,22 +1,34 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Card } from '@repo/ui'
+import {
+    Card,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@repo/ui'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import {
     Plus,
     Briefcase,
-    Pencil,
+    Edit,
     Trash2,
-    Building2,
-    Edit
+    Star,
+    Globe,
+    Users,
+    Lock
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { Employment } from '@/types/employment'
 import { EmploymentModal } from './employment-modal'
 import { EmploymentDeleteDialog } from './employment-delete-dialog'
+import { toggleEmploymentFavoriteAction, updateEmploymentVisibilityAction } from '@/app/[locale]/dashboard/profile/employment/actions'
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 
 interface EmploymentListProps {
     employmentList: Employment[]
@@ -84,59 +96,14 @@ export function EmploymentList({ employmentList, locale }: EmploymentListProps) 
                         </motion.div>
                     ) : (
                         employmentList.map((emp, index) => (
-                            <motion.div
+                            <EmploymentItem
                                 key={emp.id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ delay: index * 0.1 }}
-                            >
-                                <Card>
-                                    <div className="flex flex-row items-center justify-between p-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-2 border rounded-lg bg-muted/30">
-                                                <Briefcase className="h-5 w-5 text-primary" />
-                                            </div>
-                                            <div className="flex flex-col gap-1">
-                                                <h3 className="font-semibold text-lg leading-none">
-                                                    {emp.role}
-                                                </h3>
-                                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <Building2 className="h-3 w-3" />
-                                                    <span>{emp.organization}</span>
-                                                </div>
-                                                <div className="flex flex-wrap gap-x-2 text-xs text-muted-foreground mt-1">
-                                                    <span>
-                                                        {emp.start_date
-                                                            ? format(new Date(emp.start_date), 'MMM yyyy')
-                                                            : ''}{' '}
-                                                        -{' '}
-                                                        {emp.is_current
-                                                            ? t('present')
-                                                            : emp.end_date
-                                                                ? format(new Date(emp.end_date), 'MMM yyyy')
-                                                                : ''}
-                                                    </span>
-                                                    {emp.department && (
-                                                        <>
-                                                            <span>•</span>
-                                                            <span>{emp.department}</span>
-                                                        </>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-1">
-                                            <Button variant="ghost" size="icon" onClick={() => handleEdit(emp)}>
-                                                <Edit className="h-4 w-4 text-muted-foreground" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" onClick={() => handleDelete(emp)}>
-                                                <Trash2 className="h-4 w-4 text-destructive" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </Card>
-                            </motion.div>
+                                emp={emp}
+                                index={index}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                                t={t}
+                            />
                         )))}
                 </AnimatePresence>
             </div>
@@ -158,5 +125,162 @@ export function EmploymentList({ employmentList, locale }: EmploymentListProps) 
                 />
             )}
         </>
+    )
+}
+
+function EmploymentItem({
+    emp,
+    index,
+    onEdit,
+    onDelete,
+    t
+}: {
+    emp: Employment
+    index: number
+    onEdit: (emp: Employment) => void
+    onDelete: (emp: Employment) => void
+    t: any
+}) {
+    const [isExpanded, setIsExpanded] = useState(false)
+    const [isFavorite, setIsFavorite] = useState(emp.is_favorite)
+    const [visibility, setVisibility] = useState(emp.visibility)
+
+    const handleToggleFavorite = async () => {
+        const newFavorite = !isFavorite
+        setIsFavorite(newFavorite) // Optimistic update
+        const result = await toggleEmploymentFavoriteAction(emp.id, newFavorite)
+        if (result.error) {
+            setIsFavorite(!newFavorite) // Revert
+            toast.error(t('error'))
+        }
+    }
+
+    const handleVisibilityChange = async (value: string) => {
+        const oldVisibility = visibility
+        setVisibility(value as any) // Optimistic
+        const result = await updateEmploymentVisibilityAction(emp.id, value)
+        if (result.error) {
+            setVisibility(oldVisibility)
+            toast.error(t('error'))
+        }
+    }
+
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ delay: index * 0.1 }}
+        >
+            <Card className="overflow-hidden">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 border-b gap-4">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 shrink-0"
+                            onClick={handleToggleFavorite}
+                        >
+                            <Star className={cn("h-5 w-5", isFavorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")} />
+                        </Button>
+                        <div className="font-semibold text-base truncate">
+                            {emp.organization}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                        <Select value={visibility} onValueChange={handleVisibilityChange}>
+                            <SelectTrigger className="h-8 w-[130px] bg-background">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="public">
+                                    <div className="flex items-center gap-2">
+                                        <Globe className="h-3 w-3" />
+                                        <span>{t('form.visibilityPublic')}</span>
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="trusted">
+                                    <div className="flex items-center gap-2">
+                                        <Users className="h-3 w-3" />
+                                        <span>{t('form.visibilityTrusted')}</span>
+                                    </div>
+                                </SelectItem>
+                                <SelectItem value="private">
+                                    <div className="flex items-center gap-2">
+                                        <Lock className="h-3 w-3" />
+                                        <span>{t('form.visibilityPrivate')}</span>
+                                    </div>
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onEdit(emp)}>
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-4">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <div className="font-medium">
+                                {emp.role}
+                            </div>
+                            <div className="text-sm text-muted-foreground mt-1">
+                                {[emp.department, emp.city, emp.region_state, emp.country].filter(Boolean).join(' - ')}
+                            </div>
+                        </div>
+                        <Button
+                            variant="link"
+                            className="h-auto p-0 text-primary"
+                            onClick={() => setIsExpanded(!isExpanded)}
+                        >
+                            {isExpanded ? t('showLess') || 'Show less' : t('showMore') || 'Show more details'}
+                        </Button>
+                    </div>
+
+                    <AnimatePresence>
+                        {isExpanded && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden mt-4 text-sm space-y-2"
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <span className="font-semibold block">{t('form.dateLabel') || 'Dates'}:</span>
+                                        <span className="text-muted-foreground">
+                                            {emp.start_date ? format(new Date(emp.start_date), 'MMM yyyy') : ''} - {emp.is_current ? t('present') : (emp.end_date ? format(new Date(emp.end_date), 'MMM yyyy') : '')}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span className="font-semibold block">{t('form.department')}:</span>
+                                        <span className="text-muted-foreground">{emp.department || '-'}</span>
+                                    </div>
+                                    <div className="col-span-1 md:col-span-2">
+                                        <span className="font-semibold block">{t('added') || 'Added'}:</span>
+                                        <span className="text-muted-foreground">{format(new Date(emp.created_at), 'yyyy-MM-dd')}</span>
+                                    </div>
+                                    <div className="col-span-1 md:col-span-2">
+                                        <span className="font-semibold block">{t('modified') || 'Last Modified'}:</span>
+                                        <span className="text-muted-foreground">{format(new Date(emp.updated_at), 'yyyy-MM-dd')}</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
+                {/* Footer */}
+                <div className="p-4 pt-0 flex justify-end">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(emp)}>
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            </Card>
+        </motion.div>
     )
 }

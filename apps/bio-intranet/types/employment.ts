@@ -14,6 +14,7 @@ export interface Employment {
     is_current: boolean
     scope: string | null
     visibility: VisibilityStatus
+    is_favorite: boolean
     created_at: string
     updated_at: string
 }
