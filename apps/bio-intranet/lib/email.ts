@@ -18,7 +18,7 @@ export async function sendWelcomeEmail({
 
   try {
     const data = await resend.emails.send({
-      from: `Bio Intranet <onboarding@${domainResend}>`,
+      from: `Bio Intranet <noreply@${domainResend}>`,
       to: [email],
       subject: isSpanish
         ? '¡Bienvenido a Bio Intranet!'
