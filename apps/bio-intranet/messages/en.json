@@ -198,6 +198,45 @@
       "added": "Added",
       "modified": "Last modified"
     },
+    "language": {
+      "title": "Languages",
+      "description": "Manage your languages.",
+      "add": "Add Language",
+      "edit": "Edit",
+      "form": {
+        "createTitle": "Add Language",
+        "editTitle": "Edit Language",
+        "language": "Language",
+        "languagePlaceholder": "e.g. English",
+        "level": "Level",
+        "levelPlaceholder": "Select level",
+        "isNative": "Native",
+        "basic": "Basic",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced",
+        "fluent": "Fluent",
+        "native": "Native",
+        "visibility": "Visibility",
+        "visibilityPlaceholder": "Select visibility",
+        "visibilityPublic": "Public",
+        "visibilityTrusted": "Trusted Only",
+        "visibilityPrivate": "Private",
+        "cancel": "Cancel",
+        "save": "Save",
+        "success": "Language saved successfully",
+        "error": "Error saving language"
+      },
+      "delete": {
+        "title": "Delete Language",
+        "description": "Are you sure you want to delete this language?",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "success": "Language deleted successfully",
+        "error": "Error deleting language"
+      },
+      "languageLabel": "Language",
+      "levelLabel": "Level"
+    },
     "messages": {
       "updateSuccess": "Profile updated successfully.",
       "updateError": "Error updating profile.",

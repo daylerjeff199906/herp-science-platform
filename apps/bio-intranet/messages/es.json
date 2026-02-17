@@ -202,6 +202,45 @@
       "added": "Añadido",
       "modified": "Modificado por última vez"
     },
+    "language": {
+      "title": "Idiomas",
+      "description": "Gestiona tus idiomas.",
+      "add": "Agregar Idioma",
+      "edit": "Editar",
+      "form": {
+        "createTitle": "Agregar Idioma",
+        "editTitle": "Editar Idioma",
+        "language": "Idioma",
+        "languagePlaceholder": "ej. Inglés",
+        "level": "Nivel",
+        "levelPlaceholder": "Selecciona nivel",
+        "isNative": "Nativo",
+        "basic": "Básico",
+        "intermediate": "Intermedio",
+        "advanced": "Avanzado",
+        "fluent": "Fluido",
+        "native": "Nativo",
+        "visibility": "Visibilidad",
+        "visibilityPlaceholder": "Seleccionar visibilidad",
+        "visibilityPublic": "Público",
+        "visibilityTrusted": "Solo Confianza",
+        "visibilityPrivate": "Privado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "success": "Idioma guardado exitosamente",
+        "error": "Error al guardar el idioma"
+      },
+      "delete": {
+        "title": "Eliminar Idioma",
+        "description": "¿Estás seguro de que quieres eliminar este idioma?",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar",
+        "success": "Idioma eliminado exitosamente",
+        "error": "Error al eliminar el idioma"
+      },
+      "languageLabel": "Idioma",
+      "levelLabel": "Nivel"
+    },
     "messages": {
       "updateSuccess": "Perfil actualizado correctamente.",
       "updateError": "Error al actualizar el perfil.",
