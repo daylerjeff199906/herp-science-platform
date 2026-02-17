@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
 import { Button } from '@repo/ui/components/ui/button'
 import { AlertCircle, Loader2, Leaf, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import {
   submitOnboarding,
   getActiveTopics,
@@ -53,6 +54,7 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
     expertiseAreas: [],
     researchInterests: '',
   })
+  const router = useRouter()
 
   useEffect(() => {
     async function loadData() {
@@ -101,7 +103,14 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
     setError(null)
 
     try {
-      await submitOnboarding(formData, locale)
+      const { error } = await submitOnboarding(formData, locale)
+      if (error) {
+        setError(error)
+        setIsSubmitting(false)
+        return
+      }
+
+      router.push(`/${locale}/dashboard`)
     } catch (err) {
       setError(t('Onboarding.Errors.saveError'))
       setIsSubmitting(false)
