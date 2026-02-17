@@ -144,3 +144,67 @@ export async function updateSecurityProfile(
     revalidatePath(`/${locale}/profile`, 'layout')
     return { success: true }
 }
+
+export async function updateSocialLinks(
+    locale: string,
+    links: any[]
+) {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { error } = await supabase
+        .from('profiles')
+        .update({
+            social_links: links,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+
+    if (error) {
+        console.error('Error updating social links:', error)
+        return { error: 'Failed to update social links' }
+    }
+
+    revalidatePath(`/${locale}/profile`, 'layout')
+    return { success: true }
+}
+
+export async function updateAdditionalEmails(
+    locale: string,
+    emails: any[]
+) {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+        return { error: 'Unauthorized' }
+    }
+
+    const { error } = await supabase
+        .from('profiles')
+        .update({
+            additional_emails: emails,
+            updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id)
+
+    if (error) {
+        console.error('Error updating additional emails:', error)
+        return { error: 'Failed to update emails' }
+    }
+
+    revalidatePath(`/${locale}/profile`, 'layout')
+    return { success: true }
+}

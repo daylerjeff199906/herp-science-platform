@@ -331,13 +331,48 @@
         "visibilityTrusted": "Solo Confianza",
         "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
         "visibilityPrivate": "Privado",
-        "visibilityPrivateDescription": "Solo visible para ti.",
-        "cancel": "Cancelar",
-        "save": "Guardar",
-        "success": "Guardado correctamente",
-        "error": "Error al guardar",
         "endDateError": "La fecha de expiración debe ser posterior a la de emisión"
       }
+    },
+    "avatar": {
+      "success": "Foto de perfil actualizada correctamente",
+      "error": "Error al actualizar la foto de perfil",
+      "invalidType": "Tipo de archivo inválido. Solo se permiten imágenes.",
+      "tooLarge": "El archivo es demasiado grande. Máximo 5MB."
+    },
+    "socialLinks": {
+      "title": "Enlaces a sitios web y redes sociales",
+      "modalTitle": "Enlaces a sitios web y redes sociales",
+      "description": "Agregue enlaces a sitios web personales, perfiles de departamentos, páginas de Wikipedia o redes sociales.",
+      "myLinks": "Mis enlaces",
+      "addLink": "Agregar otro enlace",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios",
+      "validationError": "Por favor complete todos los campos requeridos",
+      "success": "Enlaces actualizados correctamente",
+      "error": "Error al actualizar enlaces",
+      "public": "Público",
+      "trusted": "De confianza",
+      "private": "Privado",
+      "titlePlaceholder": "Título (ej. LinkedIn)",
+      "urlPlaceholder": "URL (ej. https://...)",
+      "empty": "No hay enlaces añadidos"
+    },
+    "additionalEmails": {
+      "title": "Correos electrónicos y dominios",
+      "modalTitle": "Correos electrónicos y dominios",
+      "description": "Agregue direcciones de correo electrónico adicionales.",
+      "emailPlaceholder": "correo@ejemplo.com",
+      "addEmail": "Agregar otro correo",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios",
+      "validationError": "Correo inválido detectado",
+      "success": "Correos actualizados correctamente",
+      "error": "Error al actualizar correos",
+      "public": "Público",
+      "trusted": "De confianza",
+      "private": "Privado",
+      "empty": "No hay correos adicionales"
     },
     "messages": {
       "updateSuccess": "Perfil actualizado correctamente.",

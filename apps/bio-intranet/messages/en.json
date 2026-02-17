@@ -335,6 +335,46 @@
         "endDateError": "Expiration date must be after issue date"
       }
     },
+    "avatar": {
+      "success": "Profile photo updated successfully",
+      "error": "Error updating profile photo",
+      "invalidType": "Invalid file type. Only images allowed.",
+      "tooLarge": "File too large. Max 5MB."
+    },
+    "socialLinks": {
+      "title": "Website and social media links",
+      "modalTitle": "Website and social media links",
+      "description": "Add links to personal websites, department profiles, Wikipedia pages, or social media.",
+      "myLinks": "My links",
+      "addLink": "Add another link",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "validationError": "Please fill required fields",
+      "success": "Links updated successfully",
+      "error": "Error updating links",
+      "public": "Public",
+      "trusted": "Trusted",
+      "private": "Private",
+      "titlePlaceholder": "Title (e.g. LinkedIn)",
+      "urlPlaceholder": "URL (e.g. https://...)",
+      "empty": "No links added"
+    },
+    "additionalEmails": {
+      "title": "Emails and domains",
+      "modalTitle": "Emails and domains",
+      "description": "Add additional email addresses.",
+      "emailPlaceholder": "email@example.com",
+      "addEmail": "Add another email",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "validationError": "Invalid email detected",
+      "success": "Emails updated successfully",
+      "error": "Error updating emails",
+      "public": "Public",
+      "trusted": "Trusted",
+      "private": "Private",
+      "empty": "No additional emails"
+    },
     "messages": {
       "updateSuccess": "Profile updated successfully.",
       "updateError": "Error updating profile.",
