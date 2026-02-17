@@ -127,7 +127,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Header Actions */}
                 <div className="flex items-center justify-between">
                     <div>
