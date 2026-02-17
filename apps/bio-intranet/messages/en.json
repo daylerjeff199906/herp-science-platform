@@ -28,6 +28,7 @@
       "experience": "Experience",
       "interests": "Interests & Expertise",
       "activity": "Activity",
+      "certifications": "Certifications",
       "notifications": "Notifications",
       "security": "Security & Privacy"
     },
@@ -294,6 +295,8 @@
     "certifications": {
       "title": "Certifications",
       "description": "Manage your professional certifications and licenses",
+      "emptyStateTitle": "No certifications added yet",
+      "emptyStateDescription": "Add your certifications to showcase your professional achievements.",
       "add": "Add Certification",
       "edit": "Edit",
       "delete": {

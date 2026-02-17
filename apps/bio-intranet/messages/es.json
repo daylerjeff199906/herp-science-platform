@@ -28,6 +28,7 @@
       "experience": "Experiencia",
       "interests": "Intereses y Experiencia",
       "activity": "Actividad",
+      "certifications": "Certificaciones",
       "notifications": "Notificaciones",
       "security": "Seguridad y Privacidad"
     },
@@ -298,6 +299,8 @@
     "certifications": {
       "title": "Certificaciones",
       "description": "Gestiona tus certificaciones y licencias profesionales",
+      "emptyStateTitle": "No hay certificaciones añadidas aún",
+      "emptyStateDescription": "Añade tus certificaciones para mostrar tus logros profesionales.",
       "add": "Añadir certificación",
       "edit": "Editar",
       "delete": {
