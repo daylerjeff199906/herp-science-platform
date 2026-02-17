@@ -41,7 +41,6 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
 
   // Get navigation items with translations
   const navMain = getNavItems(t)
-  const projects = getNavProjects(t)
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -50,7 +49,6 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
-        <NavProjects projects={projects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} />

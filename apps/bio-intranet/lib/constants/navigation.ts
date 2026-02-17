@@ -5,9 +5,9 @@ import {
   FlaskConical,
   Map,
   FileText,
-  Settings,
   HelpCircle,
   type LucideIcon,
+  User,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -117,23 +117,9 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     icon: FileText,
   },
   {
-    title: t('Navigation.settings'),
-    url: '/settings',
-    icon: Settings,
-    items: [
-      {
-        title: t('Navigation.settingsProfile'),
-        url: '/settings/profile',
-      },
-      {
-        title: t('Navigation.settingsAccount'),
-        url: '/settings/account',
-      },
-      {
-        title: t('Navigation.settingsNotifications'),
-        url: '/settings/notifications',
-      },
-    ],
+    title: t('Navigation.profile'),
+    url: '/profile',
+    icon: User,
   },
   {
     title: t('Navigation.help'),
