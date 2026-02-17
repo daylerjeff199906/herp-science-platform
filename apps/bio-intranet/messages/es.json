@@ -24,17 +24,21 @@
     },
     "menu": {
       "general": "Detalles Generales",
-      "profile": "Perfil Público",
-      "company": "Perfil Académico",
+      "education": "Educación",
+      "experience": "Experiencia",
+      "interests": "Intereses y Experiencia",
+      "activity": "Actividad",
       "notifications": "Notificaciones",
       "security": "Seguridad y Privacidad"
     },
     "menuDescriptions": {
       "general": "Gestiona tu información personal básica.",
-      "profile": "Configura cómo te ven los demás usuarios.",
-      "company": "Gestiona tu información académica y profesional.",
+      "education": "Gestiona tu información académica y profesional.",
+      "experience": "Gestiona tu información académica y profesional.",
+      "interests": "Gestiona tu información académica y profesional.",
+      "activity": "Gestiona tu información académica y profesional.",
       "notifications": "Configura tus preferencias de notificación.",
-      "security": "Actualiza tu contraseña y seguridad."
+      "security": "Actualiza tu contraseña y configuración de seguridad."
     },
     "form": {
       "firstName": "Nombres",

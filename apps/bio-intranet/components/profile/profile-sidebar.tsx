@@ -41,8 +41,8 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             icon: LayoutGrid,
         },
         {
-            title: tMenu('academic'),
-            description: tDesc('academic'),
+            title: tMenu('education'),
+            description: tDesc('education'),
             url: `/${locale}/dashboard/profile/education`,
             icon: GraduationCap,
         },
