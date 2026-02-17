@@ -51,8 +51,6 @@ export async function updateGeneralProfile(
         areas_of_interest: data.areasOfInterest,
         expertise_areas: data.expertiseAreas,
         research_interests: data.researchInterests,
-        current_position: data.currentPosition,
-        website: data.website,
         institution: data.institution,
     }
 
