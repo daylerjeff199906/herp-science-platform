@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const handleI18n = createMiddleware({
     locales: ['en', 'es'],
     defaultLocale: 'es',
