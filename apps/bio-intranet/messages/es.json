@@ -241,6 +241,54 @@
       "languageLabel": "Idioma",
       "levelLabel": "Nivel"
     },
+    "professionalActivity": {
+      "title": "Actividades Profesionales",
+      "description": "Gestione sus distinciones, afiliaciones y servicios profesionales",
+      "add": "Añadir actividad",
+      "edit": "Editar",
+      "delete": {
+        "title": "Eliminar actividad",
+        "description": "¿Está seguro que desea eliminar esta actividad? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar",
+        "success": "Actividad eliminada",
+        "error": "Error al eliminar"
+      },
+      "form": {
+        "organization": "Organización",
+        "organizationPlaceholder": "ej. Universidad Nacional",
+        "role": "Rol / Cargo",
+        "rolePlaceholder": "ej. Director",
+        "activityType": "Tipo de actividad",
+        "activityTypePlaceholder": "Seleccionar tipo",
+        "scope": "Alcance",
+        "scopePlaceholder": "ej. Nacional",
+        "city": "Ciudad",
+        "cityPlaceholder": "ej. Lima",
+        "regionState": "Región",
+        "regionStatePlaceholder": "ej. Lima",
+        "country": "País",
+        "countryPlaceholder": "ej. Perú",
+        "startDate": "Fecha de inicio",
+        "endDate": "Fecha de fin",
+        "current": "Actualmente en curso",
+        "visibility": "Visibilidad",
+        "visibilityPublic": "Público",
+        "visibilityTrusted": "Socios",
+        "visibilityPrivate": "Privado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "success": "Guardado correctamente",
+        "error": "Error al guardar",
+        "endDateError": "La fecha de fin debe ser posterior a la de inicio"
+      },
+      "types": {
+        "distinction": "Distinción",
+        "affiliation": "Afiliación",
+        "service": "Servicio",
+        "other": "Otro"
+      }
+    },
     "messages": {
       "updateSuccess": "Perfil actualizado correctamente.",
       "updateError": "Error al actualizar el perfil.",

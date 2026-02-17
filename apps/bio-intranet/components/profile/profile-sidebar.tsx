@@ -10,7 +10,8 @@ import {
     Bell,
     Shield,
     GraduationCap,
-    Globe
+    Globe,
+    Award
 } from "lucide-react"
 
 import {
@@ -35,6 +36,8 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     const tDesc = useTranslations('Profile.menuDescriptions')
     const tLang = useTranslations('Profile.language')
 
+    const tProf = useTranslations('Profile.professionalActivity')
+
     const items = [
         {
             title: tMenu('general'),
@@ -55,10 +58,10 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             icon: Building2,
         },
         {
-            title: tMenu('experience'),
-            description: tDesc('experience'),
-            url: `/${locale}/dashboard/profile/employment`,
-            icon: Building2,
+            title: tProf('title'),
+            description: tProf('description'),
+            url: `/${locale}/dashboard/profile/professional-activities`,
+            icon: Award,
         },
         {
             title: tLang('title'),

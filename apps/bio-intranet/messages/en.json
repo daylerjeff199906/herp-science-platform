@@ -237,6 +237,54 @@
       "languageLabel": "Language",
       "levelLabel": "Level"
     },
+    "professionalActivity": {
+      "title": "Professional Activities",
+      "description": "Manage your distinctions, affiliations, and professional services",
+      "add": "Add Activity",
+      "edit": "Edit",
+      "delete": {
+        "title": "Delete Activity",
+        "description": "Are you sure you want to delete this activity? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "success": "Activity deleted",
+        "error": "Error deleting"
+      },
+      "form": {
+        "organization": "Organization",
+        "organizationPlaceholder": "e.g. National University",
+        "role": "Role / Position",
+        "rolePlaceholder": "e.g. Director",
+        "activityType": "Activity Type",
+        "activityTypePlaceholder": "Select type",
+        "scope": "Scope",
+        "scopePlaceholder": "e.g. National",
+        "city": "City",
+        "cityPlaceholder": "e.g. Lima",
+        "regionState": "Region/State",
+        "regionStatePlaceholder": "e.g. Lima",
+        "country": "Country",
+        "countryPlaceholder": "e.g. Peru",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "current": "Currently active",
+        "visibility": "Visibility",
+        "visibilityPublic": "Public",
+        "visibilityTrusted": "Trusted",
+        "visibilityPrivate": "Private",
+        "cancel": "Cancel",
+        "save": "Save",
+        "success": "Saved successfully",
+        "error": "Error saving",
+        "endDateError": "End date must be after start date"
+      },
+      "types": {
+        "distinction": "Distinction",
+        "affiliation": "Affiliation",
+        "service": "Service",
+        "other": "Other"
+      }
+    },
     "messages": {
       "updateSuccess": "Profile updated successfully.",
       "updateError": "Error updating profile.",
