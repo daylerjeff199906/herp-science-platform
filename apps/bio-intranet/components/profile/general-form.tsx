@@ -23,6 +23,7 @@ import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui"
 import { TopicSelector } from "@/components/onboarding/TopicSelector"
 import { TagInput } from "@/components/onboarding/TagInput"
+import { PhoneInput } from "@/components/ui/phone-input"
 import type { Topic, InterestCategory } from "@/types/onboarding"
 
 interface GeneralFormProps {
@@ -147,7 +148,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                 </div>
 
                 {success && (
-                    <Alert className="border-green-500 text-green-600 bg-green-50 dark:border-green-400 dark:text-green-400 dark:bg-green-400">
+                    <Alert className="border-green-500 text-green-600 bg-green-50 dark:bg-transparent">
                         <CheckCircle2 className="h-4 w-4" />
                         <AlertTitle>Success</AlertTitle>
                         <AlertDescription>{t('messages.updateSuccess')}</AlertDescription>
@@ -250,7 +251,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                 <FormItem>
                                     <FormLabel>{t('form.phone')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="tel" />
+                                        <PhoneInput {...field} defaultCountry="PE" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
