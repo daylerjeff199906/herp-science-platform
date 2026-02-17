@@ -108,7 +108,8 @@
       "expertiseAreas": {
         "label": "¿En qué áreas tienes experiencia?",
         "description": "Agrega áreas específicas donde tienes conocimientos especializados",
-        "placeholder": "Ej: Análisis de datos, Biología molecular..."
+        "placeholder": "Ej: Análisis de datos, Biología molecular...",
+        "noSuggestions": "No se encontraron sugerencias"
       },
       "researchInterests": {
         "label": "Describe tus intereses de investigación",

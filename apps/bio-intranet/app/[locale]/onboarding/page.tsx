@@ -1,20 +1,19 @@
 import { getTranslations } from 'next-intl/server'
 import OnboardingForm from './form'
 
-export async function generateMetadata({
-  params: { locale },
-}: {
-  params: { locale: string }
-}) {
+interface OnboardingPageProps {
+  params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: OnboardingPageProps) {
+  const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'Onboarding' })
   return {
     title: t('title'),
   }
 }
 
-interface OnboardingPageProps {
-  params: Promise<{ locale: string }>
-}
+
 
 export default async function OnboardingPage({
   params,

@@ -108,7 +108,8 @@
       "expertiseAreas": {
         "label": "What areas do you have expertise in?",
         "description": "Add specific areas where you have specialized knowledge",
-        "placeholder": "Ex: Data analysis, Molecular biology..."
+        "placeholder": "Ex: Data analysis, Molecular biology...",
+        "noSuggestions": "No suggestions found"
       },
       "researchInterests": {
         "label": "Describe your research interests",
