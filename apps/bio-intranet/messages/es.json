@@ -50,6 +50,12 @@
       "location": "Ubicación",
       "birthDate": "Fecha de Nacimiento",
       "phone": "Teléfono",
+      "sex": "Sexo",
+      "sexPlaceholder": "Selecciona tu sexo",
+      "genderMale": "Masculino",
+      "genderFemale": "Femenino",
+      "genderOther": "Otro",
+      "genderPreferNotToSay": "Prefiero no decirlo",
       "institution": "Institución",
       "institutionPlaceholder": "Ingresa el nombre de tu institución",
       "dedication": "Dedicación",
@@ -440,6 +446,16 @@
       "birthDate": {
         "label": "¿Cuál es tu fecha de nacimiento?",
         "placeholder": "Selecciona tu fecha de nacimiento"
+      },
+      "sex": {
+        "label": "Sexo",
+        "placeholder": "Selecciona tu sexo",
+        "options": {
+          "male": "Masculino",
+          "female": "Femenino",
+          "other": "Otro",
+          "prefer_not_to_say": "Prefiero no decirlo"
+        }
       },
       "location": {
         "label": "¿Dónde te encuentras actualmente?",

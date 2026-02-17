@@ -87,6 +87,7 @@ export async function submitOnboarding(
     .from('profiles')
     .update({
       birth_date: data.birthDate,
+      sex: data.sex || null,
       location: data.location || null,
       phone: data.phone || null,
       bio: data.bio || null,
