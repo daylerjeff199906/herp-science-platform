@@ -41,6 +41,7 @@
       "lastName": "Last Name",
       "email": "Email",
       "bio": "Bio",
+      "bioPlaceholder": "Write a brief bio about yourself, your interests, and your work...",
       "location": "Location",
       "birthDate": "Birth Date",
       "phone": "Phone",

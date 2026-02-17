@@ -53,9 +53,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
             birthDate: initialData.birthDate || '',
             phone: initialData.phone || '',
             dedication: initialData.dedication || '',
-            currentPosition: initialData.currentPosition || '',
             institution: initialData.institution || '',
-            website: initialData.website || '',
             researchInterests: initialData.researchInterests || '',
             areasOfInterest: initialData.areasOfInterest || [],
             expertiseAreas: initialData.expertiseAreas || [],
@@ -224,7 +222,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                             <FormItem>
                                 <FormLabel>{t('form.bio')}</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={4} className="resize-none" />
+                                    <Textarea {...field} rows={4} placeholder={t('form.bioPlaceholder')} className="resize-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -305,38 +303,12 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                         />
                         <FormField
                             control={form.control}
-                            name="currentPosition"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('form.currentPosition')}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
                             name="institution"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('form.institution')}</FormLabel>
                                     <FormControl>
                                         <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="website"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('form.website')}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="https://" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -16,16 +16,14 @@ export interface OnboardingInput {
   phone?: string
   bio?: string
   dedication?:
-    | 'full_time'
-    | 'part_time'
-    | 'freelance'
-    | 'student'
-    | 'researcher'
-    | 'professor'
-    | 'other'
-  currentPosition?: string
+  | 'full_time'
+  | 'part_time'
+  | 'freelance'
+  | 'student'
+  | 'researcher'
+  | 'professor'
+  | 'other'
   institution?: string
-  website?: string
   selectedTopics: number[]
   expertiseAreas: string[]
   researchInterests?: string

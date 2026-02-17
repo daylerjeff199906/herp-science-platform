@@ -41,6 +41,7 @@
       "lastName": "Apellidos",
       "email": "Correo Electrónico",
       "bio": "Biografía",
+      "bioPlaceholder": "Escribe una breve biografía sobre ti, tus intereses y tu trabajo...",
       "location": "Ubicación",
       "birthDate": "Fecha de Nacimiento",
       "phone": "Teléfono",
