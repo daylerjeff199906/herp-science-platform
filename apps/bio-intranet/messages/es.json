@@ -1,6 +1,7 @@
 {
   "Profile": {
     "title": "Perfil",
+    "description": "Gestiona tu perfil académico y profesional.",
     "general": {
       "title": "Detalles Generales",
       "description": "Gestiona tu información personal básica."
@@ -23,6 +24,13 @@
       "company": "Perfil Académico",
       "notifications": "Notificaciones",
       "security": "Seguridad y Privacidad"
+    },
+    "menuDescriptions": {
+      "general": "Gestiona tu información personal básica.",
+      "profile": "Configura cómo te ven los demás usuarios.",
+      "company": "Gestiona tu información académica y profesional.",
+      "notifications": "Configura tus preferencias de notificación.",
+      "security": "Actualiza tu contraseña y seguridad."
     },
     "form": {
       "firstName": "Nombres",

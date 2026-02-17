@@ -18,7 +18,7 @@ export const LayoutWrapper = ({
   return (
     <SidebarInset>
       <SiteHeader sectionTitle={sectionTitle} />
-      <div className="p-4 md:p-6 flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
+      <div className="p-4 flex flex-col gap-4 min-h-[calc(100vh-8rem)]">
         {children}
       </div>
       <footer className="p-4 md:p-6 text-xs text-muted-foreground text-center">

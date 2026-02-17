@@ -1,8 +1,8 @@
-import { Separator } from "@/components/ui/separator"
 import { GeneralForm } from "@/components/profile/general-form"
 import { createClient } from "@/utils/supabase/server"
 import { cookies } from "next/headers"
 import { getTranslations } from "next-intl/server"
+import { getActiveTopics, getInterestCategories } from "@/app/[locale]/onboarding/actions"
 
 interface ProfileGeneralPageProps {
     params: Promise<{ locale: string }>
@@ -27,6 +27,12 @@ export default async function ProfileGeneralPage({ params }: ProfileGeneralPageP
         .eq('id', user.id)
         .single()
 
+    // Fetch topics and categories for the form
+    const [topics, interestCategories] = await Promise.all([
+        getActiveTopics(locale),
+        getInterestCategories(locale),
+    ])
+
     const initialData = {
         firstName: profile?.first_name || '',
         lastName: profile?.last_name || '',
@@ -35,20 +41,23 @@ export default async function ProfileGeneralPage({ params }: ProfileGeneralPageP
         location: profile?.location || '',
         birthDate: profile?.birth_date || '',
         phone: profile?.phone || '',
+        // Extended fields
+        dedication: profile?.dedication || '',
+        areasOfInterest: profile?.areas_of_interest || [],
+        expertiseAreas: profile?.expertise_areas || [],
+        researchInterests: profile?.research_interests || '',
+        currentPosition: profile?.current_position || '',
+        website: profile?.website || '',
+        institution: profile?.institution || '',
+        onboardingCompleted: profile?.onboarding_completed || false,
     }
 
     return (
-        <div className="space-y-6">
-            <div>
-                <h3 className="text-2xl font-medium">{t('title')}</h3>
-                <p className="text-sm text-muted-foreground">
-                    {t('description')}
-                </p>
-            </div>
-            <Separator />
-            <div className="max-w-xl">
-                <GeneralForm initialData={initialData} locale={locale} />
-            </div>
-        </div>
+        <GeneralForm
+            initialData={initialData}
+            locale={locale}
+            topics={topics}
+            interestCategories={interestCategories}
+        />
     )
 }

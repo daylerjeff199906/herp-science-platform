@@ -28,61 +28,80 @@ interface ProfileSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     const pathname = usePathname()
-    const t = useTranslations('Profile.menu')
+    const t = useTranslations('Profile')
+    const tMenu = useTranslations('Profile.menu')
+    const tDesc = useTranslations('Profile.menuDescriptions')
 
     const items = [
         {
-            title: t('general'),
-            url: "/profile/general",
+            title: tMenu('general'),
+            description: tDesc('general'),
+            url: `/${locale}/dashboard/profile`,
             icon: LayoutGrid,
         },
         {
-            title: t('profile'), // Public Profile URL? Or Edit Profile Details? Assuming user wants to view it.
-            // For now, mapping to /profile/view or similar if it exists, or just a placeholder.
-            // Given context, maybe just another section. I'll make it /profile/public-preview for now.
-            url: "/profile/public",
+            title: tMenu('profile'),
+            description: tDesc('profile'),
+            url: `/${locale}/dashboard/profile/public`,
             icon: User,
         },
         {
-            title: t('company'), // Mapping to Academic as requested
-            url: "/profile/academic",
+            title: tMenu('company'),
+            description: tDesc('company'),
+            url: `/${locale}/dashboard/profile/academic`,
             icon: Building2,
         },
         {
-            title: t('notifications'),
-            url: "/profile/notifications",
+            title: tMenu('notifications'),
+            description: tDesc('notifications'),
+            url: `/${locale}/dashboard/profile/notifications`,
             icon: Bell,
         },
         {
-            title: t('security'),
-            url: "/profile/security",
+            title: tMenu('security'),
+            description: tDesc('security'),
+            url: `/${locale}/dashboard/profile/security`,
             icon: Shield,
         },
     ]
 
     return (
-        <Sidebar collapsible="none" className="min-w-[240px] border-r bg-background text-foreground" {...props}>
-            <SidebarHeader className="border-b p-4">
-                <h2 className="text-lg font-semibold text-foreground">MENU</h2>
+        <Sidebar collapsible="none" className="min-w-[280px] border-none bg-transparent" {...props}>
+            <SidebarHeader className="px-4 py-2">
+                <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Menu</h2>
             </SidebarHeader>
             <SidebarContent>
-                <SidebarGroup>
+                <SidebarGroup className="p-0">
                     <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton
-                                        asChild
-                                        isActive={pathname.includes(item.url)}
-                                        className="w-full justify-start gap-3 px-3 py-6 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground data-[active=true]:bg-muted data-[active=true]:text-foreground"
-                                    >
-                                        <Link href={item.url}>
-                                            <item.icon className="h-4 w-4" />
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                        <SidebarMenu className="gap-2 px-2">
+                            {items.map((item) => {
+                                // For the root profile path, require exact match to avoid highlighting it for sub-routes
+                                const isRootProfile = item.url.endsWith('/dashboard/profile')
+                                const isActive = isRootProfile
+                                    ? pathname === item.url
+                                    : pathname.startsWith(item.url)
+                                return (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton
+                                            asChild
+                                            isActive={isActive}
+                                            className="w-full h-auto py-3 justify-start items-start gap-3 rounded-lg px-3 transition-colors hover:bg-muted/50 data-[active=true]:bg-muted data-[active=true]:text-primary"
+                                        >
+                                            <Link href={item.url} className="flex w-full items-start gap-3">
+                                                <item.icon className="mt-0.5 h-5 w-5 shrink-0" />
+                                                <div className="flex flex-col gap-1 text-left w-full overflow-hidden">
+                                                    <span className="text-sm font-medium leading-none block truncate w-full">
+                                                        {item.title}
+                                                    </span>
+                                                    <span className="text-xs text-muted-foreground font-normal line-clamp-2 w-full whitespace-normal">
+                                                        {item.description}
+                                                    </span>
+                                                </div>
+                                            </Link>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )
+                            })}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

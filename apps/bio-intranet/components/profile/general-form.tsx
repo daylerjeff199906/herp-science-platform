@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { GeneralProfileSchema, GeneralProfileData } from "@/lib/schemas/profile"
 import { updateGeneralProfile } from "@/app/[locale]/dashboard/profile/actions"
 import { useTranslations } from "next-intl"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -18,19 +18,29 @@ import {
 } from "@repo/ui"
 import { Input } from "@repo/ui"
 import { Textarea } from "@repo/ui"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui"
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui"
+import { TopicSelector } from "@/components/onboarding/TopicSelector"
+import { TagInput } from "@/components/onboarding/TagInput"
+import type { Topic, InterestCategory } from "@/types/onboarding"
 
 interface GeneralFormProps {
     initialData: Partial<GeneralProfileData>
     locale: string
+    topics: Topic[]
+    interestCategories: InterestCategory[]
 }
 
-export function GeneralForm({ initialData, locale }: GeneralFormProps) {
+export function GeneralForm({ initialData, locale, topics, interestCategories }: GeneralFormProps) {
     const t = useTranslations('Profile')
+    const tOb = useTranslations('Onboarding') // Reuse onboarding translations for some labels
     const [isPending, setIsPending] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [selectedTopicIds, setSelectedTopicIds] = useState<number[]>([])
+    const [expertiseInput, setExpertiseInput] = useState('')
+    const [showSuggestions, setShowSuggestions] = useState(false)
 
     const form = useForm<GeneralProfileData>({
         resolver: zodResolver(GeneralProfileSchema),
@@ -42,8 +52,61 @@ export function GeneralForm({ initialData, locale }: GeneralFormProps) {
             location: initialData.location || '',
             birthDate: initialData.birthDate || '',
             phone: initialData.phone || '',
+            dedication: initialData.dedication || '',
+            currentPosition: initialData.currentPosition || '',
+            institution: initialData.institution || '',
+            website: initialData.website || '',
+            researchInterests: initialData.researchInterests || '',
+            areasOfInterest: initialData.areasOfInterest || [],
+            expertiseAreas: initialData.expertiseAreas || [],
         },
     })
+
+    // Sync initial topic selection
+    useEffect(() => {
+        const initialNames = initialData.areasOfInterest || []
+        const ids = topics
+            .filter(t => initialNames.includes(t.name) || initialNames.includes(t.name_es || ''))
+            .map(t => t.id)
+        setSelectedTopicIds(ids)
+    }, [initialData.areasOfInterest, topics])
+
+    const handleTopicToggle = (topicId: number) => {
+        const newIds = selectedTopicIds.includes(topicId)
+            ? selectedTopicIds.filter(id => id !== topicId)
+            : [...selectedTopicIds, topicId]
+
+        setSelectedTopicIds(newIds)
+
+        // Map IDs back to names (canonical)
+        const names = topics
+            .filter(t => newIds.includes(t.id))
+            .map(t => t.name)
+
+        form.setValue('areasOfInterest', names, { shouldDirty: true })
+    }
+
+    const addExpertise = (expertise: string) => {
+        const current = form.getValues('expertiseAreas') || []
+        if (expertise.trim() && !current.includes(expertise.trim())) {
+            form.setValue('expertiseAreas', [...current, expertise.trim()], { shouldDirty: true })
+        }
+    }
+
+    const removeExpertise = (index: number) => {
+        const current = form.getValues('expertiseAreas') || []
+        form.setValue('expertiseAreas', current.filter((_, i) => i !== index), { shouldDirty: true })
+    }
+
+    // Suggestions for tag input
+    const suggestions = interestCategories.map((cat) => ({
+        id: cat.id,
+        name: locale === 'es' && cat.name_es ? cat.name_es : cat.name,
+        description:
+            locale === 'es' && cat.description_es
+                ? cat.description_es
+                : cat.description || undefined,
+    }))
 
     async function onSubmit(data: GeneralProfileData) {
         setIsPending(true)
@@ -65,10 +128,28 @@ export function GeneralForm({ initialData, locale }: GeneralFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+                {/* Header Actions */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-xl font-bold tracking-tight">{t('general.title')}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            {t('general.description')}
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <Button type="button" variant="ghost" onClick={() => form.reset()}>
+                            {t('form.cancel')}
+                        </Button>
+                        <Button type="submit" disabled={isPending}>
+                            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {t('form.save')}
+                        </Button>
+                    </div>
+                </div>
 
                 {success && (
-                    <Alert className="border-green-500 text-green-600 bg-green-50">
+                    <Alert className="border-green-500 text-green-600 bg-green-50 dark:border-green-400 dark:text-green-400 dark:bg-green-400">
                         <CheckCircle2 className="h-4 w-4" />
                         <AlertTitle>Success</AlertTitle>
                         <AlertDescription>{t('messages.updateSuccess')}</AlertDescription>
@@ -83,91 +164,48 @@ export function GeneralForm({ initialData, locale }: GeneralFormProps) {
                     </Alert>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Account Details */}
+                <div className="rounded-lg p-6 border space-y-6">
+                    <h4 className="text-base font-bold text-foreground">Account Details</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="firstName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.firstName')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="lastName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.lastName')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
                     <FormField
                         control={form.control}
-                        name="firstName"
+                        name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>{t('form.firstName')}</FormLabel>
+                                <FormLabel>{t('form.email')}</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('form.lastName')}</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('form.email')}</FormLabel>
-                            <FormControl>
-                                <Input {...field} disabled className="bg-muted" />
-                            </FormControl>
-                            <FormDescription>
-                                Email cannot be changed directly.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="bio"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>{t('form.bio')}</FormLabel>
-                            <FormControl>
-                                <Textarea {...field} rows={4} className="resize-none" />
-                            </FormControl>
-                            <FormDescription>
-                                Brief description for your profile.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                        control={form.control}
-                        name="location"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('form.location')}</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>{t('form.phone')}</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="tel" />
+                                    <div className="flex items-center gap-2">
+                                        <Input {...field} disabled className="bg-muted flex-1" />
+                                        <span className="text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded border border-green-200">Verified</span>
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -175,23 +213,188 @@ export function GeneralForm({ initialData, locale }: GeneralFormProps) {
                     />
                 </div>
 
-                <FormField
-                    control={form.control}
-                    name="birthDate"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel>{t('form.birthDate')}</FormLabel>
-                            <FormControl>
-                                {/* Simple date input for now, ideally use a Calendar component */}
-                                <Input type="date" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                {/* Personal Information */}
+                <div className="rounded-lg p-6 border shadow-sm space-y-6">
+                    <h4 className="text-base font-bold text-foreground">Personal Information</h4>
 
-                <div className="flex justify-end gap-4">
-                    <Button type="button" variant="outline" onClick={() => form.reset()}>
+                    <FormField
+                        control={form.control}
+                        name="bio"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('form.bio')}</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} rows={4} className="resize-none" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="location"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.location')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.phone')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="tel" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="birthDate"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>{t('form.birthDate')}</FormLabel>
+                                    <FormControl>
+                                        <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
+
+                {/* Professional Information */}
+                <div className="rounded-lg p-6 border shadow-sm space-y-6">
+                    <h4 className="text-base font-bold text-foreground">Professional Information</h4>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                            control={form.control}
+                            name="dedication"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.dedication')}</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('form.dedication')} />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {/* We can use constants here or hardcode common options */}
+                                            <SelectItem value="full_time">Full Time</SelectItem>
+                                            <SelectItem value="part_time">Part Time</SelectItem>
+                                            <SelectItem value="student">Student</SelectItem>
+                                            <SelectItem value="researcher">Researcher</SelectItem>
+                                            <SelectItem value="other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="currentPosition"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.currentPosition')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="institution"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.institution')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="website"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.website')}</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="https://" />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </div>
+
+                {/* Interests */}
+                <div className="rounded-lg p-6 border shadow-sm space-y-6">
+                    <h4 className="text-base font-bold text-foreground">Interests & Expertise</h4>
+
+                    <div>
+                        <FormLabel className="mb-2 block">{t('form.expertiseAreas')}</FormLabel>
+                        <TagInput
+                            tags={form.watch('expertiseAreas') || []}
+                            onAdd={addExpertise}
+                            onRemove={removeExpertise}
+                            suggestions={suggestions}
+                            label=""
+                            description=""
+                            placeholder="Add expertise..."
+                            inputValue={expertiseInput}
+                            onInputChange={setExpertiseInput}
+                            showSuggestions={showSuggestions}
+                            onShowSuggestionsChange={setShowSuggestions}
+                        />
+                    </div>
+
+                    <FormField
+                        control={form.control}
+                        name="researchInterests"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>{t('form.researchInterests')}</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} rows={3} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <div>
+                        <FormLabel className="mb-2 block">Areas of Interest (Topics)</FormLabel>
+                        <TopicSelector
+                            topics={topics}
+                            selectedTopics={selectedTopicIds}
+                            onToggle={handleTopicToggle}
+                            locale={locale}
+                        />
+                    </div>
+                </div>
+
+                {/* Bottom Actions */}
+                <div className="flex justify-end gap-3 pt-4">
+                    <Button type="button" variant="ghost" onClick={() => form.reset()}>
                         {t('form.cancel')}
                     </Button>
                     <Button type="submit" disabled={isPending}>

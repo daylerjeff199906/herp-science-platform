@@ -43,8 +43,17 @@ export async function updateGeneralProfile(
         last_name: data.lastName,
         bio: data.bio,
         location: data.location,
-        birth_date: data.birthDate, // Check mapping, in schema it's birthDate, in form it might be different? Onboarding used birthDate.
+        birth_date: data.birthDate,
         phone: data.phone,
+
+        // Extended fields
+        dedication: data.dedication,
+        areas_of_interest: data.areasOfInterest,
+        expertise_areas: data.expertiseAreas,
+        research_interests: data.researchInterests,
+        current_position: data.currentPosition,
+        website: data.website,
+        institution: data.institution,
     }
 
     const { error } = await supabase

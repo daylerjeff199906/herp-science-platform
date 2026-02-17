@@ -8,8 +8,20 @@ import {
 export const GeneralProfileSchema = z.object({
     firstName: z.string().min(2, 'First name is required'),
     lastName: z.string().min(2, 'Last name is required'),
-    email: z.string().optional(), // Read-only typically
-    ...PersonalInfoSchema.shape,
+    email: z.string().optional(),
+    bio: z.string().optional(),
+    location: z.string().optional(),
+    birthDate: z.string().optional(),
+    phone: z.string().optional(),
+    // Extended fields
+    dedication: z.string().optional(),
+    areasOfInterest: z.array(z.string()),
+    expertiseAreas: z.array(z.string()),
+    researchInterests: z.string().optional(),
+    currentPosition: z.string().optional(),
+    website: z.string().optional(),
+    institution: z.string().optional(),
+    onboardingCompleted: z.boolean().optional(),
 })
 
 export type GeneralProfileData = z.infer<typeof GeneralProfileSchema>

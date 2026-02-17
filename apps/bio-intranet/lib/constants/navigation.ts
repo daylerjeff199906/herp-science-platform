@@ -118,7 +118,7 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
   },
   {
     title: t('Navigation.profile'),
-    url: `/${t('Navigation.profile')}`,
+    url: '/dashboard/profile',
     icon: User,
   },
   {

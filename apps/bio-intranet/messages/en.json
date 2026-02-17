@@ -1,6 +1,7 @@
 {
   "Profile": {
     "title": "Profile",
+    "description": "Manage your profile information.",
     "general": {
       "title": "General Details",
       "description": "Manage your basic personal information."
@@ -23,6 +24,13 @@
       "company": "Academic Profile",
       "notifications": "Notifications",
       "security": "Security & Privacy"
+    },
+    "menuDescriptions": {
+      "general": "Manage your basic personal information.",
+      "profile": "Configure how other users see you.",
+      "company": "Manage your academic and professional info.",
+      "notifications": "Configure your notification preferences.",
+      "security": "Update your password and security settings."
     },
     "form": {
       "firstName": "First Name",
@@ -263,7 +271,7 @@
     "deleteProject": "Delete Project",
     "logout": "Log Out",
     "notifications": "Notifications",
-    "profile": "Profile"
+    "profile": "Perfil"
   },
   "Email": {
     "welcome": {
