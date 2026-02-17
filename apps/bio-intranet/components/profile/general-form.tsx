@@ -308,7 +308,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                 <FormItem>
                                     <FormLabel>{t('form.institution')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder={t('form.institutionPlaceholder')} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -345,7 +345,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                             <FormItem>
                                 <FormLabel>{t('form.researchInterests')}</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={3} />
+                                    <Textarea {...field} rows={3} placeholder={t('form.researchInterestsPlaceholder')} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
