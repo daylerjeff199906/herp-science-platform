@@ -58,6 +58,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
             researchInterests: initialData.researchInterests || '',
             areasOfInterest: initialData.areasOfInterest || [],
             expertiseAreas: initialData.expertiseAreas || [],
+            sex: initialData.sex,
         },
     })
 
@@ -266,6 +267,29 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                     <FormControl>
                                         <Input type="date" {...field} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="sex"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>{t('form.sex')}</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder={t('form.sexPlaceholder')} />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="male">{t('form.genderMale')}</SelectItem>
+                                            <SelectItem value="female">{t('form.genderFemale')}</SelectItem>
+                                            <SelectItem value="other">{t('form.genderOther')}</SelectItem>
+                                            <SelectItem value="prefer_not_to_say">{t('form.genderPreferNotToSay')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}

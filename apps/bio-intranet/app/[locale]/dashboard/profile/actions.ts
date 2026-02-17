@@ -44,6 +44,7 @@ export async function updateGeneralProfile(
         bio: data.bio,
         location: data.location,
         birth_date: data.birthDate,
+        sex: data.sex,
         phone: data.phone,
 
         // Extended fields
