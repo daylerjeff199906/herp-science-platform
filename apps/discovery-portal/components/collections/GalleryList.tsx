@@ -29,7 +29,6 @@ export function GalleryList() {
         fetchNextPage,
         hasNextPage,
         isFetchingNextPage,
-        status
     } = useInfiniteIndividuals({
         pageSize: 20, // Initial load
         hasImages: 1
