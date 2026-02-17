@@ -291,6 +291,47 @@
         "other": "Other"
       }
     },
+    "certifications": {
+      "title": "Certifications",
+      "description": "Manage your professional certifications and licenses",
+      "add": "Add Certification",
+      "edit": "Edit",
+      "delete": {
+        "title": "Delete Certification",
+        "description": "Are you sure you want to delete this certification? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "success": "Certification deleted",
+        "error": "Error deleting"
+      },
+      "form": {
+        "add": "Add Certification",
+        "edit": "Edit Certification",
+        "name": "Certification Name",
+        "namePlaceholder": "e.g. AWS Certified Solutions Architect",
+        "issuingOrganization": "Issuing Organization",
+        "issuingOrganizationPlaceholder": "e.g. Amazon Web Services",
+        "issueDate": "Issue Date",
+        "expirationDate": "Expiration Date",
+        "credentialId": "Credential ID",
+        "credentialIdPlaceholder": "e.g. AKIA...",
+        "credentialUrl": "Credential URL",
+        "credentialUrlPlaceholder": "https://...",
+        "visibility": "Visibility",
+        "visibilityPlaceholder": "Select visibility",
+        "visibilityPublic": "Public",
+        "visibilityPublicDescription": "Visible to everyone on the platform.",
+        "visibilityTrusted": "Trusted",
+        "visibilityTrustedDescription": "Visible only to your trusted contacts.",
+        "visibilityPrivate": "Private",
+        "visibilityPrivateDescription": "Only visible to you.",
+        "cancel": "Cancel",
+        "save": "Save",
+        "success": "Saved successfully",
+        "error": "Error saving",
+        "endDateError": "Expiration date must be after issue date"
+      }
+    },
     "messages": {
       "updateSuccess": "Profile updated successfully.",
       "updateError": "Error updating profile.",

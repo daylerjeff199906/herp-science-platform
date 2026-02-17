@@ -295,6 +295,47 @@
         "other": "Otro"
       }
     },
+    "certifications": {
+      "title": "Certificaciones",
+      "description": "Gestiona tus certificaciones y licencias profesionales",
+      "add": "Añadir certificación",
+      "edit": "Editar",
+      "delete": {
+        "title": "Eliminar certificación",
+        "description": "¿Está seguro que desea eliminar esta certificación? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar",
+        "success": "Certificación eliminada",
+        "error": "Error al eliminar"
+      },
+      "form": {
+        "add": "Añadir certificación",
+        "edit": "Editar certificación",
+        "name": "Nombre de la certificación",
+        "namePlaceholder": "ej. AWS Certified Solutions Architect",
+        "issuingOrganization": "Organización emisora",
+        "issuingOrganizationPlaceholder": "ej. Amazon Web Services",
+        "issueDate": "Fecha de emisión",
+        "expirationDate": "Fecha de expiración",
+        "credentialId": "ID de la credencial",
+        "credentialIdPlaceholder": "ej. AKIA...",
+        "credentialUrl": "URL de la credencial",
+        "credentialUrlPlaceholder": "https://...",
+        "visibility": "Visibilidad",
+        "visibilityPlaceholder": "Seleccionar visibilidad",
+        "visibilityPublic": "Público",
+        "visibilityPublicDescription": "Visible para todos en la plataforma.",
+        "visibilityTrusted": "Solo Confianza",
+        "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
+        "visibilityPrivate": "Privado",
+        "visibilityPrivateDescription": "Solo visible para ti.",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "success": "Guardado correctamente",
+        "error": "Error al guardar",
+        "endDateError": "La fecha de expiración debe ser posterior a la de emisión"
+      }
+    },
     "messages": {
       "updateSuccess": "Perfil actualizado correctamente.",
       "updateError": "Error al actualizar el perfil.",
