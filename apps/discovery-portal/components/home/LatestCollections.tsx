@@ -1,7 +1,5 @@
 'use client'
-
 import React from 'react'
-import Image from 'next/image'
 import { Link } from '@/i18n/routing'
 import { ROUTES } from '@/config/routes'
 import { useTranslations } from 'next-intl'
@@ -16,7 +14,6 @@ import {
 import { Button } from '@repo/ui/components/ui/button'
 import { Skeleton } from '@repo/ui/components/ui/skeleton'
 import { ArrowRight } from 'lucide-react'
-import { CollectionImagePlaceholder } from '@/components/collections/CollectionImagePlaceholder'
 import { CollectionCard } from '../collections/CollectionCard'
 
 export const LatestCollections = () => {

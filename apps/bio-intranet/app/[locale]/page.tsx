@@ -1,103 +1,253 @@
-import { useTranslations } from 'next-intl';
-import { Button } from "@repo/ui/components/ui/button";
+"use client";
+
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Network, Fingerprint, Globe2, BookOpen } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
+import { ArrowRight } from 'lucide-react';
+import { useLocale } from 'next-intl';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Page() {
-    const t = useTranslations('Home');
+    const locale = useLocale();
+    const [videoLoaded, setVideoLoaded] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    // Effect to handle video playback once loaded
+    useEffect(() => {
+        if (videoLoaded && videoRef.current) {
+            videoRef.current.play().catch((error) => {
+                console.log("Autoplay prevented:", error);
+            });
+        }
+    }, [videoLoaded]);
+
+    // Effect to handle scroll for navbar
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 50);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <div className="flex min-h-screen flex-col bg-background text-foreground">
-            {/* Navbar */}
-            <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-16 items-center justify-between px-4 md:px-8">
-                    <div className="flex items-center gap-2">
-                        <Fingerprint className="h-6 w-6 text-primary" />
-                        <span className="font-bold text-xl tracking-tight">{t('nav.title')}</span>
-                    </div>
-
-                    <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
-                        {/* Placeholder links if needed */}
-                        {/* <Link href="#" className="hover:text-foreground transition-colors">Comunidad</Link> */}
-                        {/* <Link href="#" className="hover:text-foreground transition-colors">Recursos</Link> */}
+        <div className="flex min-h-screen flex-col bg-background text-foreground overflow-x-hidden">
+            {/* Header - Transparent initially, dark on scroll */}
+            <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled
+                ? 'bg-background/95 backdrop-blur-md border-b border-border'
+                : 'bg-transparent'
+                }`}>
+                <div className="container flex h-20 items-center justify-between px-6 md:px-12">
+                    {/* Left Navigation with Dropdowns */}
+                    <nav className="hidden md:flex items-center gap-8">
+                        <Link
+                            href="#"
+                            className={`text-sm font-medium uppercase tracking-wider transition-colors flex items-center gap-1 text-white`}
+                        >
+                            About
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </Link>
+                        <Link
+                            href="#"
+                            className={`text-sm font-medium uppercase tracking-wider transition-colors flex items-center gap-1 text-white`}
+                        >
+                            Services
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </Link>
                     </nav>
 
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" asChild className="hidden sm:flex">
-                            <Link href="/login">{t('nav.login')}</Link>
-                        </Button>
-                        <Button className="rounded-full px-6" asChild>
-                            <Link href="/signup">{t('nav.join')}</Link>
-                        </Button>
+                    {/* Centered Logo */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <Link href={`/${locale}`} className="flex items-center justify-center">
+                            <div className={`px-4 py-2 border-2 transition-colors border-white`}>
+                                <span className={`text-xl font-bold tracking-wider text-white`}>
+                                    B.E.A IIAP
+                                </span>
+                            </div>
+                        </Link>
+                    </div>
+
+                    {/* Right Actions - Login and Register */}
+                    <div className="hidden md:flex items-center gap-6">
+                        <Link
+                            href={`/${locale}/login`}
+                            className={`text-sm font-medium uppercase tracking-wider transition-colors text-white`}
+                        >
+                            Login
+                        </Link>
+                        <Link
+                            href={`/${locale}/signup`}
+                            className={`text-sm font-medium uppercase tracking-wider transition-colors text-white`}
+                        >
+                            Register
+                        </Link>
+                    </div>
+
+                    {/* Mobile Menu Button with Sheet */}
+                    <div className="md:hidden">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <button className="p-2">
+                                    <svg className={`w-6 h-6 ${scrolled ? 'text-foreground' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="bg-[#111111]/90 backdrop-blur-md border-white/10 text-white">
+                                <div className="flex flex-col gap-8 mt-12">
+                                    {/* Navigation Links */}
+                                    <nav className="flex flex-col gap-6">
+                                        <Link
+                                            href="#"
+                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                        >
+                                            About
+                                            <ArrowRight className="w-5 h-5 text-white/50" />
+                                        </Link>
+                                        <Link
+                                            href="#"
+                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                        >
+                                            Services
+                                            <ArrowRight className="w-5 h-5 text-white/50" />
+                                        </Link>
+                                    </nav>
+
+                                    {/* Divider */}
+                                    <div className="h-px w-full bg-white/10"></div>
+
+                                    {/* Auth Links */}
+                                    <div className="flex flex-col gap-4">
+                                        <Button asChild variant="ghost" className="justify-start text-white hover:text-white hover:bg-white/10 text-base uppercase tracking-wider">
+                                            <Link href={`/${locale}/login`}>
+                                                Login
+                                            </Link>
+                                        </Button>
+                                        <Button asChild className="text-base uppercase tracking-wider">
+                                            <Link href={`/${locale}/signup`}>
+                                                Register
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </div>
             </header>
 
             <main className="flex-1">
-                {/* Hero Section */}
-                <section className="container px-4 md:px-6 py-24 md:py-32 flex flex-col items-center text-center space-y-8">
-                    <div className="space-y-4 max-w-4xl mx-auto">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground">
-                            {t('hero.titlePart1')}
-                            <br className="hidden md:block" />
-                            <span className="text-foreground/80"> {t('hero.titlePart2')} </span>
-                            <span className="relative whitespace-nowrap text-foreground z-10 px-2">
-                                <span className="absolute -inset-1 bg-primary/20 -skew-y-2 rounded-lg -z-10" aria-hidden="true"></span>
-                                {t('hero.titleHighlight')}
-                            </span>
-                        </h1>
-                        <p className="mx-auto max-w-[700px] text-muted-foreground text-lg md:text-xl leading-relaxed">
-                            {t('hero.description')}
-                        </p>
+                {/* Hero Section - Matching Reference Image */}
+                <section className="relative h-screen w-full overflow-hidden">
+                    {/* Background Video/Image Container */}
+                    <div className="absolute inset-0 z-0">
+                        {/* Fallback Background Image - Shows while video loads or if video fails */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-primary/10">
+                            {/* You can replace this gradient with an actual image: */}
+                            <img src="/images/hero-fallback.webp" alt="Hero background" className="absolute inset-0 h-full w-full object-cover" />
+                        </div>
+
+                        {/* Video Layer - Fades in when loaded */}
+                        <div className={`transition-opacity duration-1000 absolute inset-0 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                            <video
+                                ref={videoRef}
+                                className="absolute inset-0 h-full w-full object-cover"
+                                playsInline
+                                muted
+                                loop
+                                onCanPlayThrough={() => setVideoLoaded(true)}
+                                poster="/hero-poster.jpg"
+                            >
+                                <source src="https://videos.pexels.com/video-files/855018/855018-hd_1920_1080_30fps.mp4" type="video/mp4" />
+                            </video>
+                        </div>
+
+                        {/* Dark overlay for text contrast */}
+                        <div className="absolute inset-0 bg-black/50 z-10"></div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-                        <Button size="lg" className="rounded-full text-lg px-8 h-12 shadow-lg shadow-primary/25 transition-all hover:scale-105" asChild>
-                            <Link href="/signup">
-                                {t('hero.ctaPrimary')}
-                            </Link>
-                        </Button>
-                        <Button variant="outline" size="lg" className="rounded-full text-lg px-8 h-12" asChild>
-                            <Link href="/login">
-                                {t('nav.login')}
-                            </Link>
-                        </Button>
-                    </div>
+                    {/* Hero Content - Left aligned with bottom controls */}
+                    <div className="relative z-30 container h-full flex flex-col justify-between px-6 md:px-12 py-12 md:py-16">
+                        {/* Main Title - Large, bold, left-aligned */}
+                        <div className="flex-1 flex items-center">
+                            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight text-white leading-[0.9] max-w-4xl">
+                                Descubre
+                                <br />
+                                la Ciencia
+                                <br />
+                                Amazónica
+                            </h1>
+                        </div>
 
-                    {/* Features / Trust Badges */}
-                    <div className="pt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center w-full max-w-5xl mx-auto opacity-90">
-                        <div className="flex flex-col items-center space-y-2 p-4 rounded-xl hover:bg-muted/50 transition-colors">
-                            <div className="p-3 bg-primary/10 rounded-full text-primary">
-                                <Network className="h-6 w-6" />
+                        {/* Bottom Row: Tagline (left) and Explore Button (right) */}
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
+                            {/* Tagline with dot indicator */}
+                            <div className="flex items-center gap-3 max-w-md">
+                                <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
+                                <p className="text-white text-sm md:text-base font-medium uppercase tracking-wide">
+                                    Plataforma de investigación biológica
+                                </p>
                             </div>
-                            <h3 className="font-semibold">IIAP Connect</h3>
-                            <p className="text-sm text-muted-foreground">Integrado con el ecosistema de investigación.</p>
-                        </div>
-                        <div className="flex flex-col items-center space-y-2 p-4 rounded-xl hover:bg-muted/50 transition-colors">
-                            <div className="p-3 bg-primary/10 rounded-full text-primary">
-                                <Globe2 className="h-6 w-6" />
-                            </div>
-                            <h3 className="font-semibold">Identidad Digital</h3>
-                            <p className="text-sm text-muted-foreground">Tu perfil único y verificable, similar a ORCID.</p>
-                        </div>
-                        <div className="flex flex-col items-center space-y-2 p-4 rounded-xl hover:bg-muted/50 transition-colors">
-                            <div className="p-3 bg-primary/10 rounded-full text-primary">
-                                <BookOpen className="h-6 w-6" />
-                            </div>
-                            <h3 className="font-semibold">Recursos Abiertos</h3>
-                            <p className="text-sm text-muted-foreground">Acceso a datos y publicaciones científicas.</p>
+
+                            {/* Explore Button */}
+                            <Button
+                                variant="ghost"
+                                className="group text-white hover:text-white hover:bg-white/10 flex items-center gap-3 text-sm md:text-base font-semibold uppercase tracking-widest"
+                            >
+                                Explore
+                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+                            </Button>
                         </div>
                     </div>
                 </section>
             </main>
 
-            <footer className="py-6 w-full border-t">
-                <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-                    <p>&copy; {new Date().getFullYear()} Instituto de Investigaciones de la Amazonía Peruana.</p>
-                    <div className="flex gap-4">
-                        <Link href="#" className="hover:underline">Privacidad</Link>
-                        <Link href="#" className="hover:underline">Términos</Link>
+            {/* Footer */}
+            <footer className="border-t bg-background py-16">
+                <div className="container px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-sm">
+                    <div className="space-y-4">
+                        <Logo size="md" />
+                        <p className="text-muted-foreground leading-relaxed max-w-xs">
+                            Impulsando la investigación científica y la conservación en la Amazonía Peruana a través de la tecnología y la colaboración abierta.
+                        </p>
                     </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-bold text-foreground text-base">Plataforma</h4>
+                        <ul className="space-y-3 text-muted-foreground">
+                            <li><Link href="#" className="hover:text-primary transition-colors">Proyectos</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">Datos Abiertos</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">Colecciones Biológicas</Link></li>
+                        </ul>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-bold text-foreground text-base">Recursos</h4>
+                        <ul className="space-y-3 text-muted-foreground">
+                            <li><Link href="#" className="hover:text-primary transition-colors">Documentación</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">API para Desarrolladores</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">Centro de Ayuda</Link></li>
+                        </ul>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-bold text-foreground text-base">Legal</h4>
+                        <ul className="space-y-3 text-muted-foreground">
+                            <li><Link href="#" className="hover:text-primary transition-colors">Política de Privacidad</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">Términos de Servicio</Link></li>
+                            <li><Link href="#" className="hover:text-primary transition-colors">Cookies</Link></li>
+                        </ul>
+                    </div>
+                </div>
+                <div className="container mt-16 pt-8 border-t text-center text-muted-foreground px-4">
+                    <p>&copy; {new Date().getFullYear()} IIAP. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

@@ -1,5 +1,5 @@
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl'
+import { getMessages } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { Inter } from 'next/font/google'
@@ -29,26 +29,26 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-};
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
+}
 
 export default async function RootLayout(props: Props) {
-  const params = await props.params;
-  const { locale } = await params;
-  const messages = await getMessages();
-  const children = props.children;
+  const params = await props.params
+  const { locale } = params
+  const messages = await getMessages()
+  const children = props.children
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <NextIntlClientProvider messages={messages}>
-          <Providers>
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
             <Header />
             <main>{children}</main>
-          </Providers>
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
-        </NextIntlClientProvider>
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   )

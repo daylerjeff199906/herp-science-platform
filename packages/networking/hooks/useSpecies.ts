@@ -1,10 +1,53 @@
-import { useQuery } from "@tanstack/react-query"
-import { fetchSpecies } from "../services/species.service"
-import { SpeciesParams } from "@repo/shared-types"
+'use client'
 
-export const useSpecies = (params: SpeciesParams) => {
-    return useQuery({
-        queryKey: ['species', params],
-        queryFn: () => fetchSpecies(params),
-    })
+import { useState, useEffect } from 'react'
+import { fetchSpecies } from '../services/species.service'
+import { SpeciesParams, SpeciesData } from '@repo/shared-types'
+
+interface UseSpeciesState {
+  data: SpeciesData | undefined
+  isLoading: boolean
+  isError: boolean
+  error: Error | null
+  refetch: () => Promise<void>
+}
+
+export const useSpecies = (params: SpeciesParams): UseSpeciesState => {
+  const [state, setState] = useState<UseSpeciesState>({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+    error: null,
+    refetch: async () => {},
+  })
+
+  const fetchData = async () => {
+    setState((prev) => ({
+      ...prev,
+      isLoading: true,
+      isError: false,
+      error: null,
+    }))
+    try {
+      const data = await fetchSpecies(params)
+      setState((prev) => ({ ...prev, data, isLoading: false }))
+    } catch (error) {
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        isError: true,
+        error: error instanceof Error ? error : new Error(String(error)),
+      }))
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(params)])
+
+  return {
+    ...state,
+    refetch: fetchData,
+  }
 }

@@ -8,8 +8,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
-    title: "Bio Intranet",
-    description: "Internal portal for Bio Herp Science Platform",
+    title: "B.E.A IIAP",
+    description: "Plataforma de gestión científica B.E.A IIAP",
 };
 
 export default async function RootLayout({

@@ -13,7 +13,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (isNewUser) {
       // Could trigger a toast here
-      // alert("Welcome to Bio Intranet! Your profile is set up.")
+      // alert("Welcome to B.E.A IIAP! Your profile is set up.")
     }
   }, [isNewUser])
 

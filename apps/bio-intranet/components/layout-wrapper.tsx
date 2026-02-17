@@ -22,7 +22,7 @@ export const LayoutWrapper = ({
         {children}
       </div>
       <footer className="p-4 md:p-6 text-xs text-muted-foreground text-center mt-auto">
-        &copy; {new Date().getFullYear()} IIAP - Bio Intranet.{' '}
+        &copy; {new Date().getFullYear()} B.E.A IIAP.{' '}
         {t('footer.rights') || 'Todos los derechos reservados.'}
       </footer>
     </SidebarInset>

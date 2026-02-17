@@ -6,14 +6,20 @@
   "scripts": {
     "lint": "eslint ."
   },
-  "dependencies": {
+  "peerDependencies": {
     "@tanstack/react-query": "^5.90.18",
+    "react": "^19.0.0"
+  },
+  "dependencies": {
     "axios": "^1.6.0"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
     "@repo/shared-types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tanstack/react-query": "^5.90.18",
     "@types/node": "^22.15.3",
+    "@types/react": "19.2.2",
+    "react": "^19.0.0",
     "typescript": "^5.0.0"
   }
 }
