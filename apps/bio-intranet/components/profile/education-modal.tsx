@@ -36,7 +36,6 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Loader2, Globe, Lock, Users } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { cn } from '@/lib/utils'
 
 interface EducationModalProps {
@@ -256,58 +255,50 @@ export function EducationModal({
                                 control={form.control}
                                 name="visibility"
                                 render={({ field }) => (
-                                    <FormItem className="space-y-3 col-span-1 md:col-span-2">
+                                    <FormItem className="col-span-1 md:col-span-2">
                                         <FormLabel>{t('visibility')}</FormLabel>
-                                        <FormControl>
-                                            <RadioGroup
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                                className="grid grid-cols-1 gap-4 pt-2"
-                                            >
-                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="public" className="mt-1" />
-                                                    </FormControl>
-                                                    <div className="space-y-1">
-                                                        <FormLabel className="font-normal flex items-center gap-2">
-                                                            <Globe className="h-4 w-4 text-muted-foreground" />
-                                                            <span className="font-semibold">{t('visibilityPublic')}</span>
-                                                        </FormLabel>
-                                                        <FormDescription>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger className="h-auto items-start py-3">
+                                                    <SelectValue placeholder={t('visibilityPlaceholder')} />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                <SelectItem value="public">
+                                                    <div className="flex flex-col text-left">
+                                                        <div className="font-semibold flex items-center gap-2">
+                                                            <Globe className="h-4 w-4" />
+                                                            {t('visibilityPublic')}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
                                                             {t('visibilityPublicDescription')}
-                                                        </FormDescription>
+                                                        </div>
                                                     </div>
-                                                </FormItem>
-                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="trusted" className="mt-1" />
-                                                    </FormControl>
-                                                    <div className="space-y-1">
-                                                        <FormLabel className="font-normal flex items-center gap-2">
-                                                            <Users className="h-4 w-4 text-muted-foreground" />
-                                                            <span className="font-semibold">{t('visibilityTrusted')}</span>
-                                                        </FormLabel>
-                                                        <FormDescription>
+                                                </SelectItem>
+                                                <SelectItem value="trusted">
+                                                    <div className="flex flex-col text-left">
+                                                        <div className="font-semibold flex items-center gap-2">
+                                                            <Users className="h-4 w-4" />
+                                                            {t('visibilityTrusted')}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
                                                             {t('visibilityTrustedDescription')}
-                                                        </FormDescription>
+                                                        </div>
                                                     </div>
-                                                </FormItem>
-                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
-                                                    <FormControl>
-                                                        <RadioGroupItem value="private" className="mt-1" />
-                                                    </FormControl>
-                                                    <div className="space-y-1">
-                                                        <FormLabel className="font-normal flex items-center gap-2">
-                                                            <Lock className="h-4 w-4 text-muted-foreground" />
-                                                            <span className="font-semibold">{t('visibilityPrivate')}</span>
-                                                        </FormLabel>
-                                                        <FormDescription>
+                                                </SelectItem>
+                                                <SelectItem value="private">
+                                                    <div className="flex flex-col text-left">
+                                                        <div className="font-semibold flex items-center gap-2">
+                                                            <Lock className="h-4 w-4" />
+                                                            {t('visibilityPrivate')}
+                                                        </div>
+                                                        <div className="text-xs text-muted-foreground whitespace-normal">
                                                             {t('visibilityPrivateDescription')}
-                                                        </FormDescription>
+                                                        </div>
                                                     </div>
-                                                </FormItem>
-                                            </RadioGroup>
-                                        </FormControl>
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
