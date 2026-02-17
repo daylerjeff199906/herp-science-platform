@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { ArrowRight } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Page() {
     const locale = useLocale();
@@ -89,12 +90,56 @@ export default function Page() {
                         </Link>
                     </div>
 
-                    {/* Mobile Menu Button */}
-                    <button className="md:hidden p-2">
-                        <svg className={`w-6 h-6 ${scrolled ? 'text-foreground' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    </button>
+                    {/* Mobile Menu Button with Sheet */}
+                    <div className="md:hidden">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <button className="p-2">
+                                    <svg className={`w-6 h-6 ${scrolled ? 'text-foreground' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent side="right" className="bg-[#111111]/90 backdrop-blur-md border-white/10 text-white">
+                                <div className="flex flex-col gap-8 mt-12">
+                                    {/* Navigation Links */}
+                                    <nav className="flex flex-col gap-6">
+                                        <Link
+                                            href="#"
+                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                        >
+                                            About
+                                            <ArrowRight className="w-5 h-5 text-white/50" />
+                                        </Link>
+                                        <Link
+                                            href="#"
+                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                        >
+                                            Services
+                                            <ArrowRight className="w-5 h-5 text-white/50" />
+                                        </Link>
+                                    </nav>
+
+                                    {/* Divider */}
+                                    <div className="h-px w-full bg-white/10"></div>
+
+                                    {/* Auth Links */}
+                                    <div className="flex flex-col gap-4">
+                                        <Button asChild variant="ghost" className="justify-start text-white hover:text-white hover:bg-white/10 text-base uppercase tracking-wider">
+                                            <Link href={`/${locale}/login`}>
+                                                Login
+                                            </Link>
+                                        </Button>
+                                        <Button asChild className="text-base uppercase tracking-wider">
+                                            <Link href={`/${locale}/signup`}>
+                                                Register
+                                            </Link>
+                                        </Button>
+                                    </div>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
             </header>
 

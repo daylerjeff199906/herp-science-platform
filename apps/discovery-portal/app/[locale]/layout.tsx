@@ -42,13 +42,13 @@ export default async function RootLayout(props: Props) {
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={inter.className}>
-        <NextIntlClientProvider messages={messages}>
-          <Providers>
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
             <Header />
             <main>{children}</main>
-          </Providers>
-          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
-        </NextIntlClientProvider>
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA4_ID || ''} />
+          </NextIntlClientProvider>
+        </Providers>
       </body>
     </html>
   )
