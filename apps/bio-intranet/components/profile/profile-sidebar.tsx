@@ -8,7 +8,8 @@ import {
     User,
     Building2,
     Bell,
-    Shield
+    Shield,
+    GraduationCap
 } from "lucide-react"
 
 import {
@@ -44,6 +45,12 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             description: tDesc('profile'),
             url: `/${locale}/dashboard/profile/public`,
             icon: User,
+        },
+        {
+            title: tMenu('education'),
+            description: tDesc('education'),
+            url: `/${locale}/dashboard/profile/education`,
+            icon: GraduationCap,
         },
         {
             title: tMenu('company'),
