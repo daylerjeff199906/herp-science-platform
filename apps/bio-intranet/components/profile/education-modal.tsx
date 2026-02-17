@@ -56,6 +56,7 @@ export function EducationModal({
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     // Ensure default values handle nulls from DB by falling back to empty strings
+    // Do NOT spread initialData at the end if it contains nulls, or it will override our fallbacks.
     const defaultValues: EducationFormValues = {
         institution: initialData?.institution || '',
         title: initialData?.title || '',
@@ -70,7 +71,7 @@ export function EducationModal({
         region_state: initialData?.region_state || '',
         country: initialData?.country || '',
         scope: initialData?.scope || '',
-        ...initialData, // spread to catch any other fields if types align, but above lines ensure safety
+        id: initialData?.id,
     }
 
     const form = useForm<EducationFormValues>({

@@ -24,15 +24,19 @@
     },
     "menu": {
       "general": "General Details",
-      "profile": "Public Profile",
-      "company": "Academic Profile",
+      "education": "Education",
+      "experience": "Experience",
+      "interests": "Interests & Expertise",
+      "activity": "Activity",
       "notifications": "Notifications",
       "security": "Security & Privacy"
     },
     "menuDescriptions": {
       "general": "Manage your basic personal information.",
-      "profile": "Configure how other users see you.",
-      "company": "Manage your academic and professional info.",
+      "education": "Manage your academic and professional info.",
+      "experience": "Manage your academic and professional info.",
+      "interests": "Manage your academic and professional info.",
+      "activity": "Manage your academic and professional info.",
       "notifications": "Configure your notification preferences.",
       "security": "Update your password and security settings."
     },
@@ -70,7 +74,6 @@
       "emptyStateTitle": "No education added yet",
       "emptyStateDescription": "Add your educational background to showcase your qualifications.",
       "edit": "Edit",
-      "delete": "Delete",
       "actions": "Actions",
       "noFieldOfStudy": "No field of study",
       "noDegree": "No degree",
