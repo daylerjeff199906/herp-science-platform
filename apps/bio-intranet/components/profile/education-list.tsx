@@ -3,28 +3,15 @@
 import React, { useState } from 'react'
 import {
     Card,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-    CardContent
 } from '@repo/ui'
 import { Button } from '@/components/ui/button'
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu'
+
 import { useTranslations } from 'next-intl'
 import {
-    MoreVertical,
     Plus,
-    BookOpen,
-    Calendar,
-    Building2,
-    GraduationCap
+    GraduationCap,
+    Trash2,
+    Edit
 } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { format } from 'date-fns'
@@ -106,66 +93,50 @@ export function EducationList({ educationList, locale }: EducationListProps) {
                                 transition={{ delay: index * 0.1 }}
                             >
                                 <Card>
-                                    <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-                                        <div className="gap-1 flex flex-col">
-                                            <CardTitle className="text-base font-semibold">
-                                                {edu.title}
-                                            </CardTitle>
-                                            <CardDescription className="text-sm">
-                                                {edu.institution}
-                                            </CardDescription>
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" className="h-8 w-8 p-0">
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
-                                                <DropdownMenuItem onClick={() => handleEdit(edu)}>
-                                                    {t('edit')}
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem
-                                                    className="text-destructive focus:text-destructive"
-                                                    onClick={() => handleDelete(edu)}
-                                                >
-                                                    {t('delete')}
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-2">
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <Building2 className="h-4 w-4" />
-                                                <span>{edu.field_of_study || t('noFieldOfStudy')}</span>
+                                    <div className="flex flex-row items-center justify-between p-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-2 border rounded-lg bg-muted/30">
+                                                <GraduationCap className="h-5 w-5 text-primary" />
                                             </div>
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <GraduationCap className="h-4 w-4" />
-                                                <span>{edu.degree || t('noDegree')}</span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <Calendar className="h-4 w-4" />
-                                                <span>
-                                                    {edu.start_date
-                                                        ? format(new Date(edu.start_date), 'MMM yyyy')
-                                                        : ''}{' '}
-                                                    -{' '}
-                                                    {edu.is_current
-                                                        ? t('present')
-                                                        : edu.end_date
-                                                            ? format(new Date(edu.end_date), 'MMM yyyy')
-                                                            : ''}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-muted-foreground">
-                                                <BookOpen className="h-4 w-4" />
-                                                <span className="capitalize">{t(`status.${edu.status}`)}</span>
+                                            <div className="flex flex-col gap-1">
+                                                <h3 className="font-semibold text-lg leading-none">
+                                                    {edu.title}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {edu.institution}
+                                                </p>
+                                                <div className="flex flex-wrap gap-x-2 text-xs text-muted-foreground mt-1">
+                                                    <span>
+                                                        {edu.start_date
+                                                            ? format(new Date(edu.start_date), 'MMM yyyy')
+                                                            : ''}{' '}
+                                                        -{' '}
+                                                        {edu.is_current
+                                                            ? t('present')
+                                                            : edu.end_date
+                                                                ? format(new Date(edu.end_date), 'MMM yyyy')
+                                                                : ''}
+                                                    </span>
+                                                    {(edu.degree || edu.field_of_study) && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span>
+                                                                {[edu.degree, edu.field_of_study].filter(Boolean).join(' - ')}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </CardContent>
+                                        <div className="flex gap-1">
+                                            <Button variant="ghost" size="icon" onClick={() => handleEdit(edu)}>
+                                                <Edit className="h-4 w-4 text-muted-foreground" />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" onClick={() => handleDelete(edu)}>
+                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </Card>
                             </motion.div>
                         )))}
