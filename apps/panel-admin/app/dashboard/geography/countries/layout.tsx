@@ -1,9 +1,16 @@
-import { SidebarInsetCustom } from '@/components/miscellaneous/sidebar-inset'
+import { LayoutWrapper } from '@/components/layout-wrapper'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarInsetCustom currentPage="Países">
+    <LayoutWrapper
+      sectionTitle="Gestión de Países"
+      breadcrumbs={[
+        { title: 'Dashboard', href: '/dashboard' },
+        { title: 'Ubicación', href: '#' },
+        { title: 'Países' },
+      ]}
+    >
       {children}
-    </SidebarInsetCustom>
+    </LayoutWrapper>
   )
 }

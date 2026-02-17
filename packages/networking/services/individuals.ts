@@ -59,3 +59,35 @@ export const fetchIndividualByUuid = async (uuid: string): Promise<IndividualDet
         throw error;
     }
 }
+
+export const fetchIndividualsAdmin = async (filters: IndividualFilter, headers: Record<string, string>): Promise<IndividualResponse> => {
+    const payload = cleanFilters(filters);
+    try {
+        const { data } = await apiClient.post<IndividualResponse>(ENDPOINTS.INDIVIDUALS.QUERY_ADMIN, payload, { headers })
+        return data || { data: [], currentPage: 1, totalPages: 1, totalItems: 0 }
+    } catch (error: any) {
+        // Handle 403 Forbidden gracefully -> return empty results
+        if (error.response?.status === 403) {
+            return {
+                data: [],
+                currentPage: 1,
+                totalPages: 1, // Avoid 0 if generic pagination breaks, but 0 is usually safer. Set 1 to be neutral. Or 0.
+                totalItems: 0
+            }
+        }
+        throw error;
+    }
+}
+
+export const fetchIndividualByUuidAdmin = async (uuid: string, headers: Record<string, string>): Promise<IndividualDetails | null> => {
+    try {
+        const { data } = await apiClient.get<IndividualDetails>(ENDPOINTS.INDIVIDUALS.GET_ADMIN_BY_ID(uuid), { headers })
+        return data || null
+    } catch (error: any) {
+        // Handle 403 Forbidden gracefully -> return empty results
+        if (error.response?.status === 403) {
+            return null
+        }
+        throw error;
+    }
+}

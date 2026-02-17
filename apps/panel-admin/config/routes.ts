@@ -23,7 +23,7 @@ export const ROUTES = {
     FOREST_TYPES: `/${route_base}/entities/forest-types`,
   },
   CORE: {
-    INDIVIDUALS: `/${route_base}/core/individuals`,
-    IDENTIFIERS: `/${route_base}/core/identifiers`,
+    INDIVIDUALS: `/${route_base}/individuals`,
+    IDENTIFIERS: `/${route_base}/identifiers`,
   },
 } as const
