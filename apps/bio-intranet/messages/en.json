@@ -1,4 +1,61 @@
 {
+  "Profile": {
+    "title": "Profile",
+    "general": {
+      "title": "General Details",
+      "description": "Manage your basic personal information."
+    },
+    "academic": {
+      "title": "Academic Profile",
+      "description": "Manage your academic and professional information."
+    },
+    "security": {
+      "title": "Security & Privacy",
+      "description": "Manage your account security and settings."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure how you receive notifications."
+    },
+    "menu": {
+      "general": "General Details",
+      "profile": "Public Profile",
+      "company": "Academic Profile",
+      "notifications": "Notifications",
+      "security": "Security & Privacy"
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "bio": "Bio",
+      "location": "Location",
+      "birthDate": "Birth Date",
+      "phone": "Phone",
+      "institution": "Institution",
+      "dedication": "Dedication",
+      "currentPosition": "Current Position",
+      "website": "Website",
+      "expertiseAreas": "Expertise Areas",
+      "researchInterests": "Research Interests",
+      "save": "Save Changes",
+      "cancel": "Cancel",
+      "uploadPhoto": "Upload Photo",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "twoFactor": "Two-factor Authentication",
+      "enableTwoFactor": "Enable Authentication",
+      "recoveryEmail": "Recovery Email"
+    },
+    "messages": {
+      "updateSuccess": "Profile updated successfully.",
+      "updateError": "Error updating profile.",
+      "passwordUpdateSuccess": "Password updated successfully.",
+      "emailVerified": "Verified"
+    }
+  },
   "Auth": {
     "login": "Login",
     "loginDescription": "Enter your email below to login to your account",

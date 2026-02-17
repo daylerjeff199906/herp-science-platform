@@ -53,8 +53,7 @@ export const InterestsSchema = z.object({
   expertiseAreas: z
     .array(z.string())
     .max(10, 'Select up to 10 areas')
-    .optional()
-    .default([]),
+    .optional(),
   researchInterests: z
     .string()
     .max(2000, 'Research interests must be less than 2000 characters')

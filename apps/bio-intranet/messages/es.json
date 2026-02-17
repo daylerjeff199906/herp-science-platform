@@ -1,4 +1,61 @@
 {
+  "Profile": {
+    "title": "Perfil",
+    "general": {
+      "title": "Detalles Generales",
+      "description": "Gestiona tu información personal básica."
+    },
+    "academic": {
+      "title": "Perfil Académico",
+      "description": "Gestiona tu información académica y profesional."
+    },
+    "security": {
+      "title": "Seguridad y Privacidad",
+      "description": "Gestiona la seguridad y privacidad de tu cuenta."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Configura cómo recibes notificaciones."
+    },
+    "menu": {
+      "general": "Detalles Generales",
+      "profile": "Perfil Público",
+      "company": "Perfil Académico",
+      "notifications": "Notificaciones",
+      "security": "Seguridad y Privacidad"
+    },
+    "form": {
+      "firstName": "Nombres",
+      "lastName": "Apellidos",
+      "email": "Correo Electrónico",
+      "bio": "Biografía",
+      "location": "Ubicación",
+      "birthDate": "Fecha de Nacimiento",
+      "phone": "Teléfono",
+      "institution": "Institución",
+      "dedication": "Dedicación",
+      "currentPosition": "Cargo Actual",
+      "website": "Sitio Web",
+      "expertiseAreas": "Áreas de Experiencia",
+      "researchInterests": "Intereses de Investigación",
+      "save": "Guardar Cambios",
+      "cancel": "Cancelar",
+      "uploadPhoto": "Subir Foto",
+      "changePassword": "Cambiar Contraseña",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "twoFactor": "Autenticación de Dos Factores",
+      "enableTwoFactor": "Habilitar Autenticación",
+      "recoveryEmail": "Correo de Recuperación"
+    },
+    "messages": {
+      "updateSuccess": "Perfil actualizado correctamente.",
+      "updateError": "Error al actualizar el perfil.",
+      "passwordUpdateSuccess": "Contraseña actualizada correctamente.",
+      "emailVerified": "Verificado"
+    }
+  },
   "Auth": {
     "login": "Iniciar Sesión",
     "loginDescription": "Ingrese su correo electrónico a continuación para iniciar sesión en su cuenta",
