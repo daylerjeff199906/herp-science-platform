@@ -23,6 +23,7 @@ import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@repo/ui"
 import { TopicSelector } from "@/components/onboarding/TopicSelector"
 import { TagInput } from "@/components/onboarding/TagInput"
+import { PhoneInput } from "@/components/ui/phone-input"
 import type { Topic, InterestCategory } from "@/types/onboarding"
 
 interface GeneralFormProps {
@@ -53,9 +54,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
             birthDate: initialData.birthDate || '',
             phone: initialData.phone || '',
             dedication: initialData.dedication || '',
-            currentPosition: initialData.currentPosition || '',
             institution: initialData.institution || '',
-            website: initialData.website || '',
             researchInterests: initialData.researchInterests || '',
             areasOfInterest: initialData.areasOfInterest || [],
             expertiseAreas: initialData.expertiseAreas || [],
@@ -128,7 +127,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Header Actions */}
                 <div className="flex items-center justify-between">
                     <div>
@@ -149,7 +148,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                 </div>
 
                 {success && (
-                    <Alert className="border-green-500 text-green-600 bg-green-50 dark:border-green-400 dark:text-green-400 dark:bg-green-400">
+                    <Alert className="border-green-500 text-green-600 bg-green-50 dark:bg-transparent">
                         <CheckCircle2 className="h-4 w-4" />
                         <AlertTitle>Success</AlertTitle>
                         <AlertDescription>{t('messages.updateSuccess')}</AlertDescription>
@@ -224,7 +223,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                             <FormItem>
                                 <FormLabel>{t('form.bio')}</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={4} className="resize-none" />
+                                    <Textarea {...field} rows={4} placeholder={t('form.bioPlaceholder')} className="resize-none" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -252,7 +251,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                                 <FormItem>
                                     <FormLabel>{t('form.phone')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} type="tel" />
+                                        <PhoneInput {...field} defaultCountry="PE" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -305,38 +304,12 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                         />
                         <FormField
                             control={form.control}
-                            name="currentPosition"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('form.currentPosition')}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
                             name="institution"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>{t('form.institution')}</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="website"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>{t('form.website')}</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="https://" />
+                                        <Input {...field} placeholder={t('form.institutionPlaceholder')} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -373,7 +346,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
                             <FormItem>
                                 <FormLabel>{t('form.researchInterests')}</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={3} />
+                                    <Textarea {...field} rows={3} placeholder={t('form.researchInterestsPlaceholder')} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

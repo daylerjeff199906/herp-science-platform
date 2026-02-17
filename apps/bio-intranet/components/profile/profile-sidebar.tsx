@@ -8,7 +8,11 @@ import {
     User,
     Building2,
     Bell,
-    Shield
+    Shield,
+    GraduationCap,
+    Globe,
+    Award,
+    BadgeCheck
 } from "lucide-react"
 
 import {
@@ -31,6 +35,10 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     const t = useTranslations('Profile')
     const tMenu = useTranslations('Profile.menu')
     const tDesc = useTranslations('Profile.menuDescriptions')
+    const tLang = useTranslations('Profile.language')
+
+    const tProf = useTranslations('Profile.professionalActivity')
+    const tCert = useTranslations('Profile.certifications')
 
     const items = [
         {
@@ -40,28 +48,34 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             icon: LayoutGrid,
         },
         {
-            title: tMenu('profile'),
-            description: tDesc('profile'),
-            url: `/${locale}/dashboard/profile/public`,
-            icon: User,
+            title: tMenu('education'),
+            description: tDesc('education'),
+            url: `/${locale}/dashboard/profile/education`,
+            icon: GraduationCap,
         },
         {
-            title: tMenu('company'),
-            description: tDesc('company'),
-            url: `/${locale}/dashboard/profile/academic`,
+            title: tMenu('experience'),
+            description: tDesc('experience'),
+            url: `/${locale}/dashboard/profile/employment`,
             icon: Building2,
         },
         {
-            title: tMenu('notifications'),
-            description: tDesc('notifications'),
-            url: `/${locale}/dashboard/profile/notifications`,
-            icon: Bell,
+            title: tProf('title'),
+            description: tProf('description'),
+            url: `/${locale}/dashboard/profile/professional-activities`,
+            icon: Award,
         },
         {
-            title: tMenu('security'),
-            description: tDesc('security'),
-            url: `/${locale}/dashboard/profile/security`,
-            icon: Shield,
+            title: tCert('title'),
+            description: tCert('description'),
+            url: `/${locale}/dashboard/profile/certifications`,
+            icon: BadgeCheck,
+        },
+        {
+            title: tLang('title'),
+            description: tLang('description'),
+            url: `/${locale}/dashboard/profile/languages`,
+            icon: Globe,
         },
     ]
 

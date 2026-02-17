@@ -6,7 +6,12 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 
-export async function login(formData: FormData) {
+type LoginResponse = {
+    error?: string
+    redirectUrl?: string
+}
+
+export async function login(formData: FormData, locale: string = 'es'): Promise<LoginResponse> {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
@@ -33,23 +38,21 @@ export async function login(formData: FormData) {
         if (profileError) {
             console.error('Error fetching profile:', profileError)
             revalidatePath('/', 'layout')
-            redirect('/dashboard')
-            return
+            return { redirectUrl: `/${locale}/dashboard` }
         }
 
 
         // Si no ha completado el onboarding, redirigir a onboarding
         if (!profile?.onboarding_completed) {
             revalidatePath('/', 'layout')
-            redirect('/onboarding')
-            return
+            return { redirectUrl: `/${locale}/onboarding` }
         }
     }
 
 
     // Si ha completado el onboarding, redirigir al dashboard
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { redirectUrl: `/${locale}/dashboard` }
 }
 
 export async function signup(formData: FormData) {

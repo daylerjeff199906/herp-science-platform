@@ -8,6 +8,7 @@ import {
   HelpCircle,
   type LucideIcon,
   User,
+  Settings,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -120,6 +121,11 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     title: t('Navigation.profile'),
     url: '/dashboard/profile',
     icon: User,
+  },
+  {
+    title: t('Navigation.settings'),
+    url: '/dashboard/settings',
+    icon: Settings,
   },
   {
     title: t('Navigation.help'),

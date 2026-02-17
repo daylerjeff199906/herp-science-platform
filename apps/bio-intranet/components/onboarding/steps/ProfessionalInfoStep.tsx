@@ -71,18 +71,6 @@ export function ProfessionalInfoStep({
           className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium block">
-          {t('Onboarding.ProfessionalInfo.website.label')}
-        </label>
-        <input
-          type="url"
-          placeholder={t('Onboarding.ProfessionalInfo.website.placeholder')}
-          value={formData.website}
-          onChange={(e) => onChange('website', e.target.value)}
-          className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        />
-      </div>
     </div>
   )
 }

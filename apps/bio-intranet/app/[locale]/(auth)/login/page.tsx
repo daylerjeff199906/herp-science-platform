@@ -5,7 +5,8 @@ import { useForm, type ControllerRenderProps } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { login } from './actions'
 import { PasswordInput } from '@/components/auth/password-input'
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
@@ -32,6 +33,8 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
     const t = useTranslations('Auth')
+    const locale = useLocale()
+    const router = useRouter()
     const [error, setError] = React.useState<string>('')
     const [isPending, setIsPending] = React.useState(false)
 
@@ -53,9 +56,12 @@ export default function LoginPage() {
         formData.append('password', data.password)
 
         try {
-            const result = await login(formData)
+            const result = await login(formData, locale)
+
             if (result?.error) {
                 setError(result.error)
+            } else if (result?.redirectUrl) {
+                router.push(result.redirectUrl)
             }
         } catch (err) {
             console.error(err)

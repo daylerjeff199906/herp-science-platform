@@ -1,6 +1,7 @@
 import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789')
+const domainResend = process.env.RESEND_FROM_EMAIL || 'resend.dev'
 
 interface WelcomeEmailParams {
   email: string
@@ -17,7 +18,7 @@ export async function sendWelcomeEmail({
 
   try {
     const data = await resend.emails.send({
-      from: 'Bio Intranet <onboarding@resend.dev>',
+      from: `Bio Intranet <onboarding@${domainResend}>`,
       to: [email],
       subject: isSpanish
         ? '¡Bienvenido a Bio Intranet!'

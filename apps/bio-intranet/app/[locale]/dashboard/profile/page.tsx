@@ -52,6 +52,7 @@ export default async function ProfileGeneralPage({ params }: ProfileGeneralPageP
         onboardingCompleted: profile?.onboarding_completed || false,
     }
 
+
     return (
         <GeneralForm
             initialData={initialData}

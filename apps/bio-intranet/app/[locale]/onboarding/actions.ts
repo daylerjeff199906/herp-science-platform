@@ -91,9 +91,7 @@ export async function submitOnboarding(
       phone: data.phone || null,
       bio: data.bio || null,
       dedication: data.dedication || null,
-      current_position: data.currentPosition || null,
       institution: data.institution || null,
-      website: data.website || null,
       research_interests: data.researchInterests || null,
       onboarding_completed: true,
     })

@@ -18,8 +18,6 @@ export const GeneralProfileSchema = z.object({
     areasOfInterest: z.array(z.string()),
     expertiseAreas: z.array(z.string()),
     researchInterests: z.string().optional(),
-    currentPosition: z.string().optional(),
-    website: z.string().optional(),
     institution: z.string().optional(),
     onboardingCompleted: z.boolean().optional(),
 })
