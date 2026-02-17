@@ -426,9 +426,6 @@ importers:
 
   packages/networking:
     dependencies:
-      '@tanstack/react-query':
-        specifier: ^5.90.18
-        version: 5.90.18(react@19.2.4)
       axios:
         specifier: ^1.6.0
         version: 1.13.2
@@ -439,6 +436,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@tanstack/react-query':
+        specifier: ^5.90.18
+        version: 5.90.18(react@19.2.4)
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
