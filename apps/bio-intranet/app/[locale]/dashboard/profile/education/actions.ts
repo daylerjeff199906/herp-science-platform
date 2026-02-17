@@ -22,11 +22,24 @@ export async function createEducationAction(data: any | FormData) {
         payload = Object.fromEntries(data.entries())
     }
 
-    // Transform dates if necessary, ensure format
-    const { error } = await supabase.from('education').insert({
+    // Ensure empty strings are converted to null for optional fields
+    const sanitizedPayload = {
         ...payload,
         user_id: user.id,
-    })
+        // Optional string fields
+        city: payload.city || null,
+        region_state: payload.region_state || null,
+        country: payload.country || null,
+        field_of_study: payload.field_of_study || null,
+        degree: payload.degree || null,
+        scope: payload.scope || null,
+        end_date: payload.end_date || null,
+        // start_date is required but if empty string, convert to null? Or let it fail if not provided?
+        // Schema requires min(1), so it should be valid string. But if frontend sends '', convert to null and see if DB accepts/rejects.
+        // Usually better to let it be string if it's there.
+    }
+
+    const { error } = await supabase.from('education').insert(sanitizedPayload)
 
     if (error) {
         console.error('Error creating education:', error)
@@ -58,9 +71,21 @@ export async function updateEducationAction(id: string, data: any | FormData) {
     delete payload.user_id
     delete payload.id
 
+    const sanitizedPayload = {
+        ...payload,
+        // Optional string fields
+        city: payload.city || null,
+        region_state: payload.region_state || null,
+        country: payload.country || null,
+        field_of_study: payload.field_of_study || null,
+        degree: payload.degree || null,
+        scope: payload.scope || null,
+        end_date: payload.end_date || null,
+    }
+
     const { error } = await supabase
         .from('education')
-        .update(payload)
+        .update(sanitizedPayload)
         .eq('id', id)
         .eq('user_id', user.id)
 

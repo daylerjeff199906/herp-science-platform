@@ -35,7 +35,7 @@ import { createEducationAction, updateEducationAction } from '@/app/[locale]/das
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
-import { Checkbox } from '@repo/ui'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface EducationModalProps {
     id?: string
@@ -55,14 +55,22 @@ export function EducationModal({
     const t = useTranslations('Profile.education.form')
     const [isSubmitting, setIsSubmitting] = useState(false)
 
+    // Ensure default values handle nulls from DB by falling back to empty strings
     const defaultValues: EducationFormValues = {
-        institution: '',
-        title: '',
-        status: 'completed',
-        start_date: '',
-        visibility: 'public',
-        is_current: false,
-        ...initialData,
+        institution: initialData?.institution || '',
+        title: initialData?.title || '',
+        status: initialData?.status || 'completed',
+        start_date: initialData?.start_date || '',
+        end_date: initialData?.end_date || '',
+        visibility: initialData?.visibility || 'public',
+        is_current: initialData?.is_current || false,
+        degree: initialData?.degree || '',
+        field_of_study: initialData?.field_of_study || '',
+        city: initialData?.city || '',
+        region_state: initialData?.region_state || '',
+        country: initialData?.country || '',
+        scope: initialData?.scope || '',
+        ...initialData, // spread to catch any other fields if types align, but above lines ensure safety
     }
 
     const form = useForm<EducationFormValues>({
@@ -182,7 +190,7 @@ export function EducationModal({
                                 control={form.control}
                                 name="is_current"
                                 render={({ field }) => (
-                                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm col-span-2">
+                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm col-span-2 md:col-span-1">
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
@@ -193,9 +201,6 @@ export function EducationModal({
                                             <FormLabel>
                                                 {t('isCurrent')}
                                             </FormLabel>
-                                            <FormDescription>
-                                                {t('isCurrentDescription')}
-                                            </FormDescription>
                                         </div>
                                     </FormItem>
                                 )}

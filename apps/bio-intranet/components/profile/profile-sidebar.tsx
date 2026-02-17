@@ -47,12 +47,6 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
             icon: GraduationCap,
         },
         {
-            title: tMenu('company'),
-            description: tDesc('company'),
-            url: `/${locale}/dashboard/profile/academic`,
-            icon: Building2,
-        },
-        {
             title: tMenu('notifications'),
             description: tDesc('notifications'),
             url: `/${locale}/dashboard/profile/notifications`,
