@@ -34,8 +34,10 @@ import { educationSchema, EducationFormValues } from '@/lib/schemas/education'
 import { createEducationAction, updateEducationAction } from '@/app/[locale]/dashboard/profile/education/actions'
 import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Globe, Lock, Users } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { cn } from '@/lib/utils'
 
 interface EducationModalProps {
     id?: string
@@ -56,7 +58,6 @@ export function EducationModal({
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     // Ensure default values handle nulls from DB by falling back to empty strings
-    // Do NOT spread initialData at the end if it contains nulls, or it will override our fallbacks.
     const defaultValues: EducationFormValues = {
         institution: initialData?.institution || '',
         title: initialData?.title || '',
@@ -112,7 +113,7 @@ export function EducationModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>{id ? t('editTitle') : t('createTitle')}</DialogTitle>
                     <DialogDescription>
@@ -120,13 +121,13 @@ export function EducationModal({
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name="institution"
                                 render={({ field }) => (
-                                    <FormItem className="col-span-2">
+                                    <FormItem className="col-span-1 md:col-span-2">
                                         <FormLabel>{t('institution')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder={t('institutionPlaceholder')} {...field} />
@@ -139,7 +140,7 @@ export function EducationModal({
                                 control={form.control}
                                 name="title"
                                 render={({ field }) => (
-                                    <FormItem className="col-span-2">
+                                    <FormItem className="col-span-1 md:col-span-2">
                                         <FormLabel>{t('titleLabel')}</FormLabel>
                                         <FormControl>
                                             <Input placeholder={t('titlePlaceholder')} {...field} />
@@ -189,25 +190,6 @@ export function EducationModal({
                             />
                             <FormField
                                 control={form.control}
-                                name="is_current"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm col-span-2 md:col-span-1">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <div className="space-y-1 leading-none">
-                                            <FormLabel>
-                                                {t('isCurrent')}
-                                            </FormLabel>
-                                        </div>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
                                 name="end_date"
                                 render={({ field }) => (
                                     <FormItem>
@@ -218,6 +200,7 @@ export function EducationModal({
                                                 {...field}
                                                 value={field.value || ''}
                                                 disabled={form.watch('is_current')}
+                                                className={cn(form.watch('is_current') && "opacity-50")}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -226,9 +209,31 @@ export function EducationModal({
                             />
                             <FormField
                                 control={form.control}
+                                name="is_current"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4 shadow-sm col-span-1 md:col-span-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div className="space-y-1 leading-none">
+                                            <FormLabel className="font-semibold">
+                                                {t('isCurrent')}
+                                            </FormLabel>
+                                            <FormDescription>
+                                                {t('isCurrentDescription')}
+                                            </FormDescription>
+                                        </div>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name="status"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="col-span-1 md:col-span-2">
                                         <FormLabel>{t('status')}</FormLabel>
                                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                                             <FormControl>
@@ -246,30 +251,69 @@ export function EducationModal({
                                     </FormItem>
                                 )}
                             />
+
                             <FormField
                                 control={form.control}
                                 name="visibility"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="space-y-3 col-span-1 md:col-span-2">
                                         <FormLabel>{t('visibility')}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                            <FormControl>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder={t('visibilityPlaceholder')} />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                <SelectItem value="public">{t('visibilityPublic')}</SelectItem>
-                                                <SelectItem value="trusted">{t('visibilityTrusted')}</SelectItem>
-                                                <SelectItem value="private">{t('visibilityPrivate')}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <FormControl>
+                                            <RadioGroup
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                                className="grid grid-cols-1 gap-4 pt-2"
+                                            >
+                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                    <FormControl>
+                                                        <RadioGroupItem value="public" className="mt-1" />
+                                                    </FormControl>
+                                                    <div className="space-y-1">
+                                                        <FormLabel className="font-normal flex items-center gap-2">
+                                                            <Globe className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-semibold">{t('visibilityPublic')}</span>
+                                                        </FormLabel>
+                                                        <FormDescription>
+                                                            {t('visibilityPublicDescription')}
+                                                        </FormDescription>
+                                                    </div>
+                                                </FormItem>
+                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                    <FormControl>
+                                                        <RadioGroupItem value="trusted" className="mt-1" />
+                                                    </FormControl>
+                                                    <div className="space-y-1">
+                                                        <FormLabel className="font-normal flex items-center gap-2">
+                                                            <Users className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-semibold">{t('visibilityTrusted')}</span>
+                                                        </FormLabel>
+                                                        <FormDescription>
+                                                            {t('visibilityTrustedDescription')}
+                                                        </FormDescription>
+                                                    </div>
+                                                </FormItem>
+                                                <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                                                    <FormControl>
+                                                        <RadioGroupItem value="private" className="mt-1" />
+                                                    </FormControl>
+                                                    <div className="space-y-1">
+                                                        <FormLabel className="font-normal flex items-center gap-2">
+                                                            <Lock className="h-4 w-4 text-muted-foreground" />
+                                                            <span className="font-semibold">{t('visibilityPrivate')}</span>
+                                                        </FormLabel>
+                                                        <FormDescription>
+                                                            {t('visibilityPrivateDescription')}
+                                                        </FormDescription>
+                                                    </div>
+                                                </FormItem>
+                                            </RadioGroup>
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                         </div>
-                        <div className="flex justify-end gap-3 pt-4">
+                        <div className="flex justify-end gap-3 pt-4 border-t mt-4">
                             <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
                                 {t('cancel')}
                             </Button>
