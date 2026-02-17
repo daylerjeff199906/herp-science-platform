@@ -1,20 +1,18 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import type { OnboardingStep } from '@/lib/schemas/onboarding'
 
-interface StepIndicatorProps {
-  steps: OnboardingStep[]
-  currentStep: number
+interface Step {
+  id: string
+  label: string
 }
 
-const stepLabels: Record<OnboardingStep, string> = {
-  personal: 'Onboarding.Steps.personal',
-  professional: 'Onboarding.Steps.professional',
-  interests: 'Onboarding.Steps.interests',
+interface StepIndicatorProps {
+  steps: Step[]
+  currentStep: number
 }
 
 export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
@@ -43,7 +41,7 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
           const isPending = index > currentStep
 
           return (
-            <div key={step} className="flex flex-col items-center gap-2">
+            <div key={step.id} className="flex flex-col items-center gap-2">
               <motion.div
                 className={cn(
                   'w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-300',
@@ -68,7 +66,7 @@ export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {
                   isPending && 'text-muted-foreground'
                 )}
               >
-                {t(stepLabels[step])}
+                {t(step.label)}
               </span>
             </div>
           )
