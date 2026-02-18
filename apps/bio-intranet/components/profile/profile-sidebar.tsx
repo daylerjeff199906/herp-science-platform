@@ -80,7 +80,7 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     ]
 
     return (
-        <Sidebar collapsible="none" className="min-w-[280px] border-none bg-transparent" {...props}>
+        <Sidebar collapsible={props.collapsible || "none"} className="min-w-[280px] border-none bg-transparent" {...props}>
             <SidebarHeader className="px-4 py-2">
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Menu</h2>
             </SidebarHeader>

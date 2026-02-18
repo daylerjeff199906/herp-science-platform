@@ -43,6 +43,7 @@ export default async function ProfileLayout({
             sectionTitle="Informacion general"
         >
             <SidebarProvider defaultOpen>
+                <ProfileSidebar locale={locale} collapsible="offcanvas" className="md:hidden" />
                 <div className="flex w-full bg-muted/30">
                     <div className="mx-auto flex w-full items-start gap-8 container flex-col md:flex-row">
                         {/* Sidebar */}
