@@ -9,6 +9,9 @@ import {
   type LucideIcon,
   User,
   Settings,
+  Newspaper,
+  Archive,
+  Calendar,
 } from 'lucide-react'
 
 export interface NavItem {
@@ -37,100 +40,86 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     isActive: true,
   },
   {
-    title: t('Navigation.members'),
-    url: '/members',
-    icon: Users,
-    items: [
-      {
-        title: t('Navigation.membersAll'),
-        url: '/members',
-      },
-      {
-        title: t('Navigation.membersResearchers'),
-        url: '/members/researchers',
-      },
-      {
-        title: t('Navigation.membersStudents'),
-        url: '/members/students',
-      },
-    ],
+    title: t('Navigation.news'),
+    url: '/news',
+    icon: Newspaper,
   },
   {
-    title: t('Navigation.publications'),
-    url: '/publications',
-    icon: BookOpen,
-    items: [
-      {
-        title: t('Navigation.publicationsAll'),
-        url: '/publications',
-      },
-      {
-        title: t('Navigation.publicationsMy'),
-        url: '/publications/my',
-      },
-      {
-        title: t('Navigation.publicationsAdd'),
-        url: '/publications/new',
-      },
-    ],
-  },
-  {
-    title: t('Navigation.research'),
-    url: '/research',
-    icon: FlaskConical,
-    items: [
-      {
-        title: t('Navigation.researchProjects'),
-        url: '/research/projects',
-      },
-      {
-        title: t('Navigation.researchData'),
-        url: '/research/data',
-      },
-      {
-        title: t('Navigation.researchProtocols'),
-        url: '/research/protocols',
-      },
-    ],
-  },
-  {
-    title: t('Navigation.expeditions'),
-    url: '/expeditions',
-    icon: Map,
-    items: [
-      {
-        title: t('Navigation.expeditionsAll'),
-        url: '/expeditions',
-      },
-      {
-        title: t('Navigation.expeditionsPlan'),
-        url: '/expeditions/plan',
-      },
-      {
-        title: t('Navigation.expeditionsMap'),
-        url: '/expeditions/map',
-      },
-    ],
-  },
-  {
-    title: t('Navigation.documents'),
-    url: '/documents',
-    icon: FileText,
-  },
-  {
-    title: t('Navigation.profile'),
+    title: t('Navigation.profileScientific'),
     url: '/dashboard/profile',
     icon: User,
   },
   {
-    title: t('Navigation.settings'),
-    url: '/dashboard/settings',
-    icon: Settings,
+    title: t('Navigation.network'),
+    url: '/network',
+    icon: Users,
+    items: [
+      {
+        title: t('Navigation.networkProjects'),
+        url: '/network/projects',
+      },
+      {
+        title: t('Navigation.networkResearch'),
+        url: '/network/research',
+      },
+      {
+        title: t('Navigation.networkGroups'),
+        url: '/network/groups',
+      },
+    ],
   },
   {
-    title: t('Navigation.help'),
-    url: '/help',
-    icon: HelpCircle,
+    title: t('Navigation.collections'),
+    url: '/collections',
+    icon: Archive,
+    items: [
+      {
+        title: t('Navigation.collectionsExplore'),
+        url: '/collections/explore',
+      },
+      {
+        title: t('Navigation.collectionsRequests'),
+        url: '/collections/requests',
+      },
+      {
+        title: t('Navigation.collectionsProcedures'),
+        url: '/collections/procedures',
+      },
+    ],
+  },
+  {
+    title: t('Navigation.events'),
+    url: '/events',
+    icon: Calendar,
+    items: [
+      {
+        title: t('Navigation.eventsCalendar'),
+        url: '/events/calendar',
+      },
+      {
+        title: t('Navigation.eventsRegistrations'),
+        url: '/events/registrations',
+      },
+      {
+        title: t('Navigation.eventsCertificates'),
+        url: '/events/certificates',
+      },
+    ],
+  },
+  {
+    title: t('Navigation.settings'),
+    url: '/settings',
+    icon: Settings,
+    items: [
+      {
+        title: t('Navigation.settingsSecurity'),
+        url: '/settings/security',
+      },
+      {
+        title: t('Navigation.settingsSupport'),
+        url: '/settings/support',
+      },
+    ],
   },
 ]
 
