@@ -47,7 +47,7 @@ export default async function ProfileLayout({
                     <ProfileSidebar locale={locale} collapsible="offcanvas" />
                 </div>
                 <div className="flex w-full bg-muted/30">
-                    <div className="mx-auto flex items-start gap-8 container flex-col md:flex-row">
+                    <div className="mx-auto flex items-start gap-8 container px-0 md:px-4 flex-col md:flex-row">
                         {/* Sidebar */}
                         <div className="bg-transparent border-0 shadow-none w-full md:w-64 shrink-0 flex flex-col gap-4">
                             <div className="flex flex-col gap-4">
