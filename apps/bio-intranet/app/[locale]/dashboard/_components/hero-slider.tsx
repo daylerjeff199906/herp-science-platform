@@ -90,7 +90,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                                     {slide.title}
                                                 </h2>
                                                 {slide.description && (
-                                                    <p className="text-sm md:text-base mb-8 max-w-lg line-clamp-3">
+                                                    <p className="text-sm md:text-base mb-8 max-w-lg line-clamp-3 text-foreground-tertiary">
                                                         {slide.description}
                                                     </p>
                                                 )}
