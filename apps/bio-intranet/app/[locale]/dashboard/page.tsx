@@ -9,7 +9,6 @@ import { LayoutWrapper } from "@/components/layout-wrapper"
 import { HeroSlider, HeroSlide } from "./_components/hero-slider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function DashboardPage() {
   const t = useTranslations()
