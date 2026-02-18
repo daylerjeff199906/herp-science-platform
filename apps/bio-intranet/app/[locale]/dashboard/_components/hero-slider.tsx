@@ -55,15 +55,12 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                         const isFullClick = slide.href && (!slide.clickArea || slide.clickArea === 'full');
                         const isButtonClick = slide.href && slide.clickArea === 'button';
 
-                        // If no href, or not full click, render as div. Otherwise Render as Link.
-                        const WrapperComponent = isFullClick ? Link : 'div';
-                        const wrapperProps = isFullClick ? { href: slide.href || "#" } : {};
-
                         return (
                             <CarouselItem key={slide.id} className="md:basis-1/1 lg:basis-1/1">
                                 <div className="p-1">
-                                    <WrapperComponent
-                                        {...wrapperProps} // @ts-ignore - Typescript check for conditional component props can be tricky, relying on logic
+                                    <SlideWrapper
+                                        shouldLink={isFullClick}
+                                        href={slide.href}
                                         className={cn(
                                             "block group relative overflow-hidden rounded-xl border bg-card text-card-foreground shadow transition-all focus:outline-none",
                                             isFullClick ? "hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer" : ""
@@ -119,7 +116,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                                 )}
                                             </CardContent>
                                         </Card>
-                                    </WrapperComponent>
+                                    </SlideWrapper>
                                 </div>
                             </CarouselItem>
                         )
@@ -134,4 +131,26 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
             </Carousel>
         </div>
     )
+}
+
+function SlideWrapper({
+    shouldLink,
+    href,
+    className,
+    children,
+}: {
+    shouldLink?: boolean | string
+    href?: string
+    className?: string
+    children: React.ReactNode
+}) {
+    if (shouldLink && href) {
+        return (
+            <Link href={href} className={className}>
+                {children}
+            </Link>
+        )
+    }
+
+    return <div className={className}>{children}</div>
 }
