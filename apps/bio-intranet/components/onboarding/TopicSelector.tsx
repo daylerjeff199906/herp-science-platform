@@ -88,12 +88,12 @@ export function TopicSelector({
             onClick={() => onToggle(topic.id)}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`relative p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-              isSelected
-                ? 'border-primary bg-primary/5 shadow-md'
-                : 'border-border hover:border-primary/50 hover:bg-accent'
-            }`}
+            className={`relative p-4 rounded-xl border-2 transition-all duration-200 text-left ${isSelected
+              ? 'border-primary bg-primary/5 shadow-md'
+              : 'border-border hover:border-primary/50 hover:bg-accent'
+              }`}
             style={{
+              backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.05)' : undefined,
               borderColor: isSelected ? topic.color || undefined : undefined,
             }}
           >

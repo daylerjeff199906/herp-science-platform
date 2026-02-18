@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/ui/logo";
 import { ArrowRight } from 'lucide-react';
 import { useLocale } from 'next-intl';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 
 export default function Page() {
     const locale = useLocale();
@@ -104,20 +104,24 @@ export default function Page() {
                                 <div className="flex flex-col gap-8 mt-12">
                                     {/* Navigation Links */}
                                     <nav className="flex flex-col gap-6">
-                                        <Link
-                                            href="#"
-                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
-                                        >
-                                            About
-                                            <ArrowRight className="w-5 h-5 text-white/50" />
-                                        </Link>
-                                        <Link
-                                            href="#"
-                                            className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
-                                        >
-                                            Services
-                                            <ArrowRight className="w-5 h-5 text-white/50" />
-                                        </Link>
+                                        <SheetClose asChild>
+                                            <Link
+                                                href="#"
+                                                className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                            >
+                                                About
+                                                <ArrowRight className="w-5 h-5 text-white/50" />
+                                            </Link>
+                                        </SheetClose>
+                                        <SheetClose asChild>
+                                            <Link
+                                                href="#"
+                                                className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
+                                            >
+                                                Services
+                                                <ArrowRight className="w-5 h-5 text-white/50" />
+                                            </Link>
+                                        </SheetClose>
                                     </nav>
 
                                     {/* Divider */}
@@ -125,16 +129,20 @@ export default function Page() {
 
                                     {/* Auth Links */}
                                     <div className="flex flex-col gap-4">
-                                        <Button asChild variant="ghost" className="justify-start text-white hover:text-white hover:bg-white/10 text-base uppercase tracking-wider">
-                                            <Link href={`/${locale}/login`}>
-                                                Login
-                                            </Link>
-                                        </Button>
-                                        <Button asChild className="text-base uppercase tracking-wider">
-                                            <Link href={`/${locale}/signup`}>
-                                                Register
-                                            </Link>
-                                        </Button>
+                                        <SheetClose asChild>
+                                            <Button asChild variant="ghost" className="justify-start text-white hover:text-white hover:bg-white/10 text-base uppercase tracking-wider">
+                                                <Link href={`/${locale}/login`}>
+                                                    Login
+                                                </Link>
+                                            </Button>
+                                        </SheetClose>
+                                        <SheetClose asChild>
+                                            <Button asChild className="text-base uppercase tracking-wider">
+                                                <Link href={`/${locale}/signup`}>
+                                                    Register
+                                                </Link>
+                                            </Button>
+                                        </SheetClose>
                                     </div>
                                 </div>
                             </SheetContent>

@@ -104,14 +104,14 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
     setError(null)
 
     try {
-      const { error } = await submitOnboarding(formData, locale)
+      const { data, error } = await submitOnboarding(formData, locale)
       if (error) {
         setError(error)
         setIsSubmitting(false)
         return
       }
 
-      router.push(`/${locale}/dashboard`)
+      router.push(`/${locale}/dashboard?welcome=true`)
     } catch (err) {
       setError(t('Onboarding.Errors.saveError'))
       setIsSubmitting(false)
@@ -145,14 +145,17 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
   return (
     <div className="w-full">
       {/* Header con Logo */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-8  flex flex-col items-center">
         <Logo
           name={'B.E.A'}
           textClassName="text-black"
           imageClassName="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white"
+          description='Bio Ecosistema Avanzado'
+          showDescription
+          orientation='vertical'
           size="lg"
         />
-        <h1 className="text-2xl font-bold tracking-tight mb-2">
+        <h1 className="text-2xl font-bold tracking-tight py-2">
           {t('Onboarding.title')}
         </h1>
         <p className="text-muted-foreground">{t('Onboarding.description')}</p>
