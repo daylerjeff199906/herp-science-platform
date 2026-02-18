@@ -43,11 +43,14 @@ export default async function ProfileLayout({
             sectionTitle="Informacion general"
         >
             <SidebarProvider defaultOpen>
+                <div className="md:hidden">
+                    <ProfileSidebar locale={locale} collapsible="offcanvas" />
+                </div>
                 <div className="flex w-full bg-muted/30">
-                    <div className="mx-auto flex w-full items-start gap-8 container">
+                    <div className="mx-auto flex items-start gap-8 container flex-col md:flex-row">
                         {/* Sidebar */}
-                        <div className="bg-transparent border-0 shadow-none w-64 shrink-0 flex flex-col gap-4">
-                            <div className="hidden md:flex flex-col gap-4">
+                        <div className="bg-transparent border-0 shadow-none w-full md:w-64 shrink-0 flex flex-col gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div className="bg-card rounded-lg border p-6 flex flex-col items-center text-center">
                                     <AvatarUpload
                                         avatarUrl={profile?.avatar_url}

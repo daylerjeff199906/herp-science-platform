@@ -153,14 +153,14 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 {/* Header Actions */}
-                <div className="flex items-center justify-between">
-                    <div>
+                <div className="flex flex-col md:flex-row items-center justify-between">
+                    <div className="mb-4 md:mb-0 w-full md:w-auto">
                         <h3 className="text-xl font-bold tracking-tight">{t('general.title')}</h3>
                         <p className="text-sm text-muted-foreground mt-1">
                             {t('general.description')}
                         </p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 w-full md:w-auto justify-end">
                         <Button type="button" variant="ghost" onClick={() => form.reset()}>
                             {t('form.cancel')}
                         </Button>
