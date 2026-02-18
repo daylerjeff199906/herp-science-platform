@@ -48,7 +48,7 @@ export const ProfessionalInfoSchema = z.object({
 
 export const InterestsSchema = z.object({
   areasOfInterest: z
-    .array(z.string())
+    .array(z.number())
     .min(1, 'Onboarding.Errors.areasRequired')
     .max(10, 'Select up to 10 areas'),
   expertiseAreas: z

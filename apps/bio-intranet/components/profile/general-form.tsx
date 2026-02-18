@@ -64,12 +64,41 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
 
     // Sync initial topic selection
     useEffect(() => {
-        const initialNames = initialData.areasOfInterest || []
-        const ids = topics
-            .filter(t => initialNames.includes(t.name) || initialNames.includes(t.name_es || ''))
-            .map(t => t.id)
-        setSelectedTopicIds(ids)
-    }, [initialData.areasOfInterest, topics])
+        const rawValues = initialData.areasOfInterest || []
+        const newSelectedIds: number[] = []
+
+        if (rawValues.length > 0) {
+            // Cast to unknown first to handle potential legacy string data
+            const values = rawValues as unknown as (string | number)[]
+
+            values.forEach((val) => {
+                if (typeof val === 'number') {
+                    // It's already an ID (number)
+                    // Verify it exists in current topics to be safe
+                    if (topics.some(t => t.id === val)) {
+                        newSelectedIds.push(val)
+                    }
+                } else if (typeof val === 'string') {
+                    // Try to match by name OR if it's a stringified ID
+                    const matchedTopic = topics.find(
+                        t => t.name === val ||
+                            (t.name_es && t.name_es === val) ||
+                            String(t.id) === val // Handle stringified ID legacy case
+                    )
+                    if (matchedTopic) {
+                        newSelectedIds.push(matchedTopic.id)
+                    }
+                }
+            })
+        }
+
+        // Remove duplicates
+        const uniqueIds = Array.from(new Set(newSelectedIds))
+
+        setSelectedTopicIds(uniqueIds)
+        // Ensure form knows about these values immediately
+        form.setValue('areasOfInterest', uniqueIds)
+    }, [initialData.areasOfInterest, topics, form])
 
     const handleTopicToggle = (topicId: number) => {
         const newIds = selectedTopicIds.includes(topicId)
@@ -77,13 +106,7 @@ export function GeneralForm({ initialData, locale, topics, interestCategories }:
             : [...selectedTopicIds, topicId]
 
         setSelectedTopicIds(newIds)
-
-        // Map IDs back to names (canonical)
-        const names = topics
-            .filter(t => newIds.includes(t.id))
-            .map(t => t.name)
-
-        form.setValue('areasOfInterest', names, { shouldDirty: true })
+        form.setValue('areasOfInterest', newIds, { shouldDirty: true })
     }
 
     const addExpertise = (expertise: string) => {

@@ -2,7 +2,6 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { sendWelcomeEmail } from '@/lib/email'
 import type { Topic, OnboardingInput } from '@/types/onboarding'
 
@@ -54,17 +53,17 @@ export async function getInterestCategories(
 export async function submitOnboarding(
   data: OnboardingInput,
   locale: string = 'es'
-) {
+): Promise<{ data: unknown; error: string | null }> {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
   // Validaciones básicas
   if (!data.birthDate) {
-    return { error: 'Birth date is required' }
+    return { error: 'Birth date is required', data: null }
   }
 
   if (!data.selectedTopics || data.selectedTopics.length === 0) {
-    return { error: 'At least one topic is required' }
+    return { error: 'At least one topic is required', data: null }
   }
 
   const {
@@ -72,7 +71,7 @@ export async function submitOnboarding(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { error: 'Unauthorized' }
+    return { error: 'Unauthorized', data: null }
   }
 
   // Get user profile for email
@@ -93,6 +92,8 @@ export async function submitOnboarding(
       bio: data.bio || null,
       dedication: data.dedication || null,
       institution: data.institution || null,
+      areas_of_interest: data.selectedTopics || null,
+      expertise_areas: data.expertiseAreas || null,
       research_interests: data.researchInterests || null,
       onboarding_completed: true,
     })
@@ -100,22 +101,7 @@ export async function submitOnboarding(
 
   if (profileError) {
     console.error('Profile update error:', profileError)
-    return { error: 'Failed to update profile' }
-  }
-
-  // Insert selected topics into profile_topics
-  const topicInserts = data.selectedTopics.map((topicId) => ({
-    profile_id: user.id,
-    topic_id: topicId,
-  }))
-
-  const { error: topicsError } = await supabase
-    .from('profile_topics')
-    .insert(topicInserts)
-
-  if (topicsError) {
-    console.error('Topics insert error:', topicsError)
-    return { error: 'Failed to save topics' }
+    return { error: 'Failed to update profile', data: null }
   }
 
   // Send welcome email
@@ -130,6 +116,5 @@ export async function submitOnboarding(
       console.error('Failed to send welcome email:', emailError)
     }
   }
-
-  redirect(`/${locale}/dashboard?welcome=true`)
+  return { data, error: null }
 }

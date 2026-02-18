@@ -16,7 +16,7 @@ export const GeneralProfileSchema = z.object({
     phone: z.string().optional(),
     // Extended fields
     dedication: z.string().optional(),
-    areasOfInterest: z.array(z.string()),
+    areasOfInterest: z.array(z.number()),
     expertiseAreas: z.array(z.string()),
     researchInterests: z.string().optional(),
     institution: z.string().optional(),
