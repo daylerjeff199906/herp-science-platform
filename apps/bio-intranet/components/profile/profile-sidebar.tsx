@@ -25,12 +25,13 @@ import {
     SidebarMenuItem,
     SidebarHeader
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 
 interface ProfileSidebarProps extends React.ComponentProps<typeof Sidebar> {
     locale: string
 }
 
-export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
+export function ProfileSidebar({ locale, collapsible, className, ...props }: ProfileSidebarProps) {
     const pathname = usePathname()
     const t = useTranslations('Profile')
     const tMenu = useTranslations('Profile.menu')
@@ -80,7 +81,7 @@ export function ProfileSidebar({ locale, ...props }: ProfileSidebarProps) {
     ]
 
     return (
-        <Sidebar collapsible={props.collapsible || "none"} className="min-w-[280px] border-none bg-transparent" {...props}>
+        <Sidebar collapsible={collapsible || "none"} className={cn("min-w-[280px] border-none bg-transparent", className)} {...props}>
             <SidebarHeader className="px-4 py-2">
                 <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Menu</h2>
             </SidebarHeader>
