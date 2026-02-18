@@ -21,6 +21,7 @@ export interface HeroSlide {
     description?: string
     imageUrl?: string
     href?: string
+    target?: React.HTMLAttributeAnchorTarget
     ctaLabel?: string
     clickArea?: 'full' | 'button'
 }
@@ -61,6 +62,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                     <SlideWrapper
                                         shouldLink={isFullClick}
                                         href={slide.href}
+                                        target={slide.target}
                                         className={cn(
                                             "block group relative overflow-hidden rounded-xl border bg-card text-card-foreground shadow transition-all focus:outline-none",
                                             isFullClick ? "hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer" : ""
@@ -99,7 +101,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                                 {slide.href && (
                                                     isButtonClick ? (
                                                         <Button asChild className="w-fit z-30">
-                                                            <Link href={slide.href}>
+                                                            <Link href={slide.href} target={slide.target}>
                                                                 {slide.ctaLabel || "Ver más"}
                                                                 <ArrowRight className="ml-2 h-4 w-4" />
                                                             </Link>
@@ -136,17 +138,19 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
 function SlideWrapper({
     shouldLink,
     href,
+    target,
     className,
     children,
 }: {
     shouldLink?: boolean | string
     href?: string
+    target?: React.HTMLAttributeAnchorTarget
     className?: string
     children: React.ReactNode
 }) {
     if (shouldLink && href) {
         return (
-            <Link href={href} className={className}>
+            <Link href={href} target={target} className={className}>
                 {children}
             </Link>
         )
