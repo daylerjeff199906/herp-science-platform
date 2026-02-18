@@ -44,10 +44,10 @@ export default async function ProfileLayout({
         >
             <SidebarProvider defaultOpen>
                 <div className="flex w-full bg-muted/30">
-                    <div className="mx-auto flex w-full items-start gap-8 container">
+                    <div className="mx-auto flex w-full items-start gap-8 container flex-col md:flex-row">
                         {/* Sidebar */}
-                        <div className="bg-transparent border-0 shadow-none w-64 shrink-0 flex flex-col gap-4">
-                            <div className="hidden md:flex flex-col gap-4">
+                        <div className="bg-transparent border-0 shadow-none w-full md:w-64 shrink-0 flex flex-col gap-4">
+                            <div className="flex flex-col gap-4">
                                 <div className="bg-card rounded-lg border p-6 flex flex-col items-center text-center">
                                     <AvatarUpload
                                         avatarUrl={profile?.avatar_url}
@@ -60,7 +60,7 @@ export default async function ProfileLayout({
                                 <SocialLinksCard links={profile?.social_links || []} locale={locale} />
                                 <AdditionalEmailsCard emails={profile?.additional_emails || []} locale={locale} />
                             </div>
-                            <ProfileSidebar locale={locale} className="hidden md:flex" />
+                            <ProfileSidebar locale={locale} className="hidden md:flex w-full" />
                         </div>
                         <div className="flex-1 flex flex-col gap-6 w-full min-w-0">
                             {/* Mobile Menu Trigger */}
