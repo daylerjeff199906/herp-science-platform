@@ -420,6 +420,8 @@
     "updatePassword": "Update Password",
     "rememberPassword": "Remember your password?",
     "logIn": "Log in",
+    "loginWithGoogle": "Continue with Google",
+    "or": "OR",
     "rememberMe": "Remember me",
     "welcome": "Welcome",
     "onboarding": "Complete Profile",
