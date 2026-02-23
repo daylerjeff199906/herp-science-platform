@@ -419,6 +419,8 @@
     "updatePassword": "Actualizar contraseña",
     "rememberPassword": "¿Recordaste tu contraseña?",
     "logIn": "Ingresar",
+    "loginWithGoogle": "Continuar con Google",
+    "or": "O",
     "rememberMe": "Recordarme",
     "welcome": "Bienvenido",
     "onboarding": "Completar Perfil",
