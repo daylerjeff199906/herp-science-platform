@@ -83,3 +83,32 @@ export async function signout() {
     revalidatePath('/', 'layout')
     redirect('/login')
 }
+
+export async function loginWithGoogle(locale: string = 'es') {
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    // Construct the absolute URL for the callback
+    // In a real environment, this would come from an environment variable
+    const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3004'
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: `${origin}/${locale}/auth/callback`,
+            queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+            },
+        },
+    })
+
+    if (error) {
+        console.error('Error signing in with Google:', error)
+        return { error: error.message }
+    }
+
+    if (data.url) {
+        redirect(data.url)
+    }
+}
