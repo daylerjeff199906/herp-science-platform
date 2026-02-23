@@ -74,7 +74,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                                 <div className="absolute inset-0 w-full h-full">
                                                     <div className="relative w-full h-full bg-muted">
                                                         {/* Dark overlay */}
-                                                        <div className="absolute inset-0 bg-black/40 z-10" />
+                                                        <div className="absolute inset-0 dark:bg-black/40 bg-white/40 z-10" />
                                                         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent z-10" />
 
                                                         <div
