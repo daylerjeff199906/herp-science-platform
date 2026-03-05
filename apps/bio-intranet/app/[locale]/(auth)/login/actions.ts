@@ -11,6 +11,18 @@ type LoginResponse = {
     redirectUrl?: string
 }
 
+// Helper: resolves the final redirect URL handling locale prefix correctly
+function resolveRedirect(path: string | null | undefined, fallback: string, locale: string): string {
+    if (!path) return fallback
+    if (path.startsWith('http')) return path
+    const knownLocales = ['es', 'en', 'pt']
+    const segments = path.split('/').filter(Boolean)
+    const firstSegment = segments[0] ?? ''
+    if (knownLocales.includes(firstSegment)) return path
+    // Missing locale prefix — prepend it
+    return `/${locale}${path.startsWith('/') ? path : '/' + path}`
+}
+
 export async function login(formData: FormData, locale: string = 'es', redirectTo?: string | null): Promise<LoginResponse> {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
@@ -38,9 +50,8 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         if (profileError) {
             console.error('Error fetching profile:', profileError)
             revalidatePath('/', 'layout')
-            return { redirectUrl: redirectTo || `/${locale}/dashboard` }
+            return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/dashboard`, locale) }
         }
-
 
         // Si no ha completado el onboarding, redirigir a onboarding
         if (!profile?.onboarding_completed) {
@@ -49,10 +60,8 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         }
     }
 
-
-    // Si ha completado el onboarding, redirigir al dashboard
     revalidatePath('/', 'layout')
-    return { redirectUrl: redirectTo || `/${locale}/dashboard` }
+    return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/dashboard`, locale) }
 }
 
 export async function signup(formData: FormData) {
@@ -75,7 +84,7 @@ export async function signup(formData: FormData) {
     redirect('/')
 }
 
-export async function signout(redirectTo?: string) {
+export async function signout(redirectTo?: string, locale: string = 'es') {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
     await supabase.auth.signOut()
@@ -83,18 +92,16 @@ export async function signout(redirectTo?: string) {
     revalidatePath('/', 'layout')
 
     if (redirectTo) {
-        redirect(`/login?redirect=${encodeURIComponent(redirectTo)}`)
+        redirect(`/${locale}/login?next=${encodeURIComponent(redirectTo)}`)
     }
 
-    redirect('/login')
+    redirect(`/${locale}/login`)
 }
 
 export async function loginWithGoogle(locale: string = 'es', redirectTo?: string | null) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    // Construct the absolute URL for the callback
-    // In a real environment, this would come from an environment variable
     const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3004'
 
     const callbackUrl = new URL(`${origin}/${locale}/auth/callback`);

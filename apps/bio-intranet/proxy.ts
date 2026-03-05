@@ -62,8 +62,10 @@ export default async function proxy(request: NextRequest) {
     ) {
       return response
     }
-    // Redirect to login for all other routes
+    // Redirect to login preserving the original destination as ?next=
+    const fullPath = pathname + request.nextUrl.search
     const loginUrl = new URL(`/${locale}/login`, request.url)
+    loginUrl.searchParams.set('next', fullPath)
     return NextResponse.redirect(loginUrl)
   }
 
@@ -80,7 +82,12 @@ export default async function proxy(request: NextRequest) {
 
   // If trying to access auth pages (login, signup, etc) while logged in
   if (pathname.match(authPathRegex)) {
-    // Redirect to dashboard or onboarding based on completion status
+    // Honor ?next= param if present, otherwise go to dashboard/onboarding
+    const nextParam = request.nextUrl.searchParams.get('next')
+    if (nextParam) {
+      const nextUrl = new URL(nextParam, request.url)
+      return NextResponse.redirect(nextUrl)
+    }
     const redirectPath = hasCompletedOnboarding ? 'dashboard' : 'onboarding'
     const redirectUrl = new URL(`/${locale}/${redirectPath}`, request.url)
     return NextResponse.redirect(redirectUrl)
@@ -97,6 +104,10 @@ export default async function proxy(request: NextRequest) {
     const dashboardUrl = new URL(`/${locale}/dashboard`, request.url)
     return NextResponse.redirect(dashboardUrl)
   }
+
+  // Forward the current path as headers so Server Components can read it
+  response.headers.set('x-pathname', pathname)
+  response.headers.set('x-search', request.nextUrl.search)
 
   return response
 }
