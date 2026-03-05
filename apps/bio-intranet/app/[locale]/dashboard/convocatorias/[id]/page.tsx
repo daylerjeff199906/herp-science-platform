@@ -175,14 +175,26 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                     </div>
                                 </div>
                             ) : existingApplication ? (
-                                <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 p-6 rounded-lg flex items-start border border-blue-200 dark:border-blue-900/50">
-                                    <Info className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <h3 className="font-bold text-lg mb-1">Postulación recibida</h3>
-                                        <p>Ya has enviado una postulación para esta convocatoria.</p>
-                                        <p className="mt-2 text-sm font-medium bg-blue-100 dark:bg-blue-900/40 inline-flex px-3 py-1 rounded-full capitalize">
-                                            Estado: {existingApplication.status === 'draft' ? 'Borrador / Recibido' : existingApplication.status.replace('_', ' ')}
+                                <div className="relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-primary/5 dark:from-blue-500/10 dark:to-primary/10 z-0" />
+                                    <div className="relative z-10 p-8 text-center space-y-4">
+                                        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 ring-8 ring-blue-50 dark:ring-blue-900/10">
+                                            <CheckCircle2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold tracking-tight">¡Ya estás en camino!</h3>
+                                        <p className="text-muted-foreground max-w-md mx-auto">
+                                            Tu postulación para <strong>{typeof call.title === 'object' ? call.title?.[locale] : call.title}</strong> fue recibida el {format(new Date(existingApplication.submitted_at), "d 'de' MMMM", { locale: es })}.
                                         </p>
+                                        <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+                                            <Link href={`/${locale}/dashboard/convocatorias/mis-postulaciones`}>
+                                                <Button variant="outline" className="rounded-full px-8">
+                                                    Ver mis postulaciones
+                                                </Button>
+                                            </Link>
+                                            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-wider border border-blue-500/20">
+                                                Estado: {existingApplication.status === 'approved' ? 'Aprobada' : existingApplication.status === 'draft' ? 'Recibida' : existingApplication.status}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ) : isClosed ? (
@@ -194,6 +206,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                     callId={call.id}
                                     schema={call.form_schema || []}
                                     profileId={userProfile.id}
+                                    locale={locale}
                                 />
                             ) : (
                                 <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">

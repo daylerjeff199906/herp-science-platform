@@ -5,15 +5,20 @@ import { useRouter } from 'next/navigation'
 import DynamicApplicationForm from '@/components/DynamicApplicationForm'
 import { createClient } from '@/utils/supabase/client'
 import { FormField } from '@/types/forms'
+import confetti from 'canvas-confetti'
+import { notifyApplicationSuccess } from '@/app/actions/convocatorias'
+import { toast } from 'sonner'
 
 export function ApplicationClient({
     callId,
     schema,
     profileId,
+    locale,
 }: {
     callId: string
     schema: FormField[]
     profileId: string
+    locale: string
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -36,6 +41,19 @@ export function ApplicationClient({
                 })
 
             if (submitError) throw submitError
+
+            // Launch confetti!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 999
+            })
+
+            toast.success(locale === 'es' ? '¡Postulación enviada con éxito!' : 'Application submitted successfully!')
+
+            // Send confirmation email in background
+            notifyApplicationSuccess({ callId, profileId, locale }).catch(console.error)
 
             router.refresh()
         } catch (err: any) {
