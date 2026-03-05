@@ -166,7 +166,18 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                             {/* Rich Text Content */}
                             {call.content && (
                                 <RichTextRenderer
-                                    content={typeof call.content === 'object' ? (call.content as any)?.[locale] : null}
+                                    content={
+                                        (() => {
+                                            let d = call.content;
+                                            if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return null; } }
+                                            if (!d || typeof d !== 'object') return null;
+                                            if (Array.isArray((d as any).blocks)) return d as any;
+                                            const loc = (d as any)?.[locale];
+                                            if (loc && Array.isArray(loc.blocks)) return loc;
+                                            if (Array.isArray(d)) return { blocks: d };
+                                            return null;
+                                        })()
+                                    }
                                 />
                             )}
                         </div>

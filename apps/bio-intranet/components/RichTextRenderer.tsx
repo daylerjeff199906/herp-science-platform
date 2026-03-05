@@ -16,14 +16,15 @@ interface RichTextRendererProps {
 }
 
 export function RichTextRenderer({ content }: RichTextRendererProps) {
-    if (!content || !content.blocks || content.blocks.length === 0) {
+    if (!content || !content.blocks || !Array.isArray(content.blocks)) {
         return null;
     }
 
     return (
-        <div className="rich-text-renderer space-y-2">
+        <div className="rich-text-renderer space-y-4">
             {content.blocks.map((block: EditorBlock) => {
-                const Component = BLOCK_COMPONENTS[block.type];
+                const type = block.type?.toLowerCase();
+                const Component = BLOCK_COMPONENTS[type];
 
                 if (!Component) {
                     console.warn(`[RichTextRenderer] Unknown block type: ${block.type}`, block);
