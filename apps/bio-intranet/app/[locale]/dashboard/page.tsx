@@ -1,9 +1,13 @@
 "use client"
 
 import { useSearchParams } from "next/navigation"
-import { useEffect } from "react"
-import { useTranslations } from "next-intl"
-import { Calendar, Bell, ExternalLink, Activity, Users } from "lucide-react"
+import { Calendar, Bell, ExternalLink, Activity, Users, Briefcase } from "lucide-react"
+import { createClient } from "@/utils/supabase/client"
+import { useLocale, useTranslations } from "next-intl"
+import Link from "next/link"
+import { format } from "date-fns"
+import { es as esLocale } from "date-fns/locale"
+import { useState, useEffect } from "react"
 
 import { LayoutWrapper } from "@/components/layout-wrapper"
 import { HeroSlider, HeroSlide } from "./_components/hero-slider"
@@ -12,8 +16,34 @@ import { Button } from "@/components/ui/button"
 
 export default function DashboardPage() {
   const t = useTranslations()
+  const locale = useLocale()
   const searchParams = useSearchParams()
   const isNewUser = searchParams.get("welcome") === "true"
+  const [latestCalls, setLatestCalls] = useState<any[]>([])
+  const [loadingCalls, setLoadingCalls] = useState(true)
+
+  useEffect(() => {
+    const fetchCalls = async () => {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('event_calls')
+        .select(`
+          id,
+          title,
+          end_date,
+          role:participant_roles(name),
+          main_event:main_events(name)
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(3)
+
+      if (data) setLatestCalls(data)
+      setLoadingCalls(false)
+    }
+
+    fetchCalls()
+  }, [])
 
   useEffect(() => {
     if (isNewUser) {
@@ -69,32 +99,66 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
 
-                <Card className="md:col-span-2">
-                  <CardHeader>
-                    <CardTitle>Recursos Recientes</CardTitle>
-                    <CardDescription>
-                      Últimas publicaciones y documentos subidos al intranet.
-                    </CardDescription>
+                {/* Convocatorias Section */}
+                <Card className="md:col-span-2 overflow-hidden border-none shadow-md bg-gradient-to-br from-primary/5 via-transparent to-transparent">
+                  <CardHeader className="pb-3 px-6 pt-6">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          Convocatorias Abiertas
+                        </CardTitle>
+                        <CardDescription>
+                          Oportunidades actuales para participar en proyectos y eventos.
+                        </CardDescription>
+                      </div>
+                      <Link href={`/${locale}/dashboard/convocatorias`}>
+                        <Button variant="ghost" size="sm" className="text-xs font-bold uppercase tracking-wider">
+                          Ver Todas <ExternalLink className="ml-2 h-3 w-3" />
+                        </Button>
+                      </Link>
+                    </div>
                   </CardHeader>
-                  <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <div className="flex items-center space-x-4 rounded-md border p-4">
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">Guía de Campo 2025</p>
-                        <p className="text-sm text-muted-foreground">PDF - 2.4 MB</p>
+                  <CardContent className="px-6 pb-6 pt-0">
+                    {loadingCalls ? (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                        {[1, 2, 3].map((i) => (
+                          <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />
+                        ))}
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-4 rounded-md border p-4">
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">Protocolo de Muestreo</p>
-                        <p className="text-sm text-muted-foreground">DOCX - 1.1 MB</p>
+                    ) : latestCalls.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                        {latestCalls.map((call) => {
+                          const callTitle = typeof call.title === 'object' ? call.title?.[locale] : call.title;
+                          const roleName = typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name;
+
+                          return (
+                            <Link key={call.id} href={`/${locale}/dashboard/convocatorias/${call.id}`}>
+                              <div className="group relative flex flex-col justify-between p-4 rounded-xl border bg-card hover:border-primary/50 hover:shadow-sm transition-all h-full">
+                                <div className="space-y-1.5">
+                                  <div className="text-[10px] font-bold uppercase tracking-widest text-primary/70">
+                                    {roleName}
+                                  </div>
+                                  <h4 className="font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                                    {callTitle}
+                                  </h4>
+                                </div>
+                                <div className="mt-3 pt-3 border-t flex items-center justify-between text-[11px] text-muted-foreground font-medium">
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" />
+                                    {format(new Date(call.end_date), "dd MMM", { locale: esLocale })}
+                                  </span>
+                                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-4 rounded-md border p-4">
-                      <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">Base de Datos Herpetológica</p>
-                        <p className="text-sm text-muted-foreground">CSV - 500 KB</p>
+                    ) : (
+                      <div className="py-8 text-center border border-dashed rounded-xl bg-muted/5">
+                        <p className="text-sm text-muted-foreground">No hay convocatorias activas en este momento.</p>
                       </div>
-                    </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

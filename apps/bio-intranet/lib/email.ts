@@ -68,3 +68,74 @@ export async function sendWelcomeEmail({
     return { success: false, error }
   }
 }
+export async function sendApplicationConfirmationEmail({
+  email,
+  firstName,
+  callTitle,
+  roleName,
+  eventName,
+  locale,
+}: {
+  email: string
+  firstName: string
+  callTitle: string
+  roleName: string
+  eventName: string
+  locale: string
+}) {
+  const isSpanish = locale === 'es'
+
+  try {
+    const data = await resend.emails.send({
+      from: `B.E.A IIAP <noreply@${domainResend}>`,
+      to: [email],
+      subject: isSpanish
+        ? `Confirmación de Postulación: ${callTitle}`
+        : `Application Confirmation: ${callTitle}`,
+      html: isSpanish
+        ? `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h1 style="color: #1a1a1a; margin-bottom: 20px;">¡Hola ${firstName}!</h1>
+                    <p style="color: #4a4a4a; line-height: 1.6; margin-bottom: 15px;">
+                        Hemos recibido exitosamente tu postulación para la convocatoria <strong>"${callTitle}"</strong>.
+                    </p>
+                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="margin: 5px 0;"><strong>Evento:</strong> ${eventName}</p>
+                        <p style="margin: 5px 0;"><strong>Rol:</strong> ${roleName}</p>
+                    </div>
+                    <p style="color: #4a4a4a; line-height: 1.6; margin-bottom: 25px;">
+                        Tu participación ha sido registrada y aprobada automáticamente. Pronto recibirás más noticias sobre los siguientes pasos.
+                    </p>
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004'}/es/dashboard/convocatorias" 
+                       style="display: inline-block; background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 30px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">
+                        Ver mis Convocatorias
+                    </a>
+                </div>
+                `
+        : `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+                    <h1 style="color: #1a1a1a; margin-bottom: 20px;">Hello ${firstName}!</h1>
+                    <p style="color: #4a4a4a; line-height: 1.6; margin-bottom: 15px;">
+                        We have successfully received your application for <strong>"${callTitle}"</strong>.
+                    </p>
+                    <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <p style="margin: 5px 0;"><strong>Event:</strong> ${eventName}</p>
+                        <p style="margin: 5px 0;"><strong>Role:</strong> ${roleName}</p>
+                    </div>
+                    <p style="color: #4a4a4a; line-height: 1.6; margin-bottom: 25px;">
+                        Your participation has been registered and auto-approved. You will receive more updates about the next steps soon.
+                    </p>
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004'}/en/dashboard/convocatorias" 
+                       style="display: inline-block; background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 30px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">
+                        View my Applications
+                    </a>
+                </div>
+                `,
+    })
+
+    return { success: true, data }
+  } catch (error) {
+    console.error('Resend error:', error)
+    return { success: false, error }
+  }
+}
