@@ -9,6 +9,8 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { ApplicationClient } from './application-client'
+import { RichTextRenderer } from '@/components/RichTextRenderer'
+import { LocalizedRichTextContent } from '@/types/editor'
 
 export default async function ConvocatoriaDetailPage({ params }: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await params;
@@ -23,7 +25,8 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
       *,
       role:participant_roles(name),
       main_event:main_events(name, cover_url, logo_url),
-      edition:editions(name, cover_url)
+      edition:editions(name, cover_url),
+      content
     `)
         .eq('id', id)
         .single()
@@ -31,6 +34,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
     if (error || !call) {
         notFound()
     }
+
 
     // Get user session to check if already applied
     const { data: { user } } = await supabase.auth.getUser()
@@ -155,9 +159,16 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
 
                         <div className="prose prose-slate dark:prose-invert max-w-none">
                             <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Descripción</h2>
-                            <div className="whitespace-pre-wrap text-muted-foreground">
+                            <div className="whitespace-pre-wrap text-muted-foreground mb-6">
                                 {(typeof call.description === 'object' ? call.description?.[locale] : call.description) || 'No hay descripción detallada disponible.'}
                             </div>
+
+                            {/* Rich Text Content */}
+                            {call.content && (
+                                <RichTextRenderer
+                                    content={typeof call.content === 'object' ? (call.content as any)?.[locale] : null}
+                                />
+                            )}
                         </div>
 
                         {/* Form Section */}

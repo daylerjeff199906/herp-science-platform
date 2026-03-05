@@ -9,7 +9,7 @@ interface HeaderSectionProps {
 export function HeaderSection({ title, description, className }: HeaderSectionProps) {
     return (
         <div className={cn("space-y-1 mb-6", className)}>
-            <h1 className="text-xl font-medium tracking-tight text-foreground">
+            <h1 className="text-xl font-bold tracking-tight text-foreground">
                 {title}
             </h1>
             {description && (
