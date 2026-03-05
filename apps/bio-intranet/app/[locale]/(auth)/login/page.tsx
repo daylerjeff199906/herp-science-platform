@@ -36,7 +36,7 @@ export default function LoginPage() {
     const locale = useLocale()
     const router = useRouter()
     const searchParams = useSearchParams()
-    const redirectTo = searchParams.get('redirect')
+    const redirectTo = searchParams.get('redirect') || searchParams.get('next')
     const [error, setError] = React.useState<string>('')
     const [isPending, setIsPending] = React.useState(false)
 
@@ -180,7 +180,7 @@ export default function LoginPage() {
                         disabled={isPending}
                         onClick={async () => {
                             setIsPending(true)
-                            await loginWithGoogle(locale)
+                            await loginWithGoogle(locale, redirectTo)
                         }}
                     >
                         <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">

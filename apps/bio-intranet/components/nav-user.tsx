@@ -51,8 +51,8 @@ export function NavUser({ user }: NavUserProps) {
   }
 
   const handleSignOut = async () => {
-    const pathname = window.location.pathname
-    await signout(pathname)
+    const pathname = window.location.pathname + window.location.search
+    await signout(pathname, locale)
   }
 
   // Get initials for avatar fallback

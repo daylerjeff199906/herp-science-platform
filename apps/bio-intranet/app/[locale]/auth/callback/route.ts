@@ -34,7 +34,14 @@ export async function GET(request: Request) {
             }
 
             // Redirect to the specified next URL with locale
-            const redirectUrl = next.startsWith('/') ? `${origin}/${locale}${next}` : `${origin}/${locale}/${next}`
+            let redirectUrl;
+            if (next.startsWith('http')) {
+                redirectUrl = next;
+            } else if (next.startsWith(`/${locale}/`) || next === `/${locale}`) {
+                redirectUrl = `${origin}${next}`;
+            } else {
+                redirectUrl = next.startsWith('/') ? `${origin}/${locale}${next}` : `${origin}/${locale}/${next}`;
+            }
             return NextResponse.redirect(redirectUrl)
         }
     }
