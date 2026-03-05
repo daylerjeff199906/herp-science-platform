@@ -21,8 +21,8 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
         .select(`
       *,
       role:participant_roles(name),
-      main_event:main_events(name),
-      edition:editions(name)
+      main_event:main_events(name, cover_url, logo_url),
+      edition:editions(name, cover_url)
     `)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
@@ -50,53 +50,77 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
                     </div>
                 )}
 
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {calls?.map((call) => (
-                        <Card key={call.id} className="flex flex-col">
-                            <CardHeader>
-                                <div className="flex justify-between items-start mb-2">
-                                    <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                                        {typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante'}
-                                    </span>
-                                    {call.max_capacity && (
-                                        <span className="inline-flex items-center text-xs text-muted-foreground">
-                                            <Users className="w-3 h-3 mr-1" />
-                                            Cupos: {call.max_capacity}
+                <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+                    {calls?.map((call) => {
+                        const callImage = call.image_url || call.main_event?.cover_url || call.edition?.cover_url || call.main_event?.logo_url;
+                        const eventName = (typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
+                            (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
+                            'Evento General';
+                        const callTitle = typeof call.title === 'object' ? call.title?.[locale] : call.title;
+                        const callDesc = typeof call.description === 'object' ? call.description?.[locale] : call.description;
+                        const callRole = typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante';
+
+                        return (
+                            <div key={call.id} className="group flex flex-col space-y-4 transition-all duration-300">
+                                {/* Top Header: Date */}
+                                <div className="flex flex-col space-y-2">
+                                    <div className="flex items-center space-x-2">
+                                        <span className="text-lg font-bold text-foreground">
+                                            Hasta {format(new Date(call.end_date), "MMM d", { locale: es })}
                                         </span>
-                                    )}
+                                        <span className="text-muted-foreground">|</span>
+                                        <span className="text-sm text-muted-foreground font-medium">
+                                            Postulaciones abiertas
+                                        </span>
+                                    </div>
+                                    <div className="h-[1px] w-full bg-border" />
                                 </div>
-                                <CardTitle className="text-xl">
-                                    {typeof call.title === 'object' ? call.title?.[locale] : call.title}
-                                </CardTitle>
-                                <CardDescription>
-                                    {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
-                                        (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
-                                        'Evento General'}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex-1">
-                                <p className="text-sm text-foreground/80 line-clamp-3 mb-4">
-                                    {typeof call.description === 'object' ? call.description?.[locale] : call.description}
-                                </p>
-                                <div className="space-y-2 text-sm text-muted-foreground">
-                                    <div className="flex items-center">
-                                        <Calendar className="mr-2 h-4 w-4" />
-                                        <span>
-                                            Cierra: {format(new Date(call.end_date), "dd 'de' MMMM, yyyy", { locale: es })}
+
+                                {/* Main Image */}
+                                <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-border transition-all duration-300 group-hover:shadow-md group-hover:ring-primary/20">
+                                    {callImage ? (
+                                        <img
+                                            src={callImage}
+                                            alt={callTitle}
+                                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                                            <Calendar className="h-12 w-12 text-muted-foreground/30" />
+                                        </div>
+                                    )}
+                                    {/* Role Badge Over Image */}
+                                    <div className="absolute left-3 top-3">
+                                        <span className="inline-flex items-center rounded-full bg-background/90 backdrop-blur-sm border px-2.5 py-0.5 text-xs font-bold text-foreground shadow-sm">
+                                            {callRole}
                                         </span>
                                     </div>
                                 </div>
-                            </CardContent>
-                            <CardFooter>
-                                <Link href={`/${locale}/dashboard/convocatorias/${call.id}`} className="w-full">
-                                    <Button className="w-full group">
-                                        <Eye className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                                        Ver Detalles
-                                    </Button>
-                                </Link>
-                            </CardFooter>
-                        </Card>
-                    ))}
+
+                                {/* Content Details */}
+                                <div className="flex flex-1 flex-col space-y-2 px-1">
+                                    <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                                        {eventName}
+                                    </div>
+                                    <h3 className="text-xl font-bold leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors">
+                                        {callTitle}
+                                    </h3>
+                                    <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
+                                        {callDesc}
+                                    </p>
+                                </div>
+
+                                {/* Footer Action */}
+                                <div className="pt-2 px-1">
+                                    <Link href={`/${locale}/dashboard/convocatorias/${call.id}`}>
+                                        <Button className="h-11 rounded-full bg-black px-6 font-bold uppercase tracking-widest text-white transition-all hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90">
+                                            Ver Convocatoria <span className="ml-2">→</span>
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
         </LayoutWrapper>

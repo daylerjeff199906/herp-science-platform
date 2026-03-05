@@ -31,7 +31,6 @@ export function ApplicationClient({
                     call_id: callId,
                     profile_id: profileId,
                     submitted_data: data,
-                    status: 'draft',
                     submitted_at: new Date().toISOString(),
                 })
 

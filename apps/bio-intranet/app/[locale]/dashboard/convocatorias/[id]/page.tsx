@@ -22,8 +22,8 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
         .select(`
       *,
       role:participant_roles(name),
-      main_event:main_events(name),
-      edition:editions(name)
+      main_event:main_events(name, cover_url, logo_url),
+      edition:editions(name, cover_url)
     `)
         .eq('id', id)
         .single()
@@ -97,31 +97,60 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                     </Link>
                 </div>
 
+                {/* Hero Section */}
+                <div className="relative mb-8 overflow-hidden rounded-2xl bg-muted shadow-lg ring-1 ring-border">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
+
+                    {/* Hero Image */}
+                    <div className="aspect-[21/9] w-full">
+                        {(call.image_url || call.main_event?.cover_url || call.edition?.cover_url || call.main_event?.logo_url) ? (
+                            <img
+                                src={call.image_url || call.main_event?.cover_url || call.edition?.cover_url || call.main_event?.logo_url}
+                                alt={typeof call.title === 'object' ? call.title?.[locale] : call.title}
+                                className="h-full w-full object-cover"
+                            />
+                        ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                                <Calendar className="h-20 w-20 text-primary/30" />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Content Overlay */}
+                    <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 z-20 text-white">
+                        <div className="flex flex-wrap items-center gap-3 mb-4">
+                            <span className="inline-flex items-center rounded-full bg-white/20 backdrop-blur-md px-3 py-1 text-sm font-bold border border-white/30">
+                                {typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante'}
+                            </span>
+                            {isClosed ? (
+                                <span className="inline-flex items-center rounded-full bg-red-500/80 backdrop-blur-md px-3 py-1 text-sm font-bold border border-red-500/50">
+                                    Convocatoria Cerrada
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center rounded-full bg-green-500/80 backdrop-blur-md px-3 py-1 text-sm font-bold border border-green-500/50">
+                                    Postulaciones Abiertas
+                                </span>
+                            )}
+                        </div>
+
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-tighter mb-4 drop-shadow-sm">
+                            {typeof call.title === 'object' ? call.title?.[locale] : call.title}
+                        </h1>
+
+                        <div className="flex items-center text-lg md:text-xl font-medium text-white/90">
+                            <Info className="mr-2 h-6 w-6" />
+                            {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
+                                (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
+                                'Evento General'}
+                        </div>
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main content - 2 columns on large screens */}
                     <div className="lg:col-span-2 space-y-8">
                         <div>
-                            <div className="flex items-center gap-2 mb-3">
-                                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                                    {typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante'}
-                                </span>
-                                {isClosed && (
-                                    <span className="inline-flex items-center rounded-full bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-600">
-                                        Cerrada
-                                    </span>
-                                )}
-                            </div>
-
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                                {typeof call.title === 'object' ? call.title?.[locale] : call.title}
-                            </h1>
-
-                            <p className="text-lg text-muted-foreground font-medium flex items-center">
-                                <Info className="mr-2 h-5 w-5" />
-                                Evento: {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
-                                    (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
-                                    'General'}
-                            </p>
+                            {/* Short summary or intro could go here but we use description */}
                         </div>
 
                         <div className="prose prose-slate dark:prose-invert max-w-none">
