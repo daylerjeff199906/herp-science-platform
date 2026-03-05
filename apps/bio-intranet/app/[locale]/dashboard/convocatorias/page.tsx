@@ -2,14 +2,16 @@ import { createClient } from '@/utils/supabase/server'
 import { cookies } from 'next/headers'
 import { getTranslations } from 'next-intl/server'
 import { LayoutWrapper } from '@/components/layout-wrapper'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
-import { Calendar, Users, Eye, Filter } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { HeaderSection } from '@/components/header-section'
 import { EmptyState } from '@/components/empty-state'
+import { CallFilters } from './call-filters'
+import { Suspense } from 'react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default async function ConvocatoriasPage({
     params,
@@ -43,14 +45,14 @@ export default async function ConvocatoriasPage({
     }
 
     // Apply year filter if present
-    if (year) {
+    if (year && year !== 'all') {
         query = query.gte('end_date', `${year}-01-01`).lte('end_date', `${year}-12-31`)
     }
 
     const { data: calls, error } = await query
 
     const currentYear = new Date().getFullYear();
-    const years = Array.from({ length: 3 }, (_, i) => (currentYear - i).toString());
+    const years = Array.from({ length: 5 }, (_, i) => (currentYear - i).toString());
 
     return (
         <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
@@ -61,47 +63,9 @@ export default async function ConvocatoriasPage({
                 />
 
                 {/* Filters Section */}
-                <form method="GET" className="flex flex-wrap gap-4 items-end bg-card p-5 rounded-2xl border border-border shadow-sm">
-                    <div className="flex flex-col gap-2 min-w-[200px]">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Estado</label>
-                        <select
-                            name="status"
-                            defaultValue={status}
-                            className="h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 hover:bg-background"
-                        >
-                            <option value="active">Activas</option>
-                            <option value="past">Pasadas</option>
-                            <option value="all">Todas</option>
-                        </select>
-                    </div>
-
-                    <div className="flex flex-col gap-2 min-w-[150px]">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Año</label>
-                        <select
-                            name="year"
-                            defaultValue={year || ""}
-                            className="h-11 w-full rounded-xl border border-input bg-background/50 px-4 py-2 text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 hover:bg-background"
-                        >
-                            <option value="">Todos los años</option>
-                            {years.map(y => (
-                                <option key={y} value={y}>{y}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <Button type="submit" className="h-11 px-8 rounded-xl font-bold uppercase tracking-widest text-xs">
-                        <Filter className="w-4 h-4 mr-2" />
-                        Filtrar
-                    </Button>
-
-                    {(status !== 'active' || year) && (
-                        <Link href={`/${locale}/dashboard/convocatorias`}>
-                            <Button variant="ghost" type="button" className="h-11 px-4 rounded-xl text-xs font-bold uppercase text-muted-foreground">
-                                Limpiar
-                            </Button>
-                        </Link>
-                    )}
-                </form>
+                <Suspense fallback={<div className="flex gap-4"><Skeleton className="h-10 w-[160px]" /><Skeleton className="h-10 w-[140px]" /></div>}>
+                    <CallFilters years={years} locale={locale} />
+                </Suspense>
 
                 {error && (
                     <div className="min-h-32 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-900">
