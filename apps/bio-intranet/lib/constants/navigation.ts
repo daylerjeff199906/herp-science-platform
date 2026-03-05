@@ -88,6 +88,11 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     ],
   },
   {
+    title: t('Navigation.convocatorias'),
+    url: '/dashboard/convocatorias',
+    icon: FileText,
+  },
+  {
     title: t('Navigation.events'),
     url: '/events',
     icon: Calendar,

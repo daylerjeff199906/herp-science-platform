@@ -1,0 +1,239 @@
+import { createClient } from '@/utils/supabase/server'
+import { cookies } from 'next/headers'
+import { getTranslations } from 'next-intl/server'
+import { LayoutWrapper } from '@/components/layout-wrapper'
+import { notFound } from 'next/navigation'
+import { Calendar, Users, Info, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
+import { ApplicationClient } from './application-client'
+
+export default async function ConvocatoriaDetailPage({ params }: { params: Promise<{ locale: string, id: string }> }) {
+    const { locale, id } = await params;
+    const t = await getTranslations({ locale });
+    const cookieStore = await cookies()
+    const supabase = createClient(cookieStore)
+
+    // Fetch the call details
+    const { data: call, error } = await supabase
+        .from('event_calls')
+        .select(`
+      *,
+      role:participant_roles(name),
+      main_event:main_events(title),
+      edition:editions(title)
+    `)
+        .eq('id', id)
+        .single()
+
+    if (error || !call) {
+        notFound()
+    }
+
+    // Get user session to check if already applied
+    const { data: { user } } = await supabase.auth.getUser()
+
+    let existingApplication = null
+    let userProfile = null
+    let isParticipant = false
+
+    if (user) {
+        // Get profile
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', user.id)
+            .single()
+
+        userProfile = profile
+
+        // Check if applied
+        if (profile) {
+            const { data: maxApp } = await supabase
+                .from('call_applications')
+                .select('id, status, submitted_at')
+                .eq('call_id', call.id)
+                .eq('profile_id', profile.id)
+                .maybeSingle()
+
+            existingApplication = maxApp
+
+            // Check if already is participant
+            if (call.main_event_id) {
+                const { data: part } = await supabase
+                    .from('event_participants')
+                    .select('id')
+                    .eq('profile_id', profile.id)
+                    .eq('main_event_id', call.main_event_id)
+                    .eq('role_id', call.role_id)
+                    .maybeSingle()
+                isParticipant = !!part
+            } else if (call.edition_id) {
+                const { data: part } = await supabase
+                    .from('event_participants')
+                    .select('id')
+                    .eq('profile_id', profile.id)
+                    .eq('edition_id', call.edition_id)
+                    .eq('role_id', call.role_id)
+                    .maybeSingle()
+                isParticipant = !!part
+            }
+        }
+    }
+
+    const isClosed = new Date() > new Date(call.end_date)
+
+    return (
+        <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
+            <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-5xl">
+                <div className="mb-6">
+                    <Link href={`/${locale}/dashboard/convocatorias`}>
+                        <Button variant="ghost" size="sm" className="pl-0 text-muted-foreground hover:text-foreground">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Volver a Convocatorias
+                        </Button>
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Main content - 2 columns on large screens */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                                    {call.role?.name || 'Participante'}
+                                </span>
+                                {isClosed && (
+                                    <span className="inline-flex items-center rounded-full bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-600">
+                                        Cerrada
+                                    </span>
+                                )}
+                            </div>
+
+                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{call.title}</h1>
+
+                            <p className="text-lg text-muted-foreground font-medium flex items-center">
+                                <Info className="mr-2 h-5 w-5" />
+                                Evento: {call.main_event?.title || call.edition?.title || 'General'}
+                            </p>
+                        </div>
+
+                        <div className="prose prose-slate dark:prose-invert max-w-none">
+                            <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Descripción</h2>
+                            <div className="whitespace-pre-wrap text-muted-foreground">
+                                {call.description || 'No hay descripción detallada disponible.'}
+                            </div>
+                        </div>
+
+                        {/* Form Section */}
+                        <div className="mt-12 bg-card rounded-xl border shadow-sm p-6 overflow-hidden">
+                            <h2 className="text-xl font-bold mb-6 flex items-center">
+                                <FileText className="mr-2 h-5 w-5 text-primary" />
+                                Formulario de Postulación
+                            </h2>
+
+                            {isParticipant ? (
+                                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-6 rounded-lg flex items-start border border-green-200 dark:border-green-900/50">
+                                    <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Ya eres participante</h3>
+                                        <p>Tu postulación fue aprobada y ya estás registrado oficialmente en este evento.</p>
+                                    </div>
+                                </div>
+                            ) : existingApplication ? (
+                                <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 p-6 rounded-lg flex items-start border border-blue-200 dark:border-blue-900/50">
+                                    <Info className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <h3 className="font-bold text-lg mb-1">Postulación recibida</h3>
+                                        <p>Ya has enviado una postulación para esta convocatoria.</p>
+                                        <p className="mt-2 text-sm font-medium bg-blue-100 dark:bg-blue-900/40 inline-flex px-3 py-1 rounded-full capitalize">
+                                            Estado: {existingApplication.status === 'draft' ? 'Borrador / Recibido' : existingApplication.status.replace('_', ' ')}
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : isClosed ? (
+                                <div className="bg-muted p-6 text-center rounded-lg border">
+                                    <p className="text-muted-foreground font-medium">Esta convocatoria ya no acepta postulaciones.</p>
+                                </div>
+                            ) : userProfile ? (
+                                <ApplicationClient
+                                    callId={call.id}
+                                    schema={call.form_schema || []}
+                                    profileId={userProfile.id}
+                                />
+                            ) : (
+                                <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">
+                                    <Info className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
+                                    <div>
+                                        <h3 className="font-bold">Debes completar tu perfil</h3>
+                                        <p>No se pudo encontrar tu perfil de usuario. Por favor, asegúrate de haber completado tu registro.</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Right sidebar details */}
+                    <div className="space-y-6">
+                        <div className="bg-muted/40 rounded-xl border p-6 space-y-6 sticky top-6">
+                            <h3 className="font-semibold text-lg border-b pb-2">Detalles clave</h3>
+
+                            <div className="space-y-4">
+                                <div className="flex gap-3">
+                                    <Calendar className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                    <div>
+                                        <p className="font-medium text-sm">Fecha de Inicio</p>
+                                        <p className="text-foreground">
+                                            {format(new Date(call.start_date), "dd/MM/yyyy", { locale: es })}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <Calendar className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                    <div>
+                                        <p className="font-medium text-sm">Fecha de Cierre</p>
+                                        <p className="text-foreground">
+                                            {format(new Date(call.end_date), "dd/MM/yyyy", { locale: es })}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-3">
+                                    <Users className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                                    <div>
+                                        <p className="font-medium text-sm">Capacidad</p>
+                                        <p className="text-foreground">
+                                            {call.max_capacity ? `${call.max_capacity} cupos` : 'Ilimitada'}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t">
+                                {isParticipant ? (
+                                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white" disabled>
+                                        <CheckCircle2 className="mr-2 h-4 w-4" /> Ya estás registrado
+                                    </Button>
+                                ) : existingApplication ? (
+                                    <Button className="w-full" variant="outline" disabled>Postulación en proceso</Button>
+                                ) : isClosed ? (
+                                    <Button className="w-full" variant="secondary" disabled>Convocatoria Cerrada</Button>
+                                ) : (
+                                    <Link href="#application-form" className="w-full">
+                                        <Button className="w-full">
+                                            ¡Postular Abajo!
+                                        </Button>
+                                    </Link>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </LayoutWrapper>
+    )
+}
