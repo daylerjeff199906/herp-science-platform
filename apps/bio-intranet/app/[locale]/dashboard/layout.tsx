@@ -24,7 +24,7 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser()
 
   if (authError || !user) {
-    // Si no hay usuario, redirigir a login
+    // Si no hay usuario, redirigir a login con el path actual
     redirect(`/${locale}/login`)
   }
 
