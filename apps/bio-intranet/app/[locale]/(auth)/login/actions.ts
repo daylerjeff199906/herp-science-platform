@@ -11,7 +11,7 @@ type LoginResponse = {
     redirectUrl?: string
 }
 
-export async function login(formData: FormData, locale: string = 'es'): Promise<LoginResponse> {
+export async function login(formData: FormData, locale: string = 'es', redirectTo?: string | null): Promise<LoginResponse> {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
@@ -38,7 +38,7 @@ export async function login(formData: FormData, locale: string = 'es'): Promise<
         if (profileError) {
             console.error('Error fetching profile:', profileError)
             revalidatePath('/', 'layout')
-            return { redirectUrl: `/${locale}/dashboard` }
+            return { redirectUrl: redirectTo || `/${locale}/dashboard` }
         }
 
 
@@ -52,7 +52,7 @@ export async function login(formData: FormData, locale: string = 'es'): Promise<
 
     // Si ha completado el onboarding, redirigir al dashboard
     revalidatePath('/', 'layout')
-    return { redirectUrl: `/${locale}/dashboard` }
+    return { redirectUrl: redirectTo || `/${locale}/dashboard` }
 }
 
 export async function signup(formData: FormData) {
@@ -75,12 +75,17 @@ export async function signup(formData: FormData) {
     redirect('/')
 }
 
-export async function signout() {
+export async function signout(redirectTo?: string) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
     await supabase.auth.signOut()
 
     revalidatePath('/', 'layout')
+
+    if (redirectTo) {
+        redirect(`/login?redirect=${encodeURIComponent(redirectTo)}`)
+    }
+
     redirect('/login')
 }
 

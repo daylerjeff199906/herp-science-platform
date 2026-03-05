@@ -45,10 +45,26 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     icon: Newspaper,
   },
   {
+    title: t('Navigation.convocatorias'),
+    url: '/dashboard/convocatorias',
+    icon: FileText,
+    items: [
+      {
+        title: t('Navigation.convocatorias'),
+        url: '/dashboard/convocatorias',
+      },
+      {
+        title: t('Navigation.misPostulaciones'),
+        url: '/dashboard/convocatorias/mis-postulaciones',
+      }
+    ]
+  },
+  {
     title: t('Navigation.profileScientific'),
     url: '/dashboard/profile',
     icon: User,
   },
+
   {
     title: t('Navigation.network'),
     url: '/network',

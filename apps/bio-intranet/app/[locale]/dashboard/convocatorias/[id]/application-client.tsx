@@ -1,0 +1,81 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import DynamicApplicationForm from '@/components/DynamicApplicationForm'
+import { createClient } from '@/utils/supabase/client'
+import { FormField } from '@/types/forms'
+import confetti from 'canvas-confetti'
+import { notifyApplicationSuccess } from '@/app/actions/convocatorias'
+import { toast } from 'sonner'
+
+export function ApplicationClient({
+    callId,
+    schema,
+    profileId,
+    locale,
+}: {
+    callId: string
+    schema: FormField[]
+    profileId: string
+    locale: string
+}) {
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const router = useRouter()
+    const supabase = createClient()
+
+    const handleSubmit = async (data: Record<string, any>) => {
+        setIsSubmitting(true)
+        setError(null)
+
+        try {
+            const { error: submitError } = await supabase
+                .from('call_applications')
+                .insert({
+                    call_id: callId,
+                    profile_id: profileId,
+                    submitted_data: data,
+                    status: 'approved',
+                    submitted_at: new Date().toISOString(),
+                })
+
+            if (submitError) throw submitError
+
+            // Launch confetti!
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 999
+            })
+
+            toast.success(locale === 'es' ? '¡Postulación enviada con éxito!' : 'Application submitted successfully!')
+
+            // Send confirmation email in background
+            notifyApplicationSuccess({ callId, profileId, locale }).catch(console.error)
+
+            router.refresh()
+        } catch (err: any) {
+            console.error('Error submitting application:', err)
+            setError(err.message || 'Ocurrió un error al enviar tu postulación. Por favor intenta de nuevo.')
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    return (
+        <div id="application-form">
+            {error && (
+                <div className="mb-4 p-4 text-red-600 bg-red-50 dark:bg-red-950/20 dark:text-red-400 rounded-md border border-red-200 dark:border-red-900/50">
+                    {error}
+                </div>
+            )}
+            <DynamicApplicationForm
+                schema={schema}
+                onSubmit={handleSubmit}
+                isLoading={isSubmitting}
+            />
+        </div>
+    )
+}
