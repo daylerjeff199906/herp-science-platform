@@ -8,6 +8,7 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
 import { Calendar, Users, Eye } from 'lucide-react'
+import { HeaderSection } from '@/components/header-section'
 
 export default async function ConvocatoriasPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
@@ -30,12 +31,10 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
     return (
         <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
             <div className="container mx-auto p-4  space-y-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Convocatorias Abiertas</h1>
-                    <p className="text-muted-foreground mt-2">
-                        Explora las oportunidades disponibles para unirte a proyectos y eventos en diferentes roles.
-                    </p>
-                </div>
+                <HeaderSection
+                    title="Convocatorias Abiertas"
+                    description="Explora las oportunidades disponibles para unirte a proyectos y eventos en diferentes roles."
+                />
 
                 {error && (
                     <div className="min-h-32 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-900">

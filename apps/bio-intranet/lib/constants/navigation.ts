@@ -50,6 +50,21 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
     icon: User,
   },
   {
+    title: t('Navigation.convocatorias'),
+    url: '/dashboard/convocatorias',
+    icon: FileText,
+    items: [
+      {
+        title: t('Navigation.convocatorias'),
+        url: '/dashboard/convocatorias',
+      },
+      {
+        title: t('Navigation.misPostulaciones'),
+        url: '/dashboard/convocatorias/mis-postulaciones',
+      }
+    ]
+  },
+  {
     title: t('Navigation.network'),
     url: '/network',
     icon: Users,
@@ -86,21 +101,6 @@ export const getNavItems = (t: (key: string) => string): NavItem[] => [
         url: '/collections/procedures',
       },
     ],
-  },
-  {
-    title: t('Navigation.convocatorias'),
-    url: '/dashboard/convocatorias',
-    icon: FileText,
-    items: [
-      {
-        title: t('Navigation.convocatorias'),
-        url: '/dashboard/convocatorias',
-      },
-      {
-        title: t('Navigation.misPostulaciones'),
-        url: '/dashboard/convocatorias/mis-postulaciones',
-      }
-    ]
   },
   {
     title: t('Navigation.events'),
