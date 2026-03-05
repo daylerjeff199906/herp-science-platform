@@ -21,8 +21,8 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
         .select(`
       *,
       role:participant_roles(name),
-      main_event:main_events(title),
-      edition:editions(title)
+      main_event:main_events(name),
+      edition:editions(name)
     `)
         .eq('is_active', true)
         .order('created_at', { ascending: false })
@@ -56,7 +56,7 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
                             <CardHeader>
                                 <div className="flex justify-between items-start mb-2">
                                     <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
-                                        {call.role?.name || 'Participante'}
+                                        {typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante'}
                                     </span>
                                     {call.max_capacity && (
                                         <span className="inline-flex items-center text-xs text-muted-foreground">
@@ -65,14 +65,18 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
                                         </span>
                                     )}
                                 </div>
-                                <CardTitle className="text-xl">{call.title}</CardTitle>
+                                <CardTitle className="text-xl">
+                                    {typeof call.title === 'object' ? call.title?.[locale] : call.title}
+                                </CardTitle>
                                 <CardDescription>
-                                    {call.main_event?.title || call.edition?.title || 'Evento General'}
+                                    {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
+                                        (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
+                                        'Evento General'}
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="flex-1">
                                 <p className="text-sm text-foreground/80 line-clamp-3 mb-4">
-                                    {call.description}
+                                    {typeof call.description === 'object' ? call.description?.[locale] : call.description}
                                 </p>
                                 <div className="space-y-2 text-sm text-muted-foreground">
                                     <div className="flex items-center">

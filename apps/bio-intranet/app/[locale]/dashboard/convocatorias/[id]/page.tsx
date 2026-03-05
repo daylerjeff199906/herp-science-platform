@@ -22,8 +22,8 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
         .select(`
       *,
       role:participant_roles(name),
-      main_event:main_events(title),
-      edition:editions(title)
+      main_event:main_events(name),
+      edition:editions(name)
     `)
         .eq('id', id)
         .single()
@@ -103,7 +103,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                         <div>
                             <div className="flex items-center gap-2 mb-3">
                                 <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
-                                    {call.role?.name || 'Participante'}
+                                    {typeof call.role?.name === 'object' ? call.role?.name?.[locale] : call.role?.name || 'Participante'}
                                 </span>
                                 {isClosed && (
                                     <span className="inline-flex items-center rounded-full bg-red-500/10 px-3 py-1 text-sm font-semibold text-red-600">
@@ -112,18 +112,22 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                 )}
                             </div>
 
-                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{call.title}</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                                {typeof call.title === 'object' ? call.title?.[locale] : call.title}
+                            </h1>
 
                             <p className="text-lg text-muted-foreground font-medium flex items-center">
                                 <Info className="mr-2 h-5 w-5" />
-                                Evento: {call.main_event?.title || call.edition?.title || 'General'}
+                                Evento: {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
+                                    (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
+                                    'General'}
                             </p>
                         </div>
 
                         <div className="prose prose-slate dark:prose-invert max-w-none">
                             <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Descripción</h2>
                             <div className="whitespace-pre-wrap text-muted-foreground">
-                                {call.description || 'No hay descripción detallada disponible.'}
+                                {(typeof call.description === 'object' ? call.description?.[locale] : call.description) || 'No hay descripción detallada disponible.'}
                             </div>
                         </div>
 
