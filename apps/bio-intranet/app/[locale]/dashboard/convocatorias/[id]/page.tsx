@@ -137,8 +137,8 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                             {typeof call.title === 'object' ? call.title?.[locale] : call.title}
                         </h1>
 
-                        <div className="flex items-center text-lg md:text-xl font-medium text-white/90">
-                            <Info className="mr-2 h-6 w-6" />
+                        <div className="flex items-center text-base font-medium text-white/90">
+                            <Info className="mr-2 h-4 w-4" />
                             {(typeof call.main_event?.name === 'object' ? call.main_event?.name?.[locale] : call.main_event?.name) ||
                                 (typeof call.edition?.name === 'object' ? call.edition?.name?.[locale] : call.edition?.name) ||
                                 'Evento General'}
@@ -162,8 +162,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
 
                         {/* Form Section */}
                         <div className="mt-12 bg-card rounded-xl border shadow-sm p-6 overflow-hidden">
-                            <h2 className="text-xl font-bold mb-6 flex items-center">
-                                <FileText className="mr-2 h-5 w-5 text-primary" />
+                            <h2 className="text-lg mb-6 flex items-center">
                                 Formulario de Postulación
                             </h2>
 

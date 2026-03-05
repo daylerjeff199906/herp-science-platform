@@ -29,7 +29,7 @@ export default async function ConvocatoriasPage({ params }: { params: Promise<{ 
 
     return (
         <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
-            <div className="container mx-auto p-4 md:p-6 lg:p-8 space-y-6">
+            <div className="container mx-auto p-4  space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Convocatorias Abiertas</h1>
                     <p className="text-muted-foreground mt-2">
