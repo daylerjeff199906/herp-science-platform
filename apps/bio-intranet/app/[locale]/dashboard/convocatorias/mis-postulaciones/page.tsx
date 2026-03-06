@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { CheckCircle2, Clock, FileText, ArrowRight, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { HeaderSection } from '@/components/header-section'
+import { EmptyState } from '@/components/empty-state'
 
 export default async function MisPostulacionesPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
@@ -105,8 +106,8 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                             <td className="px-6 py-4">
                                                 <div className="flex justify-center">
                                                     <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${isApproved
-                                                            ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/50'
-                                                            : 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50'
+                                                        ? 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/50'
+                                                        : 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50'
                                                         }`}>
                                                         {isApproved ? (
                                                             <><CheckCircle2 className="w-3 h-3 mr-1.5" /> Aprobada</>
@@ -131,16 +132,11 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                         </table>
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-muted/10 rounded-3xl border border-dashed border-border">
-                        <FileText className="w-12 h-12 mx-auto text-muted-foreground/20 mb-4" />
-                        <h3 className="text-lg font-medium tracking-tight">No tienes postulaciones aún</h3>
-                        <p className="text-sm text-muted-foreground mb-8">Explora las convocatorias abiertas y comienza tu participación.</p>
-                        <Link href={`/${locale}/dashboard/convocatorias`}>
-                            <Button className="rounded-full px-8 bg-black text-white hover:bg-black/90 text-xs font-bold uppercase tracking-widest dark:bg-white dark:text-black">
-                                Ver Convocatorias
-                            </Button>
-                        </Link>
-                    </div>
+                    <EmptyState
+                        title="No tienes postulaciones aún"
+                        description="Explora las convocatorias abiertas y comienza tu participación."
+                        className="py-12"
+                    />
                 )}
             </div>
         </LayoutWrapper>
