@@ -34,6 +34,7 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         email,
         password,
     })
+    console.log(error, data)
 
     if (error) {
         return { error: error.message }
