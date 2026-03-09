@@ -33,7 +33,7 @@ export async function getCurrentUser(): Promise<UserData | null> {
       const { data, error: profileError } = await supabase
         .from('profiles')
         .select('first_name, last_name, avatar_url')
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
         .maybeSingle() // Usar maybeSingle en lugar de single para no fallar si no existe
 
       if (profileError) {
