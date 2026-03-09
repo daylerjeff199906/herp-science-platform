@@ -58,7 +58,7 @@ export async function updateGeneralProfile(
     const { error } = await supabase
         .from('profiles')
         .update(profileUpdates)
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
 
     if (error) {
         console.error('Error updating profile:', error)
@@ -106,7 +106,7 @@ export async function updateAcademicProfile(
     const { error } = await supabase
         .from('profiles')
         .update(profileUpdates)
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
 
     if (error) {
         console.error('Error updating academic profile:', error)
@@ -167,7 +167,7 @@ export async function updateSocialLinks(
             social_links: links,
             updated_at: new Date().toISOString(),
         })
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
 
     if (error) {
         console.error('Error updating social links:', error)
@@ -199,7 +199,7 @@ export async function updateAdditionalEmails(
             additional_emails: emails,
             updated_at: new Date().toISOString(),
         })
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
 
     if (error) {
         console.error('Error updating additional emails:', error)

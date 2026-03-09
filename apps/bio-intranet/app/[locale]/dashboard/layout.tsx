@@ -31,7 +31,7 @@ export default async function DashboardLayout({
   const { data: profile } = await supabase
     .from('profiles')
     .select('first_name, last_name, avatar_url')
-    .eq('id', user.id)
+    .eq('auth_id', user.id)
     .maybeSingle()
 
   // Preparar datos del usuario

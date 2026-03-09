@@ -45,7 +45,7 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('onboarding_completed')
-            .eq('id', data.user.id)
+            .eq('auth_id', data.user.id)
             .single()
 
         if (profileError) {
