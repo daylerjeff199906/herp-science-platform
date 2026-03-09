@@ -16,7 +16,7 @@ export async function updateAvatar(url: string) {
     const { error } = await supabase
         .from('profiles')
         .update({ avatar_url: url, updated_at: new Date().toISOString() })
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
 
     if (error) {
         return { error: error.message }

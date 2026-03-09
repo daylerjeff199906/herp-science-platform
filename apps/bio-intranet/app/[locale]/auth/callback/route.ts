@@ -22,7 +22,7 @@ export async function GET(request: Request) {
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('onboarding_completed')
-                .eq('id', data.user.id)
+                .eq('auth_id', data.user.id)
                 .maybeSingle()
 
             // If profile doesn't exist yet (trigger might be slow) or onboarding not completed
