@@ -75,7 +75,7 @@ export default async function proxy(request: NextRequest) {
   const { data: profile } = await supabase
     .from('profiles')
     .select('onboarding_completed')
-    .eq('id', user.id)
+    .eq('auth_id', user.id)
     .single()
 
   const hasCompletedOnboarding = profile?.onboarding_completed === true

@@ -78,7 +78,7 @@ export async function submitOnboarding(
   const { data: profile } = await supabase
     .from('profiles')
     .select('first_name, email')
-    .eq('id', user.id)
+    .eq('auth_id', user.id)
     .single()
 
   // Update profile with all onboarding data
@@ -97,7 +97,7 @@ export async function submitOnboarding(
       research_interests: data.researchInterests || null,
       onboarding_completed: true,
     })
-    .eq('id', user.id)
+    .eq('auth_id', user.id)
 
   if (profileError) {
     console.error('Profile update error:', profileError)
