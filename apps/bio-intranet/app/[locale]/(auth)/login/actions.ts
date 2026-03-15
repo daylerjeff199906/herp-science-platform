@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 type LoginResponse = {
     error?: string
@@ -25,7 +25,12 @@ function resolveRedirect(path: string | null | undefined, fallback: string, loca
 
 export async function login(formData: FormData, locale: string = 'es', redirectTo?: string | null): Promise<LoginResponse> {
     const cookieStore = await cookies()
-    const supabase = createClient(cookieStore)
+    const headerList = await headers()
+    const host = headerList.get('host') || ''
+    const isProd = host.includes('iiap.gob.pe')
+    const platformUrl = isProd ? 'https://auth.iiap.gob.pe' : 'http://localhost:3004'
+
+    const supabase = createClient(cookieStore, host)
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -34,40 +39,78 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         email,
         password,
     })
-    console.log(error, data)
 
     if (error) {
         return { error: error.message }
     }
 
-    // Verificar si el usuario ha completado el onboarding
     if (data.user) {
-        const { data: profile, error: profileError } = await supabase
+        // Consultar el perfil para obtener el profile.id usando el auth_id
+        const { data: profile } = await supabase
             .from('profiles')
-            .select('onboarding_completed')
+            .select('id, onboarding_completed')
             .eq('auth_id', data.user.id)
             .single()
 
-        if (profileError) {
-            console.error('Error fetching profile:', profileError)
-            revalidatePath('/', 'layout')
-            return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/dashboard`, locale) }
+        if (!profile) {
+            console.error('No profile found for user:', data.user.id)
         }
 
-        // Si no ha completado el onboarding, redirigir a onboarding
-        if (!profile?.onboarding_completed) {
+        // Si existe check de onboarding, lo conservamos
+        if (profile && !profile.onboarding_completed) {
             revalidatePath('/', 'layout')
             return { redirectUrl: `/${locale}/onboarding` }
         }
+
+        // Consultar los roles del usuario asignados en user_roles usando el ID del perfil
+        const { data: userRolesData, error: rolesError } = await supabase
+            .from('user_roles')
+            .select(`*, roles(*)`)
+            .eq('profile_id', profile?.id || '')
+
+        if (rolesError) {
+            console.error('Error fetching user roles:', rolesError)
+        }
+        
+        const roles: string[] = userRolesData?.map((ur: any) => ur.roles?.name).filter(Boolean) || []
+
+        // Mapa de roles internos de la aplicación y sus redirecciones
+        const roleRedirects: Record<string, string> = {
+            'admin': `/${locale}/admin`,
+            'reviewer': `/${locale}/reviewer`,
+        }
+
+        // 1. Buscamos si el usuario tiene algún rol mapeado a la app interna
+        for (const role of roles) {
+            if (roleRedirects[role]) {
+                revalidatePath('/', 'layout')
+                return { redirectUrl: roleRedirects[role] }
+            }
+        }
+
+        // 2. Si tiene 'client', 'user', o no tiene roles, lo mandamos hacia la otra plataforma
+        if (roles.includes('client') || roles.includes('user') || roles.length === 0) {
+            const nextParam = redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''
+            const redirectUrl = `${platformUrl}/${locale}/dashboard${nextParam}`
+
+            revalidatePath('/', 'layout')
+            return { redirectUrl }
+        }
+
+        // Fallback genérico para cualquier otro escenario
+        revalidatePath('/', 'layout')
+        return { redirectUrl: `/${locale}/admin` }
     }
 
     revalidatePath('/', 'layout')
-    return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/dashboard`, locale) }
+    return { redirectUrl: `/${locale}/admin` }
 }
 
 export async function signup(formData: FormData) {
     const cookieStore = await cookies()
-    const supabase = createClient(cookieStore)
+    const headerList = await headers()
+    const host = headerList.get('host') || ''
+    const supabase = createClient(cookieStore, host)
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -87,7 +130,10 @@ export async function signup(formData: FormData) {
 
 export async function signout(redirectTo?: string, locale: string = 'es') {
     const cookieStore = await cookies()
-    const supabase = createClient(cookieStore)
+    const headerList = await headers()
+    const host = headerList.get('host') || ''
+    const supabase = createClient(cookieStore, host)
+    
     await supabase.auth.signOut()
 
     revalidatePath('/', 'layout')
@@ -101,7 +147,9 @@ export async function signout(redirectTo?: string, locale: string = 'es') {
 
 export async function loginWithGoogle(locale: string = 'es', redirectTo?: string | null) {
     const cookieStore = await cookies()
-    const supabase = createClient(cookieStore)
+    const headerList = await headers()
+    const host = headerList.get('host') || ''
+    const supabase = createClient(cookieStore, host)
 
     const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3004'
 
