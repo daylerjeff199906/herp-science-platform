@@ -48,7 +48,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
         const { data: profile } = await supabase
             .from('profiles')
             .select('id')
-            .eq('id', user.id)
+            .eq('auth_id', user.id)
             .single()
 
         userProfile = profile

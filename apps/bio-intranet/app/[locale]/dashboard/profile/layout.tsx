@@ -34,7 +34,7 @@ export default async function ProfileLayout({
     const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('auth_id', user.id)
         .single()
 
 

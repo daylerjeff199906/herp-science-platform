@@ -34,7 +34,7 @@ export function useUser() {
         const { data: profile } = await supabase
           .from('profiles')
           .select('first_name, last_name, avatar_url')
-          .eq('id', user.id)
+          .eq('auth_id', user.id)
           .maybeSingle()
 
         const firstName =

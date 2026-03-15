@@ -7,7 +7,7 @@ import {
     AvatarImage,
 } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Edit, Loader2, Trash2, Upload } from 'lucide-react'
+import { Edit, Loader2, Trash2 } from 'lucide-react'
 import { updateAvatar } from '@/app/[locale]/dashboard/profile/actions-r2'
 import { toast } from 'sonner'
 import { useTranslations } from 'next-intl'
