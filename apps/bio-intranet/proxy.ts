@@ -71,21 +71,59 @@ export default async function proxy(request: NextRequest) {
 
   // User IS logged in
 
-  // Check if user has completed onboarding
+  // Check if user has completed onboarding and their role
   const { data: profile } = await supabase
     .from('profiles')
-    .select('onboarding_completed')
+    .select(`
+      id,
+      onboarding_completed,
+      user_roles (
+        roles (
+          name
+        )
+      )
+    `)
     .eq('auth_id', user.id)
     .single()
 
   const hasCompletedOnboarding = profile?.onboarding_completed === true
 
-  // If trying to access auth pages (login, signup, etc) while logged in
-  if (pathname.match(authPathRegex)) {
+  // Get user role, default to 'cliente' if not found
+  const userRoles = profile?.user_roles as any[] | undefined
+  const rolesList = userRoles?.flatMap((ur: any) => ur.roles ? [ur.roles.name] : []) || []
+  const isAdmin = rolesList.some(r => r.toLowerCase() === 'admin')
+
+  if (isAdmin) {
+    // Redirect admin to external platform (distinguis between dev/prod ports)
+    const isDev = process.env.NODE_ENV === 'development'
+    const adminUrl = isDev
+      ? `http://localhost:3000/${locale}/admin`
+      : `https://coniap.iiap.gob.pe/${locale}/admin`
+    return NextResponse.redirect(new URL(adminUrl))
+  }
+
+  const rootPathRegex = /^\/(en|es)?\/?$/
+  const isInRoot = pathname === '/' || pathname.match(rootPathRegex)
+
+  // If trying to access auth pages or root while logged in as Cliente
+  if (pathname.match(authPathRegex) || isInRoot) {
     // Honor ?next= param if present, otherwise go to dashboard/onboarding
     const nextParam = request.nextUrl.searchParams.get('next')
     if (nextParam) {
-      const nextUrl = new URL(nextParam, request.url)
+      let targetPath = nextParam
+      if (!nextParam.startsWith('http') && !nextParam.startsWith('https')) {
+        let cleanPath = nextParam
+        if (!cleanPath.startsWith('/')) {
+          cleanPath = `/${cleanPath}`
+        }
+        const hasLocale = cleanPath.match(/^\/(en|es)($|\/)/)
+        if (!hasLocale) {
+          targetPath = `/${locale}${cleanPath}`
+        } else {
+          targetPath = cleanPath
+        }
+      }
+      const nextUrl = new URL(targetPath, request.url)
       return NextResponse.redirect(nextUrl)
     }
     const redirectPath = hasCompletedOnboarding ? 'dashboard' : 'onboarding'
