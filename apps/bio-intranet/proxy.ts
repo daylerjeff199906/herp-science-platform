@@ -97,7 +97,7 @@ export default async function proxy(request: NextRequest) {
     // Redirect admin to external platform (distinguis between dev/prod ports)
     const isDev = process.env.NODE_ENV === 'development'
     const adminUrl = isDev
-      ? `http://localhost:3004/${locale}/admin`
+      ? `http://localhost:3000/${locale}/admin`
       : `https://coniap.iiap.gob.pe/${locale}/admin`
     return NextResponse.redirect(new URL(adminUrl))
   }
