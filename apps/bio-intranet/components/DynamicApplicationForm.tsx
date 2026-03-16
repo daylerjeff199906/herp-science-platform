@@ -1,13 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FormField, DynamicFormProps } from '@/types/forms';
 import { Paperclip, X, Loader2, UploadCloud, ExternalLink } from 'lucide-react';
 
-export default function DynamicApplicationForm({ schema, onSubmit, isLoading = false }: DynamicFormProps) {
+export default function DynamicApplicationForm({ 
+    schema, 
+    onSubmit, 
+    isLoading = false,
+    initialData = {},
+    onFileUploadSuccess,
+    onFileRemoved
+}: DynamicFormProps) {
     // Estado para guardar las respuestas del usuario
-    const [formData, setFormData] = useState<Record<string, any>>({});
+    const [formData, setFormData] = useState<Record<string, any>>(initialData);
     const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
+
+    // Cargar datos iniciales cuando cambien de forma asíncrona
+    useEffect(() => {
+        if (initialData && Object.keys(initialData).length > 0) {
+            setFormData((prev) => ({
+                ...prev,
+                ...initialData
+            }));
+        }
+    }, [initialData]);
 
     const handleChange = (id: string, value: any) => {
         setFormData((prev) => ({
@@ -36,8 +53,12 @@ export default function DynamicApplicationForm({ schema, onSubmit, isLoading = f
             }
 
             const data = await res.json();
-            // Guardamos la URL subida como valor del campo
             handleChange(id, data.url);
+            
+            // Notificar al padre para guardar progreso
+            if (onFileUploadSuccess) {
+                onFileUploadSuccess(id, data.url, file);
+            }
         } catch (error: any) {
             console.error('Error uploading file:', error);
             alert(error.message || 'Error al subir el archivo. Inténtelo de nuevo.');
@@ -51,6 +72,12 @@ export default function DynamicApplicationForm({ schema, onSubmit, isLoading = f
         if (!url) return;
 
         handleChange(id, null); // Clear immediately in UI
+        
+        // Notificar al padre para quitar del historial
+        if (onFileRemoved) {
+            onFileRemoved(id, url);
+        }
+
         try {
             await fetch('/api/r2/delete', {
                 method: 'POST',

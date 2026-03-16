@@ -254,6 +254,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                     schema={call.form_schema || []}
                                     profileId={userProfile.id}
                                     locale={locale}
+                                    call={call}
                                 />
                             ) : (
                                 <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">
