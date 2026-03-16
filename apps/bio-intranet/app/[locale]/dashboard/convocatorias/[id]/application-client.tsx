@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import DynamicApplicationForm from '@/components/DynamicApplicationForm'
 import { createClient } from '@/utils/supabase/client'
@@ -14,16 +14,115 @@ export function ApplicationClient({
     schema,
     profileId,
     locale,
+    call
 }: {
     callId: string
     schema: FormField[]
     profileId: string
     locale: string
+    call: any
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [submissionId, setSubmissionId] = useState<string | null>(null)
+    const [initialData, setInitialData] = useState<Record<string, any>>({})
+    
     const router = useRouter()
     const supabase = createClient()
+
+    // Cargar borrador (Draft) cargado previamente
+    useEffect(() => {
+        const fetchDraft = async () => {
+             const { data: draft } = await supabase
+                 .from('event_submissions')
+                 .select('id, metadata')
+                 .eq('call_id', callId)
+                 .eq('profile_id', profileId)
+                 .eq('status', 'draft')
+                 .maybeSingle()
+
+             if (draft) {
+                 setSubmissionId(draft.id)
+                 setInitialData(draft.metadata || {})
+             }
+        }
+        fetchDraft()
+    }, [callId, profileId, supabase])
+
+    const handleFileUploadSuccess = async (id: string, url: string, file: File) => {
+        try {
+            let currentSubId = submissionId;
+
+            // 1. Crear event_submission si no existe
+            if (!currentSubId) {
+                const { data: sub, error: subError } = await supabase
+                    .from('event_submissions')
+                    .insert({
+                        profile_id: profileId,
+                        call_id: callId,
+                        main_event_id: call.main_event_id,
+                        edition_id: call.edition_id,
+                        title: `Postulación - ${typeof call.title === 'object' ? call.title?.[locale] : call.title}`,
+                        status: 'draft',
+                        metadata: { [id]: url },
+                        is_admin_upload: false
+                    })
+                    .select('id')
+                    .single()
+
+                if (subError) throw subError;
+                currentSubId = sub.id;
+                setSubmissionId(sub.id);
+            } else {
+                // Actualizar metadata
+                const updatedMetadata = { ...initialData, [id]: url };
+                setInitialData(updatedMetadata);
+                await supabase
+                    .from('event_submissions')
+                    .update({ metadata: updatedMetadata })
+                    .eq('id', currentSubId);
+            }
+
+            // 2. Insertar archivo en la tabla de archivos
+            await supabase.from('submission_files').insert({
+                submission_id: currentSubId,
+                file_name: file.name,
+                file_url: url,
+                document_type: 'application_file',
+                mime_type: file.type,
+                size_bytes: file.size
+            });
+
+        } catch (err) {
+            console.error('Error guardando progreso:', err);
+        }
+    };
+
+    const handleFileRemoved = async (id: string, url: string) => {
+        try {
+            if (!submissionId) return;
+
+            // 1. Eliminar de la tabla de archivos
+            await supabase
+                .from('submission_files')
+                .delete()
+                .eq('submission_id', submissionId)
+                .eq('file_url', url);
+
+            // 2. Limpiar metadata
+            const updatedMetadata = { ...initialData };
+            delete updatedMetadata[id];
+            setInitialData(updatedMetadata);
+
+            await supabase
+                .from('event_submissions')
+                .update({ metadata: updatedMetadata })
+                .eq('id', submissionId);
+
+        } catch (err) {
+            console.error('Error quitando registro de archivo:', err);
+        }
+    };
 
     const handleSubmit = async (data: Record<string, any>) => {
         setIsSubmitting(true)
@@ -41,6 +140,14 @@ export function ApplicationClient({
                 })
 
             if (submitError) throw submitError
+
+            // Actualizar estado del borrador a enviado si existe
+            if (submissionId) {
+                await supabase
+                    .from('event_submissions')
+                    .update({ status: 'approved', metadata: data })
+                    .eq('id', submissionId);
+            }
 
             // Launch confetti!
             confetti({
@@ -75,6 +182,9 @@ export function ApplicationClient({
                 schema={schema}
                 onSubmit={handleSubmit}
                 isLoading={isSubmitting}
+                initialData={initialData}
+                onFileUploadSuccess={handleFileUploadSuccess}
+                onFileRemoved={handleFileRemoved}
             />
         </div>
     )

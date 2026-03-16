@@ -13,10 +13,17 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
         }
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+        const validTypes = [
+            'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ]
         if (!validTypes.includes(file.type)) {
             return NextResponse.json(
-                { error: 'Invalid file type. Only images are allowed.' },
+                { error: 'Invalid file type. Only images and documents (PDF, Word, Excel) are allowed.' },
                 { status: 400 }
             )
         }
