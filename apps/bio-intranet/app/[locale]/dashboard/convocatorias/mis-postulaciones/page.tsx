@@ -29,6 +29,15 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
         )
     }
 
+    // Get profile
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('auth_id', user.id)
+        .single()
+
+    const profileId = profile?.id || user.id; // fallback if they are using same in some tables
+
     // Fetch applications
     const { data: applications, error: appError } = await supabase
         .from('call_applications')
@@ -39,10 +48,11 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                 title,
                 role:participant_roles(name),
                 main_event:main_events(name, cover_url),
-                edition:editions(name, cover_url)
+                edition:editions(name, cover_url),
+                form_schema
             )
         `)
-        .eq('profile_id', user.id)
+        .eq('profile_id', profileId)
         .order('submitted_at', { ascending: false })
 
     return (
@@ -92,6 +102,30 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                                     <span className="text-[11px] text-muted-foreground">
                                                         {eventName}
                                                     </span>
+
+                                                    {app.submitted_data && Object.keys(app.submitted_data).length > 0 && (
+                                                        <details className="mt-2 text-[11px] group/details">
+                                                            <summary className="cursor-pointer text-muted-foreground group-hover/details:text-primary font-medium flex items-center transition-colors">
+                                                                <FileText className="w-3.5 w-3.5 mr-1" /> Ver datos enviados
+                                                            </summary>
+                                                            <ul className="mt-1.5 space-y-1 pl-3 border-l-2 border-primary/20 bg-muted/20 p-2 rounded-md">
+                                                                {Object.entries(app.submitted_data).map(([key, value]) => {
+                                                                    const field = (call?.form_schema as any[])?.find((f: any) => f.id === key);
+                                                                    const label = field?.label || key;
+                                                                    return (
+                                                                        <li key={key} className="break-all text-muted-foreground">
+                                                                            <span className="font-semibold text-foreground/80">{label}:</span>{' '}
+                                                                            {typeof value === 'string' && value.startsWith('http') ? (
+                                                                                <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium inline-flex items-center">
+                                                                                     <ExternalLink className="h-2.5 w-2.5 mr-0.5" /> Ver archivo
+                                                                                </a>
+                                                                            ) : typeof value === 'boolean' ? (value ? 'Sí' : 'No') : String(value)}
+                                                                        </li>
+                                                                    )
+                                                                })}
+                                                            </ul>
+                                                        </details>
+                                                    )}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4">

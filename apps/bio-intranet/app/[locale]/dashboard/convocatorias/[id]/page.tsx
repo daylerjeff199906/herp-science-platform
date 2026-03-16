@@ -57,7 +57,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
         if (profile) {
             const { data: maxApp } = await supabase
                 .from('call_applications')
-                .select('id, status, submitted_at')
+                .select('id, status, submitted_at, submitted_data')
                 .eq('call_id', call.id)
                 .eq('profile_id', profile.id)
                 .maybeSingle()
@@ -207,6 +207,31 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                         <p className="text-muted-foreground max-w-md mx-auto">
                                             Tu postulación para <strong>{typeof call.title === 'object' ? call.title?.[locale] : call.title}</strong> fue recibida el {format(new Date(existingApplication.submitted_at), "d 'de' MMMM", { locale: es })}.
                                         </p>
+
+                                        {existingApplication.submitted_data && Object.keys(existingApplication.submitted_data).length > 0 && (
+                                            <div className="bg-background dark:bg-muted/30 rounded-xl p-4 text-left border shadow-sm max-w-md mx-auto mt-4 space-y-2">
+                                                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-bold border-b pb-1">Datos Enviados</h4>
+                                                <dl className="grid grid-cols-1 gap-x-4 gap-y-2">
+                                                    {Object.entries(existingApplication.submitted_data).map(([key, value]) => {
+                                                        const field = (call.form_schema as any[])?.find((f: any) => f.id === key);
+                                                        const label = field?.label || key;
+                                                        return (
+                                                            <div key={key} className="flex flex-col">
+                                                                <dt className="text-xs font-semibold text-foreground/80">{label}</dt>
+                                                                <dd className="text-sm text-muted-foreground break-all">
+                                                                    {typeof value === 'string' && value.startsWith('http') ? (
+                                                                        <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center">
+                                                                            <FileText className="h-3.5 w-3.5 mr-1" /> Ver archivo
+                                                                        </a>
+                                                                    ) : typeof value === 'boolean' ? (value ? 'Sí' : 'No') : String(value)}
+                                                                </dd>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </dl>
+                                            </div>
+                                        )}
+
                                         <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
                                             <Link href={`/${locale}/dashboard/convocatorias/mis-postulaciones`}>
                                                 <Button variant="outline" className="rounded-full px-8">
@@ -229,6 +254,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                     schema={call.form_schema || []}
                                     profileId={userProfile.id}
                                     locale={locale}
+                                    call={call}
                                 />
                             ) : (
                                 <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">
