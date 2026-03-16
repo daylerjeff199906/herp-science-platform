@@ -1,6 +1,6 @@
 export interface FormField {
     id: string;
-    type: 'text' | 'textarea' | 'select' | 'boolean' | 'url' | 'email' | 'number';
+    type: 'text' | 'textarea' | 'select' | 'boolean' | 'url' | 'email' | 'number' | 'file';
     label: string;
     required?: boolean;
     placeholder?: string;
