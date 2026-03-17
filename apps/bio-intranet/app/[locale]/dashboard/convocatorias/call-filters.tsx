@@ -28,7 +28,7 @@ export function CallFilters({ years, locale }: CallFiltersProps) {
 
     const updateFilters = (key: string, value: string) => {
         const params = new URLSearchParams(searchParams.toString());
-        if (value && value !== 'all' && value !== '') {
+        if (value && value !== '') {
             params.set(key, value);
         } else {
             params.delete(key);
