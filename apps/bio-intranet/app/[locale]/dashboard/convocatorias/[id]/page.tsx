@@ -188,9 +188,9 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                     <div className="lg:col-span-2 space-y-8">
                         <ApplicationStatus 
                             isParticipant={isParticipant}
-                            existingApplication={existingApplication as any}
+                            existingApplication={existingApplication}
                             isClosed={isClosed}
-                            call={call as any}
+                            call={call}
                             userProfile={userProfile}
                             locale={locale}
                         />

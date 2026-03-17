@@ -11,41 +11,41 @@ import { RichTextRenderer } from '@/components/RichTextRenderer';
 
 export interface ApplicationStatusProps {
     isParticipant: boolean;
-    existingApplication: {
-        id: string;
-        status: string;
-        submitted_at: string;
-        submitted_data?: Record<string, any>;
+    existingApplication?: {
+        id?: string;
+        status?: string;
+        submitted_at?: string;
+        submitted_data?: Record<string, unknown>;
         submission?: {
             id?: string;
             comments?: Array<{
-                id: string;
-                content: string;
-                created_at: string;
-                author?: { first_name?: string };
+                id?: string;
+                content?: string;
+                created_at?: string;
+                author?: { first_name?: string; last_name?: string } | Array<{ first_name?: string; last_name?: string }> | null;
             }>;
             history?: Array<{
-                id: string;
-                new_status: string;
-                justification?: string;
-                created_at: string;
+                id?: string;
+                new_status?: string;
+                justification?: string | null;
+                created_at?: string;
+                profile?: { first_name?: string; last_name?: string; email?: string } | Array<{ first_name?: string; last_name?: string; email?: string }> | null;
             }>;
         } | null;
     } | null;
     isClosed: boolean;
-    call: {
-        id: string;
-        title: string | Record<string, any>;
-        description?: string | Record<string, any>;
-        content?: any;
-        end_date: string;
+    call?: {
+        id?: string;
+        title?: string | Record<string, string | undefined>;
+        description?: string | Record<string, string | undefined>;
+        content?: unknown;
         is_direct?: boolean;
-        form_schema?: any[];
+        form_schema?: unknown[];
         role?: {
-            name?: string | Record<string, any>;
+            name?: string | Record<string, string | undefined>;
         };
-    };
-    userProfile: { id: string } | null;
+    } | null;
+    userProfile?: { id?: string } | null;
     locale: string;
 }
 
@@ -54,7 +54,7 @@ const statusConfig: Record<string, { label: string; color: string }> = {
     submitted: { label: 'Presentado', color: 'text-blue-600 bg-blue-100 border-blue-200' },
     under_review: { label: 'En Revisión', color: 'text-amber-600 bg-amber-100 border-amber-200' },
     changes_requested: { label: 'Cambios Solicitados', color: 'text-orange-500 bg-orange-100 border-orange-200' },
-    approved: { label: 'Aprobado', color: 'text-purple-600 bg-purple-50 border-purple-200 dark:bg-purple-900/20' },
+    approved: { label: 'Aprobado', color: 'text-primary bg-primary/10 border-primary/20' },
     rejected: { label: 'Rechazado', color: 'text-rose-600 bg-rose-100 border-rose-200' }
 };
 
@@ -74,21 +74,21 @@ export default function ApplicationStatus({
     const timeline = sub ? [
         ...(sub.comments || []).map((c) => ({
             type: 'comment' as const,
-            id: `comment-${c.id}`,
-            date: new Date(c.created_at),
+            id: `comment-${c.id || Math.random()}`,
+            date: new Date(c.created_at || Date.now()),
             data: { content: c.content, author: c.author }
         })),
         ...(sub.history || []).map((h) => ({
             type: 'history' as const,
-            id: `history-${h.id}`,
-            date: new Date(h.created_at),
+            id: `history-${h.id || Math.random()}`,
+            date: new Date(h.created_at || Date.now()),
             data: { new_status: h.new_status, justification: h.justification }
         }))
     ].sort((a, b) => a.date.getTime() - b.date.getTime()) : existingApplication ? [
         {
             type: 'history' as const,
             id: 'initial',
-            date: new Date(existingApplication.submitted_at),
+            date: new Date(existingApplication.submitted_at || Date.now()),
             data: {
                 new_status: existingApplication.status,
                 justification: 'Postulación recibida y registrada en el sistema.'
@@ -98,34 +98,41 @@ export default function ApplicationStatus({
 
     const isApproved = existingApplication?.status === 'approved' || isParticipant;
 
+    const roleName = call?.role?.name;
+    const currentRoleString = typeof roleName === 'object' && roleName ? roleName[locale] : (typeof roleName === 'string' ? roleName : 'Participante');
+
+    const callTitle = call?.title;
+    const currentCallTitle = typeof callTitle === 'object' && callTitle ? callTitle[locale] : (typeof callTitle === 'string' ? callTitle : 'Convocatoria');
+
+    const callDescription = call?.description;
+    const currentCallDescription = typeof callDescription === 'object' && callDescription ? callDescription[locale] : (typeof callDescription === 'string' ? callDescription : 'No hay descripción detallada disponible.');
+
     return (
         <div className="space-y-6 w-full">
             {/* 🟢 BANNER ESTILO GITHUB (Solo si ya interactuó o está cerrado) */}
             {(existingApplication || isClosed) && (
-                <div className={`p-4 border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm bg-background ${
-                    isApproved ? 'bg-purple-50/50 dark:bg-purple-900/10 border-purple-200 dark:border-purple-900/50' :
-                    isClosed && !existingApplication ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' : 
-                    'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/50'
-                }`}>
+                <div className={`p-4 border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm bg-background ${isApproved ? 'bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30' :
+                        isClosed && !existingApplication ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' :
+                            'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/50'
+                    }`}>
                     <div className="flex items-start gap-3">
-                        <div className={`p-1.5 rounded-full mt-0.5 ${
-                            isApproved ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400' : 
-                            isClosed && !existingApplication ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'
-                        }`}>
+                        <div className={`p-1.5 rounded-full mt-0.5 ${isApproved ? 'bg-primary/10 dark:bg-primary/20 text-primary' :
+                                isClosed && !existingApplication ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'
+                            }`}>
                             {isClosed && !existingApplication ? <Info className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
                         </div>
                         <div className="space-y-0.5">
                             <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm flex items-center gap-2">
-                                {isApproved ? 'Postulación aprobada y cerrada' : 
-                                 isClosed && !existingApplication ? 'Convocatoria finalizada' : 'Postulación recibida en revisión'}
+                                {isApproved ? 'Postulación aprobada y cerrada' :
+                                    isClosed && !existingApplication ? 'Convocatoria finalizada' : 'Postulación recibida en revisión'}
                             </h3>
                             <p className="text-xs text-muted-foreground">
-                                {isClosed && !existingApplication ? 'Esta convocatoria ya no acepta postulaciones.' : 
-                                 `Has completado tu postulación para el rol de ${typeof call.role?.name === 'object' ? (call.role?.name as any)?.[locale] : call.role?.name || 'Participante'}.`}
+                                {isClosed && !existingApplication ? 'Esta convocatoria ya no acepta postulaciones.' :
+                                    `Has completado tu postulación para el rol de ${currentRoleString}.`}
                             </p>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                         <Link href={`/${locale}/dashboard/convocatorias/mis-postulaciones`}>
                             <Button variant="outline" size="sm" className="rounded-md shadow-sm text-xs px-3 h-8">
@@ -133,10 +140,9 @@ export default function ApplicationStatus({
                             </Button>
                         </Link>
                         {existingApplication && (
-                            <span className={`flex items-center px-2.5 py-1 text-xs font-semibold rounded-md border shadow-sm ${
-                                isApproved ? 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30' : statusConfig[existingApplication.status]?.color || 'bg-slate-100'
-                            }`}>
-                                {statusConfig[existingApplication.status]?.label || (isApproved ? 'Aprobada' : existingApplication.status)}
+                            <span className={`flex items-center px-2.5 py-1 text-xs font-semibold rounded-md border shadow-sm ${isApproved ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20' : statusConfig[existingApplication.status || '']?.color || 'bg-slate-100'
+                                }`}>
+                                {statusConfig[existingApplication.status || '']?.label || (isApproved ? 'Aprobada' : existingApplication.status)}
                             </span>
                         )}
                     </div>
@@ -147,32 +153,29 @@ export default function ApplicationStatus({
             <div className="border rounded-xl bg-background shadow-sm overflow-hidden">
                 <div className="border-b px-6 flex gap-6 text-sm font-medium bg-muted/20">
                     <button
-                        className={`py-3 px-1 border-b-2 transition-colors ${
-                            activeTab === 'desc' 
-                            ? 'border-primary text-foreground font-semibold' 
-                            : 'border-transparent text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'desc'
+                                ? 'border-primary text-foreground font-semibold'
+                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                         onClick={() => setActiveTab('desc')}
                     >
                         Descripción
                     </button>
                     <button
-                        className={`py-3 px-1 border-b-2 transition-colors ${
-                            activeTab === 'form' 
-                            ? 'border-primary text-foreground font-semibold' 
-                            : 'border-transparent text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'form'
+                                ? 'border-primary text-foreground font-semibold'
+                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                            }`}
                         onClick={() => setActiveTab('form')}
                     >
                         {existingApplication ? 'Mis Respuestas' : 'Formulario'}
                     </button>
                     {existingApplication && (
                         <button
-                            className={`py-3 px-1 border-b-2 transition-colors ${
-                                activeTab === 'tracking' 
-                                ? 'border-primary text-foreground font-semibold' 
-                                : 'border-transparent text-muted-foreground hover:text-foreground'
-                            }`}
+                            className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'tracking'
+                                    ? 'border-primary text-foreground font-semibold'
+                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                                }`}
                             onClick={() => setActiveTab('tracking')}
                         >
                             Seguimiento
@@ -186,20 +189,21 @@ export default function ApplicationStatus({
                         <div className="prose prose-slate dark:prose-invert max-w-none">
                             <h2 className="text-xl font-bold mb-4 border-b pb-2">Descripción del Evento</h2>
                             <div className="whitespace-pre-wrap text-muted-foreground mb-6 text-sm">
-                                {(typeof call.description === 'object' ? (call.description as any)?.[locale] : call.description) || 'No hay descripción detallada disponible.'}
+                                {currentCallDescription}
                             </div>
 
-                            {call.content && (
+                            {Boolean(call?.content) && (
                                 <div className="mt-4">
                                     <RichTextRenderer
                                         content={
                                             (() => {
-                                                let d = call.content;
+                                                let d = call?.content;
                                                 if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return null; } }
                                                 if (!d || typeof d !== 'object') return null;
-                                                if (Array.isArray((d as any).blocks)) return d as any;
-                                                const loc = (d as any)?.[locale];
-                                                if (loc && Array.isArray(loc.blocks)) return loc;
+                                                const anyD = d as Record<string, unknown>;
+                                                if (Array.isArray(anyD.blocks)) return anyD as { blocks: unknown[] };
+                                                const loc = anyD[locale] as Record<string, unknown> | undefined;
+                                                if (loc && Array.isArray(loc.blocks)) return loc as { blocks: unknown[] };
                                                 if (Array.isArray(d)) return { blocks: d };
                                                 return null;
                                             })()
@@ -220,14 +224,14 @@ export default function ApplicationStatus({
                                             <span className="font-semibold text-muted-foreground">Rol Postulado</span>
                                             <p className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5 mt-0.5 text-sm">
                                                 <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                                                {typeof call.role?.name === 'object' ? (call.role?.name as any)?.[locale] : call.role?.name || 'Participante'}
+                                                {currentRoleString}
                                             </p>
                                         </div>
                                         <div className="flex flex-col gap-1">
                                             <span className="font-semibold text-muted-foreground">Fecha de Postulación</span>
                                             <p className="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5 mt-0.5 text-sm">
                                                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                {format(new Date(existingApplication.submitted_at), "dd/MM/yyyy")}
+                                                {existingApplication.submitted_at ? format(new Date(existingApplication.submitted_at), "dd/MM/yyyy") : '-'}
                                             </p>
                                         </div>
                                     </div>
@@ -237,8 +241,8 @@ export default function ApplicationStatus({
                                             <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-bold border-b pb-1">Datos Enviados</h4>
                                             <dl className="grid grid-cols-1 gap-y-3 mt-2">
                                                 {Object.entries(existingApplication.submitted_data).map(([key, value]) => {
-                                                    const field = call.form_schema?.find((f: any) => f.id === key);
-                                                    const label = field?.label || key;
+                                                    const field = call?.form_schema?.find((f) => (f as Record<string, unknown>).id === key) as Record<string, unknown> | undefined;
+                                                    const label = (field?.label as string) || key;
                                                     return (
                                                         <div key={key} className="flex flex-col border-b pb-2 last:border-0">
                                                             <dt className="text-xs font-semibold text-foreground/80">{label}</dt>
@@ -262,11 +266,11 @@ export default function ApplicationStatus({
                                 </div>
                             ) : userProfile ? (
                                 <ApplicationClient
-                                    callId={call.id}
-                                    schema={call.form_schema || []}
-                                    profileId={userProfile.id}
+                                    callId={call?.id || ''}
+                                    schema={(call?.form_schema as any[]) || []}
+                                    profileId={userProfile.id || ''}
                                     locale={locale}
-                                    call={call}
+                                    call={call as any}
                                     disabled={false}
                                 />
                             ) : (
@@ -294,12 +298,12 @@ export default function ApplicationStatus({
                                         <div className="flex-1 text-xs">
                                             {item.type === 'comment' ? (
                                                 <div>
-                                                    <span className="font-semibold text-foreground">{item.data.author?.first_name || 'Comité'}:</span> {item.data.content}
+                                                    <span className="font-semibold text-foreground">Comité:</span> {item.data.content}
                                                 </div>
                                             ) : (
                                                 <div>
                                                     <span className="text-muted-foreground">Estado: </span>
-                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded border ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
+                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
                                                         {statusConfig[item.data.new_status || '']?.label || item.data.new_status}
                                                     </span>
                                                     {item.data.justification && <p className="mt-1 text-muted-foreground italic">"{item.data.justification}"</p>}
