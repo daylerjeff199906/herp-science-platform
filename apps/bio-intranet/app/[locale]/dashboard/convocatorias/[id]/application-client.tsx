@@ -14,13 +14,15 @@ export function ApplicationClient({
     schema,
     profileId,
     locale,
-    call
+    call,
+    disabled = false
 }: {
     callId: string
     schema: FormField[]
     profileId: string
     locale: string
     call: any
+    disabled?: boolean
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -183,6 +185,7 @@ export function ApplicationClient({
                 onSubmit={handleSubmit}
                 isLoading={isSubmitting}
                 initialData={initialData}
+                disabled={disabled}
                 onFileUploadSuccess={handleFileUploadSuccess}
                 onFileRemoved={handleFileRemoved}
             />

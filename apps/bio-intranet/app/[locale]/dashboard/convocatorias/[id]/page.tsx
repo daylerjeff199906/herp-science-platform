@@ -220,16 +220,20 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                 Formulario de Postulación
                             </h2>
 
-                            {isParticipant ? (
-                                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-6 rounded-lg flex items-start border border-green-200 dark:border-green-900/50">
-                                    <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <h3 className="font-bold text-lg mb-1">Ya eres participante</h3>
-                                        <p>Tu postulación fue aprobada y ya estás registrado oficialmente en este evento.</p>
-                                    </div>
-                                </div>
-                            ) : existingApplication ? (
-                                <div className="relative overflow-hidden group">
+                            {isParticipant || existingApplication ? (
+                                <div className="space-y-6">
+                                    {isParticipant && (
+                                        <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-6 rounded-lg flex items-start border border-green-200 dark:border-green-900/50">
+                                            <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
+                                            <div>
+                                                <h3 className="font-bold text-lg mb-1">Ya eres participante</h3>
+                                                <p>Tu postulación fue aprobada y ya estás registrado oficialmente en este evento.</p>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {existingApplication && (
+                                        <div className="relative overflow-hidden group">
                                     <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-primary/5 dark:from-blue-500/10 dark:to-primary/10 z-0" />
                                     <div className="relative z-10 p-8 space-y-6">
                                         <div className="text-center">
@@ -384,12 +388,32 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                                             <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-wider border border-blue-500/20">
                                                 Estado: {existingApplication.status === 'approved' ? 'Aprobada' : existingApplication.status === 'draft' ? 'Recibida' : existingApplication.status}
                                             </div>
-                                        </div>
+
+                                            </div>
+
+                                            </div>
+
+                                            </div>
+
+                                            </div>
+) : isClosed ? (
+                                <div className="space-y-6 w-full">
+                                    <div className="bg-muted p-6 text-center rounded-lg border">
+                                        <p className="text-muted-foreground font-medium">Esta convocatoria ya no acepta postulaciones.</p>
                                     </div>
-                                </div>
-                            ) : isClosed ? (
-                                <div className="bg-muted p-6 text-center rounded-lg border">
-                                    <p className="text-muted-foreground font-medium">Esta convocatoria ya no acepta postulaciones.</p>
+                                    {call.form_schema && (call.form_schema as any[]).length > 0 && userProfile && (
+                                        <div className="border rounded-xl p-6 bg-background dark:bg-muted/10 opacity-75">
+                                            <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Formulario (Modo Vista - Convocatoria Cerrada)</h4>
+                                            <ApplicationClient
+                                                callId={call.id}
+                                                schema={call.form_schema || []}
+                                                profileId={userProfile.id}
+                                                locale={locale}
+                                                call={call}
+                                                disabled={true}
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             ) : userProfile ? (
                                 <ApplicationClient

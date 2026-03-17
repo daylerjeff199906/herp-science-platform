@@ -10,8 +10,9 @@ export default function DynamicApplicationForm({
     isLoading = false,
     initialData = {},
     onFileUploadSuccess,
-    onFileRemoved
-}: DynamicFormProps) {
+    onFileRemoved,
+    disabled = false
+}: DynamicFormProps & { disabled?: boolean }) {
     // Estado para guardar las respuestas del usuario
     const [formData, setFormData] = useState<Record<string, any>>(initialData);
     const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
@@ -27,6 +28,7 @@ export default function DynamicApplicationForm({
     }, [initialData]);
 
     const handleChange = (id: string, value: any) => {
+        if (disabled) return;
         setFormData((prev) => ({
             ...prev,
             [id]: value,
@@ -34,7 +36,7 @@ export default function DynamicApplicationForm({
     };
 
     const handleUploadFile = async (id: string, file: File | undefined) => {
-        if (!file) return;
+        if (!file || disabled) return;
 
         setUploadingFields((prev) => ({ ...prev, [id]: true }));
         try {
@@ -68,6 +70,7 @@ export default function DynamicApplicationForm({
     };
 
     const handleRemoveFile = async (id: string) => {
+        if (disabled) return;
         const url = formData[id];
         if (!url) return;
 
@@ -91,6 +94,7 @@ export default function DynamicApplicationForm({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (disabled) return;
         // Verificar si hay campos subiendo
         const isStillUploading = Object.values(uploadingFields).some(Boolean);
         if (isStillUploading) {
@@ -107,7 +111,8 @@ export default function DynamicApplicationForm({
                     <select
                         id={field.id}
                         required={field.required}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        disabled={disabled}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
                     >
@@ -124,7 +129,8 @@ export default function DynamicApplicationForm({
                         id={field.id}
                         required={field.required}
                         placeholder={field.placeholder}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        disabled={disabled}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         rows={4}
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
@@ -138,7 +144,8 @@ export default function DynamicApplicationForm({
                             type="checkbox"
                             id={field.id}
                             required={field.required}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            disabled={disabled}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
                             onChange={(e) => handleChange(field.id, e.target.checked)}
                             checked={formData[field.id] || false}
                         />
@@ -203,8 +210,9 @@ export default function DynamicApplicationForm({
                         type={field.type}
                         id={field.id}
                         required={field.required}
+                        disabled={disabled}
                         placeholder={field.placeholder}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
                     />
@@ -227,19 +235,21 @@ export default function DynamicApplicationForm({
                 </div>
             ))}
 
-            <button
-                type="submit"
-                disabled={isLoading || isUploadingAny}
-                className="w-full py-2 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors disabled:opacity-50 mt-4 flex justify-center items-center"
-            >
-                {isLoading ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isLoading ? 'Enviando...' : 'Enviar Postulación'}</>
-                ) : isUploadingAny ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Subiendo archivos...</>
-                ) : (
-                    'Enviar Postulación'
-                )}
-            </button>
+            {!disabled && (
+                <button
+                    type="submit"
+                    disabled={isLoading || isUploadingAny}
+                    className="w-full py-2 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors disabled:opacity-50 mt-4 flex justify-center items-center"
+                >
+                    {isLoading ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isLoading ? 'Enviando...' : 'Enviar Postulación'}</>
+                    ) : isUploadingAny ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Subiendo archivos...</>
+                    ) : (
+                        'Enviar Postulación'
+                    )}
+                </button>
+            )}
         </form>
     );
 }
