@@ -18,7 +18,7 @@ export async function sendWelcomeEmail({
 
   try {
     const data = await resend.emails.send({
-      from: `B.E.A IIAP <noreply@${domainResend}>`,
+      from: `Auth Services IIAP <noreply@${domainResend}>`,
       to: [email],
       subject: isSpanish
         ? '¡Bienvenido a B.E.A IIAP!'
@@ -89,7 +89,7 @@ export async function sendApplicationConfirmationEmail({
 
   try {
     const data = await resend.emails.send({
-      from: `B.E.A IIAP <noreply@${domainResend}>`,
+      from: `Eventos IIAP <noreply@${domainResend}>`,
       to: [email],
       subject: isSpanish
         ? `Confirmación de Postulación: ${callTitle}`
