@@ -7,7 +7,7 @@ import { sendApplicationConfirmationEmail } from '@/lib/email'
 export async function notifyApplicationSuccess({
     callId,
     profileId,
-    locale
+    locale,
 }: {
     callId: string
     profileId: string
@@ -23,7 +23,8 @@ export async function notifyApplicationSuccess({
             title,
             role:participant_roles(name),
             main_event:main_events(name),
-            edition:editions(name)
+            edition:editions(name),
+            auto_approve
         `)
         .eq('id', callId)
         .single()
@@ -46,13 +47,16 @@ export async function notifyApplicationSuccess({
             (typeof editionData?.name === 'object' ? (editionData?.name as any)?.[locale] : editionData?.name) ||
             'Evento General'
 
+        const isAutoApproved = call?.auto_approve || false
+
         await sendApplicationConfirmationEmail({
             email: profile.email,
             firstName: profile.first_name || 'Participante',
             callTitle: callTitle || 'Convocatoria',
             roleName: roleName,
             eventName: eventName,
-            locale
+            locale,
+            isAutoApproved
         })
     }
 

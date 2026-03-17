@@ -37,11 +37,13 @@ export default async function ConvocatoriasPage({
         `)
         .order('created_at', { ascending: false })
 
+    const now = new Date().toISOString();
+
     // Apply status filter
     if (status === 'active') {
-        query = query.eq('is_active', true)
+        query = query.eq('is_active', true).gte('end_date', now)
     } else if (status === 'past') {
-        query = query.eq('is_active', false)
+        query = query.or(`is_active.eq.false,end_date.lt.${now}`)
     }
 
     // Apply year filter if present
