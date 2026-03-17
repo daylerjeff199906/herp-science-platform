@@ -108,6 +108,23 @@ export function ApplicationClient({
                     .eq('id', currentSubId);
             }
 
+            // También actualizar submitted_data en call_applications si ya existe (postulación enviada)
+            const { data: existingApp } = await supabase
+                .from('call_applications')
+                .select('submitted_data')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .maybeSingle();
+
+            if (existingApp) {
+                const updatedSubmittedData = { ...existingApp.submitted_data, [id]: url };
+                await supabase
+                    .from('call_applications')
+                    .update({ submitted_data: updatedSubmittedData })
+                    .eq('call_id', callId)
+                    .eq('profile_id', profileId);
+            }
+
             // 2. Insertar archivo en la tabla de archivos
             await supabase.from('submission_files').insert({
                 submission_id: currentSubId,

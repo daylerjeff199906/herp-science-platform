@@ -5,7 +5,7 @@ import { LayoutWrapper } from '@/components/layout-wrapper'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
-import { CheckCircle2, Clock, FileText, ArrowRight, ExternalLink } from 'lucide-react'
+import { CheckCircle2, Clock, FileText, ArrowRight, ExternalLink, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { HeaderSection } from '@/components/header-section'
 import { EmptyState } from '@/components/empty-state'
@@ -146,7 +146,20 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                                         {isApproved ? (
                                                             <><CheckCircle2 className="w-3 h-3 mr-1.5" /> Aprobada</>
                                                         ) : (
-                                                            <><Clock className="w-3 h-3 mr-1.5" /> En Revisión</>
+                                                            <>
+                                                                {
+                                                                    app.status === 'submitted' && <><Clock className="w-3 h-3 mr-1.5" /> En Revisión</>
+                                                                }
+                                                                {
+                                                                    app.status === 'draft' && <><Clock className="w-3 h-3 mr-1.5" /> Borrador</>
+                                                                }
+                                                                {
+                                                                    app.status === 'rejected' && <><XCircle className="w-3 h-3 mr-1.5" /> Rechazada</>
+                                                                }
+                                                                {
+                                                                    app.status === 'approved' && <><CheckCircle2 className="w-3 h-3 mr-1.5" /> Aprobada</>
+                                                                }
+                                                            </>
                                                         )}
                                                     </div>
                                                 </div>
