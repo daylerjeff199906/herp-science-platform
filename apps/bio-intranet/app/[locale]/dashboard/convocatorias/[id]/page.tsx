@@ -186,66 +186,16 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main content - 2 columns on large screens */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div>
-                            {/* Short summary or intro could go here but we use description */}
-                        </div>
-
-                        <div className="prose prose-slate dark:prose-invert max-w-none">
-                            <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Descripción</h2>
-                            <div className="whitespace-pre-wrap text-muted-foreground mb-6">
-                                {(typeof call.description === 'object' ? call.description?.[locale] : call.description) || 'No hay descripción detallada disponible.'}
-                            </div>
-
-                            {/* Rich Text Content */}
-                            {call.content && (
-                                <RichTextRenderer
-                                    content={
-                                        (() => {
-                                            let d = call.content;
-                                            if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return null; } }
-                                            if (!d || typeof d !== 'object') return null;
-                                            if (Array.isArray((d as any).blocks)) return d as any;
-                                            const loc = (d as any)?.[locale];
-                                            if (loc && Array.isArray(loc.blocks)) return loc;
-                                            if (Array.isArray(d)) return { blocks: d };
-                                            return null;
-                                        })()
-                                    }
-                                />
-                            )}
-                        </div>
-
-                        {/* Form Section */}
-                        <ApplicationStatus
+                        <ApplicationStatus 
                             isParticipant={isParticipant}
                             existingApplication={existingApplication as any}
                             isClosed={isClosed}
-                            call={call}
+                            call={call as any}
                             userProfile={userProfile}
                             locale={locale}
                         />
-
-                        {!isParticipant && !existingApplication && !isClosed && userProfile && (
-                            <ApplicationClient
-                                callId={call.id}
-                                schema={call.form_schema || []}
-                                profileId={userProfile.id}
-                                locale={locale}
-                                call={call}
-                            />
-                        )}
-
-                        {!isParticipant && !existingApplication && !isClosed && !userProfile && (
-                            <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">
-                                <Info className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
-                                <div>
-                                    <h3 className="font-bold">Debes completar tu perfil</h3>
-                                    <p>No se pudo encontrar tu perfil de usuario. Por favor, asegúrate de haber completado tu registro.</p>
-                                </div>
-                            </div>
-                        )}
                     </div>
-
+                    
 
                     {/* Right sidebar details */}
                     <div className="space-y-6">
