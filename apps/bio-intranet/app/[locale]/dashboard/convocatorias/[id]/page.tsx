@@ -3,15 +3,12 @@ import { cookies } from 'next/headers'
 import { getTranslations } from 'next-intl/server'
 import { LayoutWrapper } from '@/components/layout-wrapper'
 import { notFound } from 'next/navigation'
-import { Calendar, Users, Info, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Calendar, Users, Info, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ApplicationClient } from './application-client'
 import ApplicationStatus from './application-status'
-import { RichTextRenderer } from '@/components/RichTextRenderer'
-import { LocalizedRichTextContent } from '@/types/editor'
 
 export default async function ConvocatoriaDetailPage({ params }: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await params;
@@ -188,7 +185,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main content - 2 columns on large screens */}
                     <div className="lg:col-span-2 space-y-8">
-                        <ApplicationStatus 
+                        <ApplicationStatus
                             isParticipant={isParticipant}
                             existingApplication={existingApplication}
                             isClosed={isClosed}
@@ -197,7 +194,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                             locale={locale}
                         />
                     </div>
-                    
+
 
                     {/* Right sidebar details */}
                     <div className="space-y-6">

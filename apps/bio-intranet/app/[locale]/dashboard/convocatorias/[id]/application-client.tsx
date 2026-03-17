@@ -32,27 +32,30 @@ export function ApplicationClient({
     const [error, setError] = useState<string | null>(null)
     const [submissionId, setSubmissionId] = useState<string | null>(initialSubmissionId)
     const [initialData, setInitialData] = useState<Record<string, any>>(initialDataProp)
-    
+
     const router = useRouter()
     const supabase = createClient()
+
+    const isAutoApproved = call?.auto_approve;
+    const statusCall = isAutoApproved ? 'approved' : 'submitted';
 
     // Cargar borrador (Draft) cargado previamente o actualizar de props
     useEffect(() => {
         if (submissionId) return; // Ya se cargó desde Props
-        
-        const fetchDraft = async () => {
-             const { data: draft } = await supabase
-                 .from('event_submissions')
-                 .select('id, metadata')
-                 .eq('call_id', callId)
-                 .eq('profile_id', profileId)
-                 .eq('status', 'draft')
-                 .maybeSingle()
 
-             if (draft) {
-                 setSubmissionId(draft.id)
-                 setInitialData(draft.metadata || {})
-             }
+        const fetchDraft = async () => {
+            const { data: draft } = await supabase
+                .from('event_submissions')
+                .select('id, metadata')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .eq('status', 'draft')
+                .maybeSingle()
+
+            if (draft) {
+                setSubmissionId(draft.id)
+                setInitialData(draft.metadata || {})
+            }
         }
         fetchDraft()
     }, [callId, profileId, supabase])
@@ -172,7 +175,7 @@ export function ApplicationClient({
                     call_id: callId,
                     profile_id: profileId,
                     submitted_data: data,
-                    status: 'approved',
+                    status: statusCall,
                     submitted_at: new Date().toISOString(),
                 }, { onConflict: 'call_id, profile_id' })
 
@@ -182,7 +185,7 @@ export function ApplicationClient({
             if (submissionId) {
                 await supabase
                     .from('event_submissions')
-                    .update({ status: 'approved', metadata: data })
+                    .update({ status: statusCall, metadata: data })
                     .eq('id', submissionId);
             }
 

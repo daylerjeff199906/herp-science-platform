@@ -41,7 +41,7 @@ export interface ApplicationStatusProps {
         title?: string | Record<string, string | undefined>;
         description?: string | Record<string, string | undefined>;
         content?: unknown;
-        is_direct?: boolean;
+        auto_approve?: boolean;
         form_schema?: unknown[];
         role?: {
             name?: string | Record<string, string | undefined>;
@@ -71,6 +71,7 @@ export default function ApplicationStatus({
     const [activeTab, setActiveTab] = useState<'desc' | 'form' | 'tracking'>(
         existingApplication && existingApplication.status !== 'draft' ? 'tracking' : (existingApplication?.status === 'draft' ? 'form' : 'desc')
     );
+    const isAutoApproved = call?.auto_approve;
 
     const supabase = createClient();
     const handleRevertToDraft = async () => {
