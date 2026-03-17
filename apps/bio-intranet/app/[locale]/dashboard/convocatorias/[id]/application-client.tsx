@@ -117,7 +117,7 @@ export function ApplicationClient({
                 .eq('submission_id', submissionId)
                 .eq('file_url', url);
 
-            // 2. Limpiar metadata
+            // 2. Limpiar metadata en event_submissions
             const updatedMetadata = { ...initialData };
             delete updatedMetadata[id];
             setInitialData(updatedMetadata);
@@ -126,6 +126,35 @@ export function ApplicationClient({
                 .from('event_submissions')
                 .update({ metadata: updatedMetadata })
                 .eq('id', submissionId);
+
+            // 3. También limpiar submitted_data en call_applications (si ya fue enviada)
+            const { data: existingApp } = await supabase
+                .from('call_applications')
+                .select('submitted_data')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .maybeSingle();
+
+            if (existingApp?.submitted_data) {
+                const updatedSubmittedData = { ...existingApp.submitted_data };
+                delete updatedSubmittedData[id];
+                await supabase
+                    .from('call_applications')
+                    .update({ submitted_data: updatedSubmittedData })
+                    .eq('call_id', callId)
+                    .eq('profile_id', profileId);
+            }
+
+            // 4. Eliminar del storage de Cloudflare R2
+            try {
+                await fetch('/api/r2/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url }),
+                });
+            } catch (r2err) {
+                console.error('Error deleting file from R2:', r2err);
+            }
 
         } catch (err) {
             console.error('Error quitando registro de archivo:', err);
