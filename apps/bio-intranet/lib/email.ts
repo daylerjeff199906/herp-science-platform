@@ -75,6 +75,7 @@ export async function sendApplicationConfirmationEmail({
   roleName,
   eventName,
   locale,
+  isAutoApproved
 }: {
   email: string
   firstName: string
@@ -82,6 +83,7 @@ export async function sendApplicationConfirmationEmail({
   roleName: string
   eventName: string
   locale: string
+  isAutoApproved: boolean
 }) {
   const isSpanish = locale === 'es'
 
@@ -104,7 +106,7 @@ export async function sendApplicationConfirmationEmail({
                         <p style="margin: 5px 0;"><strong>Rol:</strong> ${roleName}</p>
                     </div>
                     <p style="color: #4a4a4a; line-height: 1.6; margin-bottom: 25px;">
-                        Tu participación ha sido registrada y aprobada automáticamente. Pronto recibirás más noticias sobre los siguientes pasos.
+                       ${isAutoApproved ? 'Tu participación ha sido registrada y aprobada automáticamente. Pronto recibirás más noticias sobre los siguientes pasos.' : 'Tu participación ha sido registrada. Pronto recibirás más noticias sobre los siguientes pasos.'}
                     </p>
                     <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004'}/es/dashboard/convocatorias" 
                        style="display: inline-block; background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 30px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">
