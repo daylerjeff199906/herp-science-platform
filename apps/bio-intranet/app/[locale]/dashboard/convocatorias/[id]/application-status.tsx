@@ -289,7 +289,7 @@ export default function ApplicationStatus({
                     {activeTab === 'tracking' && existingApplication && (
                         <div className="space-y-4 w-full">
                             <h4 className="text-xs uppercase tracking-wider font-bold border-b pb-1">Historial de Seguimiento</h4>
-                            <div className="relative pl-6 border-l border-slate-200 dark:border-slate-800 space-y-6 mt-4">
+                            <div className="relative pl-6 border-l space-y-6 mt-4">
                                 {timeline.map((item) => {
                                     if (item.type === 'comment') {
                                         const author = item.data.author;
@@ -297,15 +297,15 @@ export default function ApplicationStatus({
                                         return (
                                             <div key={item.id} className="relative">
                                                 {/* Left Circular Avatar Node */}
-                                                <div className="absolute left-[-31px] w-6 h-6 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary border-2 border-background">
+                                                <div className="absolute left-[-36px] w-6 h-6 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary border-2 border-background">
                                                     {(authorName?.charAt(0) || 'C').toUpperCase()}
                                                 </div>
-                                                
+
                                                 {/* Github Comment Box */}
                                                 <div className="rounded-xl border bg-background shadow-sm overflow-hidden text-sm">
-                                                    <div className="border-b px-4 py-2 bg-slate-50 dark:bg-muted/50 text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between items-center">
+                                                    <div className="border-b px-4 py-2 text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between items-center">
                                                         <div className="flex items-center gap-1.5">
-                                                            <span className="font-semibold text-foreground">{authorName || 'Comité'}</span> 
+                                                            <span className="font-semibold text-foreground">{authorName || 'Comité'}</span>
                                                             <span>comentó</span>
                                                         </div>
                                                         <span>{format(item.date, "dd/MM/yyyy HH:mm")}</span>
@@ -323,7 +323,7 @@ export default function ApplicationStatus({
                                                 <div className="absolute left-[-28.5px] w-2.5 h-2.5 rounded-full bg-background border-2 border-slate-400 dark:border-slate-500 flex items-center justify-center">
                                                     <div className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></div>
                                                 </div>
-                                                
+
                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                     <span>Cambió el estado a:</span>
                                                     <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border shadow-sm ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
