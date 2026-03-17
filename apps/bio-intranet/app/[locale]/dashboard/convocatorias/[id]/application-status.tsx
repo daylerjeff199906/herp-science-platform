@@ -112,12 +112,12 @@ export default function ApplicationStatus({
             {/* 🟢 BANNER ESTILO GITHUB (Solo si ya interactuó o está cerrado) */}
             {(existingApplication || isClosed) && (
                 <div className={`p-4 border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm bg-background ${isApproved ? 'bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30' :
-                        isClosed && !existingApplication ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' :
-                            'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/50'
+                    isClosed && !existingApplication ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' :
+                        'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/50'
                     }`}>
                     <div className="flex items-start gap-3">
                         <div className={`p-1.5 rounded-full mt-0.5 ${isApproved ? 'bg-primary/10 dark:bg-primary/20 text-primary' :
-                                isClosed && !existingApplication ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'
+                            isClosed && !existingApplication ? 'bg-amber-100 text-amber-600' : 'bg-blue-100 text-blue-600'
                             }`}>
                             {isClosed && !existingApplication ? <Info className="h-5 w-5" /> : <CheckCircle2 className="h-5 w-5" />}
                         </div>
@@ -154,8 +154,8 @@ export default function ApplicationStatus({
                 <div className="border-b px-6 flex gap-6 text-sm font-medium bg-muted/20">
                     <button
                         className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'desc'
-                                ? 'border-primary text-foreground font-semibold'
-                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                            ? 'border-primary text-foreground font-semibold'
+                            : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         onClick={() => setActiveTab('desc')}
                     >
@@ -163,8 +163,8 @@ export default function ApplicationStatus({
                     </button>
                     <button
                         className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'form'
-                                ? 'border-primary text-foreground font-semibold'
-                                : 'border-transparent text-muted-foreground hover:text-foreground'
+                            ? 'border-primary text-foreground font-semibold'
+                            : 'border-transparent text-muted-foreground hover:text-foreground'
                             }`}
                         onClick={() => setActiveTab('form')}
                     >
@@ -173,8 +173,8 @@ export default function ApplicationStatus({
                     {existingApplication && (
                         <button
                             className={`py-3 px-1 border-b-2 transition-colors ${activeTab === 'tracking'
-                                    ? 'border-primary text-foreground font-semibold'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                                ? 'border-primary text-foreground font-semibold'
+                                : 'border-transparent text-muted-foreground hover:text-foreground'
                                 }`}
                             onClick={() => setActiveTab('tracking')}
                         >
@@ -289,7 +289,7 @@ export default function ApplicationStatus({
                     {activeTab === 'tracking' && existingApplication && (
                         <div className="space-y-4 w-full">
                             <h4 className="text-xs uppercase tracking-wider font-bold border-b pb-1">Historial de Seguimiento</h4>
-                            <div className="relative pl-5 border-l-2 border-slate-200 dark:border-slate-800 space-y-5 mt-3">
+                            <div className="relative pl-3 border-l-[1px] border-slate-200 dark:border-slate-800 space-y-5 mt-3">
                                 {timeline.map((item) => (
                                     <div key={item.id} className="relative flex items-start gap-3">
                                         <div className="absolute left-[-23px] w-4 h-4 rounded-full bg-background border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center mt-0.5">
