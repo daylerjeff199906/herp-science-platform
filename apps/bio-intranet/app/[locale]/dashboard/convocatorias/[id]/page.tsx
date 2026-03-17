@@ -71,6 +71,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                     .select(`
                         id,
                         status,
+                        metadata,
                         history:submission_history(
                             id,
                             old_status,

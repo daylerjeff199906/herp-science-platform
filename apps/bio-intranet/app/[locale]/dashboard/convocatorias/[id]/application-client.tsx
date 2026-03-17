@@ -15,7 +15,9 @@ export function ApplicationClient({
     profileId,
     locale,
     call,
-    disabled = false
+    disabled = false,
+    initialSubmissionId = null,
+    initialDataProp = {}
 }: {
     callId: string
     schema: FormField[]
@@ -23,17 +25,21 @@ export function ApplicationClient({
     locale: string
     call: any
     disabled?: boolean
+    initialSubmissionId?: string | null
+    initialDataProp?: Record<string, any>
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [submissionId, setSubmissionId] = useState<string | null>(null)
-    const [initialData, setInitialData] = useState<Record<string, any>>({})
+    const [submissionId, setSubmissionId] = useState<string | null>(initialSubmissionId)
+    const [initialData, setInitialData] = useState<Record<string, any>>(initialDataProp)
     
     const router = useRouter()
     const supabase = createClient()
 
-    // Cargar borrador (Draft) cargado previamente
+    // Cargar borrador (Draft) cargado previamente o actualizar de props
     useEffect(() => {
+        if (submissionId) return; // Ya se cargó desde Props
+        
         const fetchDraft = async () => {
              const { data: draft } = await supabase
                  .from('event_submissions')

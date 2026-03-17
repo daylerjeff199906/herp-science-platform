@@ -18,6 +18,7 @@ export interface ApplicationStatusProps {
         submitted_data?: Record<string, unknown>;
         submission?: {
             id?: string;
+            metadata?: Record<string, any>;
             comments?: Array<{
                 id?: string;
                 content?: string;
@@ -67,7 +68,7 @@ export default function ApplicationStatus({
     locale
 }: ApplicationStatusProps) {
     const [activeTab, setActiveTab] = useState<'desc' | 'form' | 'tracking'>(
-        existingApplication ? 'tracking' : 'desc'
+        existingApplication && existingApplication.status !== 'draft' ? 'tracking' : (existingApplication?.status === 'draft' ? 'form' : 'desc')
     );
 
     const sub = existingApplication?.submission;
@@ -110,7 +111,7 @@ export default function ApplicationStatus({
     return (
         <div className="space-y-6 w-full">
             {/* 🟢 BANNER ESTILO GITHUB (Solo si ya interactuó o está cerrado) */}
-            {(existingApplication || isClosed) && (
+            {(existingApplication && existingApplication.status !== 'draft' || isClosed) && (
                 <div className={`p-4 border rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm bg-background ${isApproved ? 'bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30' :
                     isClosed && !existingApplication ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200' :
                         'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-900/50'
@@ -217,7 +218,7 @@ export default function ApplicationStatus({
                     {/* 🟢 TAB 2: FORMULARIO Y RESPUESTAS */}
                     {activeTab === 'form' && (
                         <div className="space-y-6">
-                            {existingApplication ? (
+                            {existingApplication && existingApplication.status !== 'draft' ? (
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs border rounded-xl p-4 bg-muted/20 dark:bg-muted/10 shadow-sm w-full">
                                         <div className="flex flex-col gap-1">
@@ -272,6 +273,8 @@ export default function ApplicationStatus({
                                     locale={locale}
                                     call={call as any}
                                     disabled={false}
+                                    initialSubmissionId={existingApplication?.submission?.id}
+                                    initialDataProp={existingApplication?.submission?.metadata || {}}
                                 />
                             ) : (
                                 <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start gap-3">
