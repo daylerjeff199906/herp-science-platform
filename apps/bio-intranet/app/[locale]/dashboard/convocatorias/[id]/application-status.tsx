@@ -289,30 +289,56 @@ export default function ApplicationStatus({
                     {activeTab === 'tracking' && existingApplication && (
                         <div className="space-y-4 w-full">
                             <h4 className="text-xs uppercase tracking-wider font-bold border-b pb-1">Historial de Seguimiento</h4>
-                            <div className="relative pl-3 border-l-[1px] border-slate-200 dark:border-slate-800 space-y-5 mt-3">
-                                {timeline.map((item) => (
-                                    <div key={item.id} className="relative flex items-start gap-3">
-                                        <div className="absolute left-[-23px] w-4 h-4 rounded-full bg-background border-2 border-slate-300 dark:border-slate-700 flex items-center justify-center mt-0.5">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div>
-                                        </div>
-                                        <div className="flex-1 text-xs">
-                                            {item.type === 'comment' ? (
-                                                <div>
-                                                    <span className="font-semibold text-foreground">Comité:</span> {item.data.content}
+                            <div className="relative pl-6 border-l border-slate-200 dark:border-slate-800 space-y-6 mt-4">
+                                {timeline.map((item) => {
+                                    if (item.type === 'comment') {
+                                        const author = item.data.author;
+                                        const authorName = Array.isArray(author) ? author[0]?.first_name : author?.first_name;
+                                        return (
+                                            <div key={item.id} className="relative">
+                                                {/* Left Circular Avatar Node */}
+                                                <div className="absolute left-[-31px] w-6 h-6 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center font-bold text-[10px] text-primary border-2 border-background">
+                                                    {(authorName?.charAt(0) || 'C').toUpperCase()}
                                                 </div>
-                                            ) : (
-                                                <div>
-                                                    <span className="text-muted-foreground">Estado: </span>
-                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
+                                                
+                                                {/* Github Comment Box */}
+                                                <div className="rounded-xl border bg-background shadow-sm overflow-hidden text-sm">
+                                                    <div className="border-b px-4 py-2 bg-slate-50 dark:bg-muted/50 text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between items-center">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className="font-semibold text-foreground">{authorName || 'Comité'}</span> 
+                                                            <span>comentó</span>
+                                                        </div>
+                                                        <span>{format(item.date, "dd/MM/yyyy HH:mm")}</span>
+                                                    </div>
+                                                    <div className="p-4 text-slate-700 dark:text-slate-300 leading-relaxed text-xs">
+                                                        {item.data.content}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    } else {
+                                        return (
+                                            <div key={item.id} className="relative flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-muted-foreground">
+                                                {/* Status Dot Node */}
+                                                <div className="absolute left-[-28.5px] w-2.5 h-2.5 rounded-full bg-background border-2 border-slate-400 dark:border-slate-500 flex items-center justify-center">
+                                                    <div className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-500"></div>
+                                                </div>
+                                                
+                                                <div className="flex items-center gap-1.5 flex-wrap">
+                                                    <span>Cambió el estado a:</span>
+                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border shadow-sm ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
                                                         {statusConfig[item.data.new_status || '']?.label || item.data.new_status}
                                                     </span>
-                                                    {item.data.justification && <p className="mt-1 text-muted-foreground italic">"{item.data.justification}"</p>}
+                                                    {item.data.justification && (
+                                                        <span className="text-slate-400 dark:text-slate-500 italic block sm:inline">
+                                                            - "{item.data.justification}"
+                                                        </span>
+                                                    )}
                                                 </div>
-                                            )}
-                                            <span className="text-[10px] text-muted-foreground block mt-1">{format(item.date, "dd/MM/yyyy HH:mm")}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                            </div>
+                                        );
+                                    }
+                                })}
                             </div>
                         </div>
                     )}
