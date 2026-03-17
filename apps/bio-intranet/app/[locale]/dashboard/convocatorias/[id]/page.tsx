@@ -91,7 +91,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
 
     return (
         <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
-            <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-5xl">
+            <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
                 <div className="mb-6">
                     <Link href={`/${locale}/dashboard/convocatorias`}>
                         <Button variant="ghost" size="sm" className="pl-0 text-muted-foreground hover:text-foreground">

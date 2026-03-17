@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { FormField, DynamicFormProps } from '@/types/forms';
 import { Paperclip, X, Loader2, UploadCloud, ExternalLink } from 'lucide-react';
 
-export default function DynamicApplicationForm({ 
-    schema, 
-    onSubmit, 
+export default function DynamicApplicationForm({
+    schema,
+    onSubmit,
     isLoading = false,
     initialData = {},
     onFileUploadSuccess,
@@ -54,7 +54,7 @@ export default function DynamicApplicationForm({
 
             const data = await res.json();
             handleChange(id, data.url);
-            
+
             // Notificar al padre para guardar progreso
             if (onFileUploadSuccess) {
                 onFileUploadSuccess(id, data.url, file);
@@ -72,7 +72,7 @@ export default function DynamicApplicationForm({
         if (!url) return;
 
         handleChange(id, null); // Clear immediately in UI
-        
+
         // Notificar al padre para quitar del historial
         if (onFileRemoved) {
             onFileRemoved(id, url);
@@ -161,9 +161,9 @@ export default function DynamicApplicationForm({
                                     <a href={formData[field.id]} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors">
                                         <ExternalLink className="h-4 w-4" />
                                     </a>
-                                    <button 
-                                        type="button" 
-                                        onClick={() => handleRemoveFile(field.id)} 
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveFile(field.id)}
                                         className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-md text-muted-foreground transition-colors"
                                     >
                                         <X className="h-4 w-4" />
@@ -215,7 +215,7 @@ export default function DynamicApplicationForm({
     const isUploadingAny = Object.values(uploadingFields).some(Boolean);
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mt-4">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-4xl mt-4">
             {schema.map((field) => (
                 <div key={field.id} className="flex flex-col space-y-1">
                     {field.type !== 'boolean' && (
