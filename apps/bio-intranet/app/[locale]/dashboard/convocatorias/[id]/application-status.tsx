@@ -9,6 +9,7 @@ import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ApplicationClient } from "./application-client";
 import { RichTextRenderer } from '@/components/RichTextRenderer';
+import { statusConfig } from "@/types/submissions";
 
 export interface ApplicationStatusProps {
     isParticipant: boolean;
@@ -51,14 +52,7 @@ export interface ApplicationStatusProps {
     locale: string;
 }
 
-const statusConfig: Record<string, { label: string; color: string }> = {
-    draft: { label: 'Borrador', color: 'text-slate-500 bg-slate-100' },
-    submitted: { label: 'Presentado', color: 'text-blue-600 bg-blue-100 border-blue-200' },
-    under_review: { label: 'En Revisión', color: 'text-amber-600 bg-amber-100 border-amber-200' },
-    changes_requested: { label: 'Cambios Solicitados', color: 'text-orange-500 bg-orange-100 border-orange-200' },
-    approved: { label: 'Aprobado', color: 'text-primary bg-primary/10 border-primary/20' },
-    rejected: { label: 'Rechazado', color: 'text-rose-600 bg-rose-100 border-rose-200' }
-};
+
 
 export default function ApplicationStatus({
     isParticipant,
@@ -166,9 +160,9 @@ export default function ApplicationStatus({
                             </Button>
                         )}
                         {existingApplication && (
-                            <span className={`flex items-center px-2.5 py-1 text-xs font-semibold rounded-md border shadow-sm ${isApproved ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20' : statusConfig[existingApplication.status || '']?.color || 'bg-slate-100'
+                            <span className={`flex items-center px-2.5 py-1 text-xs font-semibold rounded-md border shadow-sm ${isApproved ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20' : statusConfig[(existingApplication.status || 'draft') as keyof typeof statusConfig]?.color || 'bg-slate-100'
                                 }`}>
-                                {statusConfig[existingApplication.status || '']?.label || (isApproved ? 'Aprobada' : existingApplication.status)}
+                                {statusConfig[(existingApplication.status || 'draft') as keyof typeof statusConfig]?.label || (isApproved ? 'Aprobada' : existingApplication.status)}
                             </span>
                         )}
                     </div>
@@ -359,8 +353,8 @@ export default function ApplicationStatus({
 
                                                 <div className="flex items-center gap-1.5 flex-wrap">
                                                     <span>Cambió el estado a:</span>
-                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border shadow-sm ${statusConfig[item.data.new_status || '']?.color || 'bg-slate-100'}`}>
-                                                        {statusConfig[item.data.new_status || '']?.label || item.data.new_status}
+                                                    <span className={`font-bold px-1.5 py-0.5 text-[10px] rounded-full border shadow-sm ${statusConfig[(item.data.new_status || 'draft') as keyof typeof statusConfig]?.color || 'bg-slate-100'}`}>
+                                                        {statusConfig[(item.data.new_status || 'draft') as keyof typeof statusConfig]?.label || item.data.new_status}
                                                     </span>
                                                     {item.data.justification && (
                                                         <span className="text-slate-400 dark:text-slate-500 italic block sm:inline">
