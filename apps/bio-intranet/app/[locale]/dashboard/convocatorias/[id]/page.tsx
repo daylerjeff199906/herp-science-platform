@@ -83,7 +83,8 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                             id,
                             content,
                             created_at,
-                            author:profiles(first_name, last_name, email)
+                            author:profiles!fk_comment_author(id, first_name, last_name, email),
+                            file:submission_files!fk_comment_file(file_name)
                         )
                     `)
                     .eq('call_id', call.id)

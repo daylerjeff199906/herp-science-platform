@@ -76,13 +76,13 @@ export default function ApplicationStatus({
             type: 'comment' as const,
             id: `comment-${c.id || Math.random()}`,
             date: new Date(c.created_at || Date.now()),
-            data: { content: c.content, author: c.author }
+            data: c
         })),
         ...(sub.history || []).map((h) => ({
             type: 'history' as const,
             id: `history-${h.id || Math.random()}`,
             date: new Date(h.created_at || Date.now()),
-            data: { new_status: h.new_status, justification: h.justification }
+            data: h
         }))
     ].sort((a, b) => a.date.getTime() - b.date.getTime()) : existingApplication ? [
         {
@@ -304,9 +304,14 @@ export default function ApplicationStatus({
                                                 {/* Github Comment Box */}
                                                 <div className="rounded-xl border bg-background shadow-sm overflow-hidden text-sm">
                                                     <div className="border-b px-4 py-2 text-[11px] font-medium text-slate-500 dark:text-slate-400 flex justify-between items-center">
-                                                        <div className="flex items-center gap-1.5">
+                                                        <div className="flex items-center gap-1.5 flex-wrap">
                                                             <span className="font-semibold text-foreground">{authorName || 'Comité'}</span>
                                                             <span>comentó</span>
+                                                            {(item.data as any).file?.file_name && (
+                                                                <span className="text-[10px] px-1.5 py-0 bg-slate-100 border border-slate-200 text-slate-600 rounded-full flex items-center gap-1 font-medium shadow-none">
+                                                                    <FileText className="h-2.5 w-2.5 text-slate-400" /> Sobre: {(item.data as any).file.file_name}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                         <span>{format(item.date, "dd/MM/yyyy HH:mm")}</span>
                                                     </div>
