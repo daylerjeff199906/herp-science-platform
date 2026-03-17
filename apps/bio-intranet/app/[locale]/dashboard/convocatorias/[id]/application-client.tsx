@@ -139,13 +139,13 @@ export function ApplicationClient({
         try {
             const { error: submitError } = await supabase
                 .from('call_applications')
-                .insert({
+                .upsert({
                     call_id: callId,
                     profile_id: profileId,
                     submitted_data: data,
                     status: 'approved',
                     submitted_at: new Date().toISOString(),
-                })
+                }, { onConflict: 'call_id, profile_id' })
 
             if (submitError) throw submitError
 

@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CheckCircle2, Calendar, FileText, Info } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ApplicationClient } from "./application-client";
 import { RichTextRenderer } from '@/components/RichTextRenderer';
@@ -70,6 +71,19 @@ export default function ApplicationStatus({
     const [activeTab, setActiveTab] = useState<'desc' | 'form' | 'tracking'>(
         existingApplication && existingApplication.status !== 'draft' ? 'tracking' : (existingApplication?.status === 'draft' ? 'form' : 'desc')
     );
+
+    const supabase = createClient();
+    const handleRevertToDraft = async () => {
+        if (!existingApplication?.submission?.id) return;
+        const { error } = await supabase
+            .from('event_submissions')
+            .update({ status: 'draft' })
+            .eq('id', existingApplication.submission.id);
+
+        if (!error) {
+            window.location.reload();
+        }
+    };
 
     const sub = existingApplication?.submission;
     const timeline = sub ? [
@@ -140,6 +154,16 @@ export default function ApplicationStatus({
                                 Ver mis postulaciones
                             </Button>
                         </Link>
+                        {existingApplication && existingApplication.status !== 'draft' && !isClosed && !isApproved && (
+                            <Button
+                                onClick={handleRevertToDraft}
+                                variant="outline"
+                                size="sm"
+                                className="rounded-md shadow-sm text-xs px-3 h-8 bg-amber-50 text-amber-600 hover:bg-amber-100 border-amber-200"
+                            >
+                                Volver a Borrador
+                            </Button>
+                        )}
                         {existingApplication && (
                             <span className={`flex items-center px-2.5 py-1 text-xs font-semibold rounded-md border shadow-sm ${isApproved ? 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20' : statusConfig[existingApplication.status || '']?.color || 'bg-slate-100'
                                 }`}>
