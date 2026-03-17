@@ -5,7 +5,7 @@ import { LayoutWrapper } from '@/components/layout-wrapper'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import Link from 'next/link'
-import { CheckCircle2, Clock, FileText, ArrowRight, ExternalLink } from 'lucide-react'
+import { CheckCircle2, Clock, FileText, ArrowRight, ExternalLink, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { HeaderSection } from '@/components/header-section'
 import { EmptyState } from '@/components/empty-state'
@@ -108,7 +108,7 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                                             <summary className="cursor-pointer text-muted-foreground group-hover/details:text-primary font-medium flex items-center transition-colors">
                                                                 <FileText className="w-3.5 w-3.5 mr-1" /> Ver datos enviados
                                                             </summary>
-                                                            <ul className="mt-1.5 space-y-1 pl-3 border-l-2 border-primary/20 bg-muted/20 p-2 rounded-md">
+                                                            <ul className="mt-1.5 space-y-1 pl-3 border-l-2 border-primary/20 bg-muted/20 p-2 rounded">
                                                                 {Object.entries(app.submitted_data).map(([key, value]) => {
                                                                     const field = (call?.form_schema as any[])?.find((f: any) => f.id === key);
                                                                     const label = field?.label || key;
@@ -117,7 +117,7 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                                                             <span className="font-semibold text-foreground/80">{label}:</span>{' '}
                                                                             {typeof value === 'string' && value.startsWith('http') ? (
                                                                                 <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium inline-flex items-center">
-                                                                                     <ExternalLink className="h-2.5 w-2.5 mr-0.5" /> Ver archivo
+                                                                                    <ExternalLink className="h-2.5 w-2.5 mr-0.5" /> Ver archivo
                                                                                 </a>
                                                                             ) : typeof value === 'boolean' ? (value ? 'Sí' : 'No') : String(value)}
                                                                         </li>
@@ -146,7 +146,20 @@ export default async function MisPostulacionesPage({ params }: { params: Promise
                                                         {isApproved ? (
                                                             <><CheckCircle2 className="w-3 h-3 mr-1.5" /> Aprobada</>
                                                         ) : (
-                                                            <><Clock className="w-3 h-3 mr-1.5" /> En Revisión</>
+                                                            <>
+                                                                {
+                                                                    app.status === 'submitted' && <><Clock className="w-3 h-3 mr-1.5" /> En Revisión</>
+                                                                }
+                                                                {
+                                                                    app.status === 'draft' && <><Clock className="w-3 h-3 mr-1.5" /> Borrador</>
+                                                                }
+                                                                {
+                                                                    app.status === 'rejected' && <><XCircle className="w-3 h-3 mr-1.5" /> Rechazada</>
+                                                                }
+                                                                {
+                                                                    app.status === 'approved' && <><CheckCircle2 className="w-3 h-3 mr-1.5" /> Aprobada</>
+                                                                }
+                                                            </>
                                                         )}
                                                     </div>
                                                 </div>

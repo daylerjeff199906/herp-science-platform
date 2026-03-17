@@ -3,14 +3,12 @@ import { cookies } from 'next/headers'
 import { getTranslations } from 'next-intl/server'
 import { LayoutWrapper } from '@/components/layout-wrapper'
 import { notFound } from 'next/navigation'
-import { Calendar, Users, Info, FileText, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Calendar, Users, Info, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ApplicationClient } from './application-client'
-import { RichTextRenderer } from '@/components/RichTextRenderer'
-import { LocalizedRichTextContent } from '@/types/editor'
+import ApplicationStatus from './application-status'
 
 export default async function ConvocatoriaDetailPage({ params }: { params: Promise<{ locale: string, id: string }> }) {
     const { locale, id } = await params;
@@ -63,6 +61,40 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                 .maybeSingle()
 
             existingApplication = maxApp
+            // Fetch submission with history for the tracking timeline
+            if (maxApp) {
+                const { data: submission } = await supabase
+                    .from('event_submissions')
+                    .select(`
+                        id,
+                        status,
+                        metadata,
+                        history:submission_history(
+                            id,
+                            old_status,
+                            new_status,
+                            justification,
+                            created_at,
+                            profile:profiles(first_name, last_name, email)
+                        ),
+                        comments:submission_comments(
+                            id,
+                            content,
+                            created_at,
+                            author:profiles!fk_comment_author(id, first_name, last_name, email),
+                            file:submission_files!fk_comment_file(file_name)
+                        )
+                    `)
+                    .eq('call_id', call.id)
+                    .eq('profile_id', profile.id)
+                    .maybeSingle();
+                if (submission) {
+                    existingApplication = {
+                        ...existingApplication,
+                        submission: submission
+                    };
+                }
+            }
 
             // Check if already is participant
             if (call.main_event_id) {
@@ -91,7 +123,7 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
 
     return (
         <LayoutWrapper sectionTitle={t('Navigation.convocatorias')}>
-            <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-5xl">
+            <div className="container mx-auto p-4 md:p-6 lg:p-8 max-w-6xl">
                 <div className="mb-6">
                     <Link href={`/${locale}/dashboard/convocatorias`}>
                         <Button variant="ghost" size="sm" className="pl-0 text-muted-foreground hover:text-foreground">
@@ -153,120 +185,16 @@ export default async function ConvocatoriaDetailPage({ params }: { params: Promi
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Main content - 2 columns on large screens */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div>
-                            {/* Short summary or intro could go here but we use description */}
-                        </div>
-
-                        <div className="prose prose-slate dark:prose-invert max-w-none">
-                            <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Descripción</h2>
-                            <div className="whitespace-pre-wrap text-muted-foreground mb-6">
-                                {(typeof call.description === 'object' ? call.description?.[locale] : call.description) || 'No hay descripción detallada disponible.'}
-                            </div>
-
-                            {/* Rich Text Content */}
-                            {call.content && (
-                                <RichTextRenderer
-                                    content={
-                                        (() => {
-                                            let d = call.content;
-                                            if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return null; } }
-                                            if (!d || typeof d !== 'object') return null;
-                                            if (Array.isArray((d as any).blocks)) return d as any;
-                                            const loc = (d as any)?.[locale];
-                                            if (loc && Array.isArray(loc.blocks)) return loc;
-                                            if (Array.isArray(d)) return { blocks: d };
-                                            return null;
-                                        })()
-                                    }
-                                />
-                            )}
-                        </div>
-
-                        {/* Form Section */}
-                        <div className="mt-12 bg-card rounded-xl border shadow-sm p-6 overflow-hidden">
-                            <h2 className="text-lg mb-6 flex items-center">
-                                Formulario de Postulación
-                            </h2>
-
-                            {isParticipant ? (
-                                <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-6 rounded-lg flex items-start border border-green-200 dark:border-green-900/50">
-                                    <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <h3 className="font-bold text-lg mb-1">Ya eres participante</h3>
-                                        <p>Tu postulación fue aprobada y ya estás registrado oficialmente en este evento.</p>
-                                    </div>
-                                </div>
-                            ) : existingApplication ? (
-                                <div className="relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-primary/5 dark:from-blue-500/10 dark:to-primary/10 z-0" />
-                                    <div className="relative z-10 p-8 text-center space-y-4">
-                                        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 ring-8 ring-blue-50 dark:ring-blue-900/10">
-                                            <CheckCircle2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                                        </div>
-                                        <h3 className="text-2xl font-bold tracking-tight">¡Ya estás en camino!</h3>
-                                        <p className="text-muted-foreground max-w-md mx-auto">
-                                            Tu postulación para <strong>{typeof call.title === 'object' ? call.title?.[locale] : call.title}</strong> fue recibida el {format(new Date(existingApplication.submitted_at), "d 'de' MMMM", { locale: es })}.
-                                        </p>
-
-                                        {existingApplication.submitted_data && Object.keys(existingApplication.submitted_data).length > 0 && (
-                                            <div className="bg-background dark:bg-muted/30 rounded-xl p-4 text-left border shadow-sm max-w-md mx-auto mt-4 space-y-2">
-                                                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-bold border-b pb-1">Datos Enviados</h4>
-                                                <dl className="grid grid-cols-1 gap-x-4 gap-y-2">
-                                                    {Object.entries(existingApplication.submitted_data).map(([key, value]) => {
-                                                        const field = (call.form_schema as any[])?.find((f: any) => f.id === key);
-                                                        const label = field?.label || key;
-                                                        return (
-                                                            <div key={key} className="flex flex-col">
-                                                                <dt className="text-xs font-semibold text-foreground/80">{label}</dt>
-                                                                <dd className="text-sm text-muted-foreground break-all">
-                                                                    {typeof value === 'string' && value.startsWith('http') ? (
-                                                                        <a href={value} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline inline-flex items-center">
-                                                                            <FileText className="h-3.5 w-3.5 mr-1" /> Ver archivo
-                                                                        </a>
-                                                                    ) : typeof value === 'boolean' ? (value ? 'Sí' : 'No') : String(value)}
-                                                                </dd>
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </dl>
-                                            </div>
-                                        )}
-
-                                        <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
-                                            <Link href={`/${locale}/dashboard/convocatorias/mis-postulaciones`}>
-                                                <Button variant="outline" className="rounded-full px-8">
-                                                    Ver mis postulaciones
-                                                </Button>
-                                            </Link>
-                                            <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-wider border border-blue-500/20">
-                                                Estado: {existingApplication.status === 'approved' ? 'Aprobada' : existingApplication.status === 'draft' ? 'Recibida' : existingApplication.status}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : isClosed ? (
-                                <div className="bg-muted p-6 text-center rounded-lg border">
-                                    <p className="text-muted-foreground font-medium">Esta convocatoria ya no acepta postulaciones.</p>
-                                </div>
-                            ) : userProfile ? (
-                                <ApplicationClient
-                                    callId={call.id}
-                                    schema={call.form_schema || []}
-                                    profileId={userProfile.id}
-                                    locale={locale}
-                                    call={call}
-                                />
-                            ) : (
-                                <div className="bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 p-6 rounded-lg flex items-start">
-                                    <Info className="h-6 w-6 mr-3 flex-shrink-0 mt-0.5" />
-                                    <div>
-                                        <h3 className="font-bold">Debes completar tu perfil</h3>
-                                        <p>No se pudo encontrar tu perfil de usuario. Por favor, asegúrate de haber completado tu registro.</p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <ApplicationStatus
+                            isParticipant={isParticipant}
+                            existingApplication={existingApplication}
+                            isClosed={isClosed}
+                            call={call}
+                            userProfile={userProfile}
+                            locale={locale}
+                        />
                     </div>
+
 
                     {/* Right sidebar details */}
                     <div className="space-y-6">

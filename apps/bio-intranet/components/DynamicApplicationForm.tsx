@@ -4,14 +4,15 @@ import React, { useState, useEffect } from 'react';
 import { FormField, DynamicFormProps } from '@/types/forms';
 import { Paperclip, X, Loader2, UploadCloud, ExternalLink } from 'lucide-react';
 
-export default function DynamicApplicationForm({ 
-    schema, 
-    onSubmit, 
+export default function DynamicApplicationForm({
+    schema,
+    onSubmit,
     isLoading = false,
     initialData = {},
     onFileUploadSuccess,
-    onFileRemoved
-}: DynamicFormProps) {
+    onFileRemoved,
+    disabled = false
+}: DynamicFormProps & { disabled?: boolean }) {
     // Estado para guardar las respuestas del usuario
     const [formData, setFormData] = useState<Record<string, any>>(initialData);
     const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
@@ -27,6 +28,7 @@ export default function DynamicApplicationForm({
     }, [initialData]);
 
     const handleChange = (id: string, value: any) => {
+        if (disabled) return;
         setFormData((prev) => ({
             ...prev,
             [id]: value,
@@ -34,7 +36,7 @@ export default function DynamicApplicationForm({
     };
 
     const handleUploadFile = async (id: string, file: File | undefined) => {
-        if (!file) return;
+        if (!file || disabled) return;
 
         setUploadingFields((prev) => ({ ...prev, [id]: true }));
         try {
@@ -54,7 +56,7 @@ export default function DynamicApplicationForm({
 
             const data = await res.json();
             handleChange(id, data.url);
-            
+
             // Notificar al padre para guardar progreso
             if (onFileUploadSuccess) {
                 onFileUploadSuccess(id, data.url, file);
@@ -68,11 +70,12 @@ export default function DynamicApplicationForm({
     };
 
     const handleRemoveFile = async (id: string) => {
+        if (disabled) return;
         const url = formData[id];
         if (!url) return;
 
         handleChange(id, null); // Clear immediately in UI
-        
+
         // Notificar al padre para quitar del historial
         if (onFileRemoved) {
             onFileRemoved(id, url);
@@ -91,6 +94,7 @@ export default function DynamicApplicationForm({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (disabled) return;
         // Verificar si hay campos subiendo
         const isStillUploading = Object.values(uploadingFields).some(Boolean);
         if (isStillUploading) {
@@ -107,7 +111,8 @@ export default function DynamicApplicationForm({
                     <select
                         id={field.id}
                         required={field.required}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        disabled={disabled}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
                     >
@@ -124,7 +129,8 @@ export default function DynamicApplicationForm({
                         id={field.id}
                         required={field.required}
                         placeholder={field.placeholder}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        disabled={disabled}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         rows={4}
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
@@ -138,7 +144,8 @@ export default function DynamicApplicationForm({
                             type="checkbox"
                             id={field.id}
                             required={field.required}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            disabled={disabled}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
                             onChange={(e) => handleChange(field.id, e.target.checked)}
                             checked={formData[field.id] || false}
                         />
@@ -161,9 +168,9 @@ export default function DynamicApplicationForm({
                                     <a href={formData[field.id]} target="_blank" rel="noopener noreferrer" className="p-1.5 hover:bg-muted rounded-md text-muted-foreground hover:text-foreground transition-colors">
                                         <ExternalLink className="h-4 w-4" />
                                     </a>
-                                    <button 
-                                        type="button" 
-                                        onClick={() => handleRemoveFile(field.id)} 
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveFile(field.id)}
                                         className="p-1.5 hover:bg-red-50 hover:text-red-500 rounded-md text-muted-foreground transition-colors"
                                     >
                                         <X className="h-4 w-4" />
@@ -203,8 +210,9 @@ export default function DynamicApplicationForm({
                         type={field.type}
                         id={field.id}
                         required={field.required}
+                        disabled={disabled}
                         placeholder={field.placeholder}
-                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-background text-foreground disabled:bg-muted disabled:text-muted-foreground"
                         onChange={(e) => handleChange(field.id, e.target.value)}
                         value={formData[field.id] || ''}
                     />
@@ -215,7 +223,7 @@ export default function DynamicApplicationForm({
     const isUploadingAny = Object.values(uploadingFields).some(Boolean);
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mt-4">
+        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-4xl mt-4">
             {schema.map((field) => (
                 <div key={field.id} className="flex flex-col space-y-1">
                     {field.type !== 'boolean' && (
@@ -227,19 +235,21 @@ export default function DynamicApplicationForm({
                 </div>
             ))}
 
-            <button
-                type="submit"
-                disabled={isLoading || isUploadingAny}
-                className="w-full py-2 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors disabled:opacity-50 mt-4 flex justify-center items-center"
-            >
-                {isLoading ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isLoading ? 'Enviando...' : 'Enviar Postulación'}</>
-                ) : isUploadingAny ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Subiendo archivos...</>
-                ) : (
-                    'Enviar Postulación'
-                )}
-            </button>
+            {!disabled && (
+                <button
+                    type="submit"
+                    disabled={isLoading || isUploadingAny}
+                    className="w-full py-2 px-4 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors disabled:opacity-50 mt-4 flex justify-center items-center"
+                >
+                    {isLoading ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {isLoading ? 'Enviando...' : 'Enviar Postulación'}</>
+                    ) : isUploadingAny ? (
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Subiendo archivos...</>
+                    ) : (
+                        'Enviar Postulación'
+                    )}
+                </button>
+            )}
         </form>
     );
 }

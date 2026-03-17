@@ -9,42 +9,67 @@ import confetti from 'canvas-confetti'
 import { notifyApplicationSuccess } from '@/app/actions/convocatorias'
 import { toast } from 'sonner'
 
+interface EventCallInput {
+    id?: string;
+    title?: string | Record<string, string | undefined>;
+    description?: string | Record<string, string | undefined>;
+    content?: unknown;
+    auto_approve?: boolean;
+    form_schema?: unknown[];
+    main_event_id?: string | null;
+    edition_id?: string | null;
+    role?: {
+        name?: string | Record<string, string | undefined>;
+    };
+}
+
 export function ApplicationClient({
     callId,
     schema,
     profileId,
     locale,
-    call
+    call,
+    disabled = false,
+    initialSubmissionId = null,
+    initialDataProp = {}
 }: {
     callId: string
     schema: FormField[]
     profileId: string
     locale: string
-    call: any
+    call: EventCallInput
+    disabled?: boolean
+    initialSubmissionId?: string | null
+    initialDataProp?: Record<string, any>
 }) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [submissionId, setSubmissionId] = useState<string | null>(null)
-    const [initialData, setInitialData] = useState<Record<string, any>>({})
-    
+    const [submissionId, setSubmissionId] = useState<string | null>(initialSubmissionId)
+    const [initialData, setInitialData] = useState<Record<string, any>>(initialDataProp)
+
     const router = useRouter()
     const supabase = createClient()
 
-    // Cargar borrador (Draft) cargado previamente
-    useEffect(() => {
-        const fetchDraft = async () => {
-             const { data: draft } = await supabase
-                 .from('event_submissions')
-                 .select('id, metadata')
-                 .eq('call_id', callId)
-                 .eq('profile_id', profileId)
-                 .eq('status', 'draft')
-                 .maybeSingle()
+    const isAutoApproved = call?.auto_approve;
+    const statusCall = isAutoApproved ? 'approved' : 'submitted';
 
-             if (draft) {
-                 setSubmissionId(draft.id)
-                 setInitialData(draft.metadata || {})
-             }
+    // Cargar borrador (Draft) cargado previamente o actualizar de props
+    useEffect(() => {
+        if (submissionId) return; // Ya se cargó desde Props
+
+        const fetchDraft = async () => {
+            const { data: draft } = await supabase
+                .from('event_submissions')
+                .select('id, metadata')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .eq('status', 'draft')
+                .maybeSingle()
+
+            if (draft) {
+                setSubmissionId(draft.id)
+                setInitialData(draft.metadata || {})
+            }
         }
         fetchDraft()
     }, [callId, profileId, supabase])
@@ -83,6 +108,23 @@ export function ApplicationClient({
                     .eq('id', currentSubId);
             }
 
+            // También actualizar submitted_data en call_applications si ya existe (postulación enviada)
+            const { data: existingApp } = await supabase
+                .from('call_applications')
+                .select('submitted_data')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .maybeSingle();
+
+            if (existingApp) {
+                const updatedSubmittedData = { ...existingApp.submitted_data, [id]: url };
+                await supabase
+                    .from('call_applications')
+                    .update({ submitted_data: updatedSubmittedData })
+                    .eq('call_id', callId)
+                    .eq('profile_id', profileId);
+            }
+
             // 2. Insertar archivo en la tabla de archivos
             await supabase.from('submission_files').insert({
                 submission_id: currentSubId,
@@ -109,7 +151,7 @@ export function ApplicationClient({
                 .eq('submission_id', submissionId)
                 .eq('file_url', url);
 
-            // 2. Limpiar metadata
+            // 2. Limpiar metadata en event_submissions
             const updatedMetadata = { ...initialData };
             delete updatedMetadata[id];
             setInitialData(updatedMetadata);
@@ -118,6 +160,35 @@ export function ApplicationClient({
                 .from('event_submissions')
                 .update({ metadata: updatedMetadata })
                 .eq('id', submissionId);
+
+            // 3. También limpiar submitted_data en call_applications (si ya fue enviada)
+            const { data: existingApp } = await supabase
+                .from('call_applications')
+                .select('submitted_data')
+                .eq('call_id', callId)
+                .eq('profile_id', profileId)
+                .maybeSingle();
+
+            if (existingApp?.submitted_data) {
+                const updatedSubmittedData = { ...existingApp.submitted_data };
+                delete updatedSubmittedData[id];
+                await supabase
+                    .from('call_applications')
+                    .update({ submitted_data: updatedSubmittedData })
+                    .eq('call_id', callId)
+                    .eq('profile_id', profileId);
+            }
+
+            // 4. Eliminar del storage de Cloudflare R2
+            try {
+                await fetch('/api/r2/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url }),
+                });
+            } catch (r2err) {
+                console.error('Error deleting file from R2:', r2err);
+            }
 
         } catch (err) {
             console.error('Error quitando registro de archivo:', err);
@@ -131,13 +202,13 @@ export function ApplicationClient({
         try {
             const { error: submitError } = await supabase
                 .from('call_applications')
-                .insert({
+                .upsert({
                     call_id: callId,
                     profile_id: profileId,
                     submitted_data: data,
-                    status: 'approved',
+                    status: statusCall,
                     submitted_at: new Date().toISOString(),
-                })
+                }, { onConflict: 'call_id, profile_id' })
 
             if (submitError) throw submitError
 
@@ -145,7 +216,7 @@ export function ApplicationClient({
             if (submissionId) {
                 await supabase
                     .from('event_submissions')
-                    .update({ status: 'approved', metadata: data })
+                    .update({ status: statusCall, metadata: data })
                     .eq('id', submissionId);
             }
 
@@ -183,6 +254,7 @@ export function ApplicationClient({
                 onSubmit={handleSubmit}
                 isLoading={isSubmitting}
                 initialData={initialData}
+                disabled={disabled}
                 onFileUploadSuccess={handleFileUploadSuccess}
                 onFileRemoved={handleFileRemoved}
             />
