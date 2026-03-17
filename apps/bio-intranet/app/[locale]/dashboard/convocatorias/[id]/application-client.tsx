@@ -9,6 +9,20 @@ import confetti from 'canvas-confetti'
 import { notifyApplicationSuccess } from '@/app/actions/convocatorias'
 import { toast } from 'sonner'
 
+interface EventCallInput {
+    id?: string;
+    title?: string | Record<string, string | undefined>;
+    description?: string | Record<string, string | undefined>;
+    content?: unknown;
+    auto_approve?: boolean;
+    form_schema?: unknown[];
+    main_event_id?: string | null;
+    edition_id?: string | null;
+    role?: {
+        name?: string | Record<string, string | undefined>;
+    };
+}
+
 export function ApplicationClient({
     callId,
     schema,
@@ -23,7 +37,7 @@ export function ApplicationClient({
     schema: FormField[]
     profileId: string
     locale: string
-    call: any
+    call: EventCallInput
     disabled?: boolean
     initialSubmissionId?: string | null
     initialDataProp?: Record<string, any>
