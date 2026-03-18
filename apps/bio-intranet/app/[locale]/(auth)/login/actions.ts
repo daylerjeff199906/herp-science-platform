@@ -81,17 +81,17 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         }
 
         // 1. Buscamos si el usuario tiene algún rol mapeado a la app interna
-        for (const role of roles) {
-            if (roleRedirects[role]) {
-                revalidatePath('/', 'layout')
-                return { redirectUrl: roleRedirects[role] }
-            }
+        const activeRole = roles.find(r => roleRedirects[r])
+        if (activeRole) {
+            revalidatePath('/', 'layout')
+            const redirectUrl = resolveRedirect(redirectTo, roleRedirects[activeRole] || `/${locale}/admin`, locale)
+            return { redirectUrl }
         }
 
         // 2. Si tiene 'client', 'user', o no tiene roles, lo mandamos hacia la otra plataforma
         if (roles.includes('client') || roles.includes('user') || roles.length === 0) {
-            const nextParam = redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''
-            const redirectUrl = `${platformUrl}/${locale}/dashboard${nextParam}`
+            const redirectParam = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''
+            const redirectUrl = `${platformUrl}/${locale}/dashboard${redirectParam}`
 
             revalidatePath('/', 'layout')
             return { redirectUrl }
@@ -139,7 +139,7 @@ export async function signout(redirectTo?: string, locale: string = 'es') {
     revalidatePath('/', 'layout')
 
     if (redirectTo) {
-        redirect(`/${locale}/login?next=${encodeURIComponent(redirectTo)}`)
+        redirect(`/${locale}/login?redirect=${encodeURIComponent(redirectTo)}`)
     }
 
     redirect(`/${locale}/login`)
