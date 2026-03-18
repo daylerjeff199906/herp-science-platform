@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react'
 import { Language } from '@/types/language'
-import { Card } from '@repo/ui'
+import { Card, CardContent } from '@repo/ui'
 import { useTranslations } from 'next-intl'
-import { Edit, Trash2, Globe, Users, Lock, ChevronDown, ChevronUp, Star, GraduationCap } from 'lucide-react'
+import { Edit, Trash2, Globe, Users, Lock, ChevronDown, ChevronUp, Star, GraduationCap, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LanguageModal } from './language-modal'
 import { DeleteLanguageDialog } from './language-delete-dialog'
@@ -43,37 +43,42 @@ export function LanguageList({ languages }: LanguageListProps) {
         setSelectedLanguage(null)
     }
 
-    if (languages.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center p-8 text-center border rounded-lg bg-muted/10 border-dashed">
-                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <GraduationCap className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-semibold text-lg mb-1">{t('title')}</h3>
-                <p className="text-sm text-muted-foreground max-w-sm mb-4">
-                    {t('description')}
-                </p>
-                <LanguageCreateButton />
-            </div>
-        )
-    }
+
 
     return (
-        <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">{t('title')}</h3>
+        <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
+                <div className="space-y-1">
+                    <h2 className="text-2xl font-bold tracking-tight">{t('title')}</h2>
+                    <p className="text-muted-foreground">{t('description')}</p>
+                </div>
                 <LanguageCreateButton />
             </div>
 
             <div className="grid gap-4">
-                {languages.map((language) => (
-                    <LanguageItem
-                        key={language.id}
-                        language={language}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                ))}
+                {languages.length === 0 ? (
+                    <Card className="border-dashed">
+                        <CardContent className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
+                            <GraduationCap className="h-10 w-10 mb-4 opacity-20" />
+                            <h3 className="mt-2 text-lg font-semibold">{t('emptyStateTitle')}</h3>
+                            <p className="mb-2 mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
+                                {t('emptyStateDescription')}
+                            </p>
+                            <div className="mt-2">
+                                <LanguageCreateButton />
+                            </div>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    languages.map((language) => (
+                        <LanguageItem
+                            key={language.id}
+                            language={language}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
+                    ))
+                )}
             </div>
 
             <LanguageModal
@@ -100,7 +105,8 @@ function LanguageCreateButton() {
 
     return (
         <>
-            <Button onClick={() => setIsOpen(true)} variant="outline" size="sm">
+            <Button onClick={() => setIsOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
                 {t('add')}
             </Button>
             <LanguageModal

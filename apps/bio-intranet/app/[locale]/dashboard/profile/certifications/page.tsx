@@ -10,6 +10,6 @@ export default async function CertificationsPage() {
     const t = await getTranslations('Profile.certifications')
 
     return (
-        <CertificationList certifications={certifications as any} />
+        <CertificationList certifications={certifications} />
     )
 }

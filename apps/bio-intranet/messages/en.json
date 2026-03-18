@@ -208,6 +208,8 @@
     "language": {
       "title": "Languages",
       "description": "Manage your languages.",
+      "emptyStateTitle": "No languages added yet",
+      "emptyStateDescription": "Add the languages you speak to showcase your communication skills.",
       "add": "Add Language",
       "edit": "Edit",
       "form": {

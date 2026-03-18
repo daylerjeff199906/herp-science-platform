@@ -212,6 +212,8 @@
     "language": {
       "title": "Idiomas",
       "description": "Gestiona tus idiomas.",
+      "emptyStateTitle": "No hay idiomas añadidos aún",
+      "emptyStateDescription": "Añade los idiomas que hablas para mostrar tu dominio en comunicación.",
       "add": "Agregar Idioma",
       "edit": "Editar",
       "form": {
@@ -337,6 +339,8 @@
         "visibilityTrusted": "Solo Confianza",
         "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
         "visibilityPrivate": "Privado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
         "endDateError": "La fecha de expiración debe ser posterior a la de emisión"
       }
     },
