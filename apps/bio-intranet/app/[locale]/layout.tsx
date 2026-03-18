@@ -9,8 +9,8 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata = {
-    title: "B.E.A IIAP",
-    description: "Plataforma de gestión científica B.E.A IIAP",
+    title: "Intranet IIAP",
+    description: "Plataforma de gestión científica - Instituto de Investigaciones de la Amazonía Peruana",
 };
 
 export default async function RootLayout({

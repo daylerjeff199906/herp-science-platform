@@ -553,7 +553,7 @@
   "Home": {
     "instituteName": "Research Institute of the Peruvian Amazon",
     "nav": {
-      "title": "B.E.A IIAP",
+      "title": "IIAP",
       "login": "Log In",
       "join": "Join Us"
     },
@@ -561,13 +561,13 @@
       "titlePart1": "Join the IIAP Scientific Community:",
       "titlePart2": "Your home for building a",
       "titleHighlight": "scientific legacy",
-      "description": "You don't have to research alone. Inside B.E.A IIAP, connect with other researchers, access digital resources, and manage your academic profile integrated with IIAP services.",
-      "ctaPrimary": "Enter B.E.A IIAP"
+      "description": "You don't have to research alone. Inside the IIAP Intranet, connect with other researchers, access digital resources, and manage your academic profile integrated with IIAP services.",
+      "ctaPrimary": "Enter IIAP Intranet"
     }
   },
   "Dashboard": {
     "title": "Dashboard",
-    "welcomeMessage": "Welcome to B.E.A IIAP! Your profile has been created successfully.",
+    "welcomeMessage": "Welcome to IIAP Intranet! Your profile has been created successfully.",
     "protectedArea": "This is the protected dashboard area.",
     "welcomeBack": "Welcome back, {name}!"
   },
@@ -631,10 +631,10 @@
   },
   "Email": {
     "welcome": {
-      "subject": "Welcome to B.E.A IIAP!",
+      "subject": "Welcome to IIAP Intranet!",
       "title": "Welcome to the community!",
       "greeting": "Hello {name},",
-      "message": "We're excited to have you as part of B.E.A IIAP. Your profile has been created successfully and you can now start connecting with other researchers.",
+      "message": "We're excited to have you as part of IIAP Intranet. Your profile has been created successfully and you can now start connecting with other researchers.",
       "cta": "Go to Dashboard",
       "footer": "If you have any questions, feel free to contact us."
     }

@@ -46,7 +46,6 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
                     {/* Logo y Nombre de la App - Arriba */}
                     <div className="text-white">
                         <Logo
-                            name={AUTH_CONFIG.appName}
                             textClassName="text-white"
                             imageClassName="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white"
                             size="lg"

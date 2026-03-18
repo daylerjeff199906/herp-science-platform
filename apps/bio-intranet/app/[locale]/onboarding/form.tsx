@@ -147,10 +147,8 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
       {/* Header con Logo */}
       <div className="text-center mb-8  flex flex-col items-center">
         <Logo
-          name={'B.E.A'}
           textClassName="text-black"
           imageClassName="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white"
-          description='Bio Ecosistema Avanzado'
           showDescription
           orientation='vertical'
           size="lg"
