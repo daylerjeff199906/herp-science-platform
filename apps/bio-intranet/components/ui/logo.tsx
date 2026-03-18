@@ -18,10 +18,10 @@ interface LogoProps {
 
 export function Logo({
     image,
-    name = "B.E.A IIAP",
-    description,
+    name = "IIAP",
+    description = "Instituto de Investigaciones de la Amazonía Peruana",
     showName = true,
-    showDescription = false,
+    showDescription = true,
     orientation = 'horizontal',
     size = 'md',
     className,
@@ -38,19 +38,19 @@ export function Logo({
         },
         md: {
             gap: "gap-3",
-            iconSize: "w-8 h-8",
+            iconSize: "w-20 h-20",
             textSize: "text-lg",
             descSize: "text-xs"
         },
         lg: {
             gap: "gap-4",
-            iconSize: "w-12 h-12",
+            iconSize: "w-24 h-24",
             textSize: "text-3xl",
             descSize: "text-sm"
         },
         xl: {
             gap: "gap-5",
-            iconSize: "w-16 h-16",
+            iconSize: "w-32 h-32",
             textSize: "text-4xl",
             descSize: "text-base"
         }
@@ -79,8 +79,13 @@ export function Logo({
                     )}
                 </div>
             ) : (
-                <div className={cn("relative flex items-center justify-center shrink-0 p-2 border border-primary rounded-lg", config.iconSize, imageClassName)}>
-                    <Leaf className="w-8 h-8 text-primary" />
+                <div className={cn("relative flex items-center justify-center shrink-0 overflow-hidden", config.iconSize, imageClassName)}>
+                    <Image
+                        src="/brands/logo-iiap.webp"
+                        alt={name || "Logo IIAP"}
+                        fill
+                        className="object-contain w-full h-full"
+                    />
                 </div>
             )}
 

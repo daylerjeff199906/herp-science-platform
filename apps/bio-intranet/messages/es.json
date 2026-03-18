@@ -212,6 +212,8 @@
     "language": {
       "title": "Idiomas",
       "description": "Gestiona tus idiomas.",
+      "emptyStateTitle": "No hay idiomas añadidos aún",
+      "emptyStateDescription": "Añade los idiomas que hablas para mostrar tu dominio en comunicación.",
       "add": "Agregar Idioma",
       "edit": "Editar",
       "form": {
@@ -337,6 +339,8 @@
         "visibilityTrusted": "Solo Confianza",
         "visibilityTrustedDescription": "Visible solo para tus contactos de confianza.",
         "visibilityPrivate": "Privado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
         "endDateError": "La fecha de expiración debe ser posterior a la de emisión"
       }
     },
@@ -552,7 +556,7 @@
   "Home": {
     "instituteName": "Instituto de Investigaciones de la Amazonía Peruana",
     "nav": {
-      "title": "B.E.A IIAP",
+      "title": "IIAP",
       "login": "Iniciar Sesión",
       "join": "Únete"
     },
@@ -560,13 +564,13 @@
       "titlePart1": "Únete a la Comunidad Científica del IIAP:",
       "titlePart2": "Tu espacio para construir un",
       "titleHighlight": "legado científico",
-      "description": "No tienes que investigar solo. Dentro de B.E.A IIAP, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
-      "ctaPrimary": "Ingresar a B.E.A IIAP"
+      "description": "No tienes que investigar solo. Dentro de la Intranet IIAP, conecta con otros investigadores, accede a recursos digitales y gestiona tu perfil académico integrado con los servicios del IIAP.",
+      "ctaPrimary": "Ingresar a la Intranet IIAP"
     }
   },
   "Dashboard": {
     "title": "Panel de Control",
-    "welcomeMessage": "¡Bienvenido a B.E.A IIAP! Tu perfil ha sido creado exitosamente.",
+    "welcomeMessage": "¡Bienvenido a la Intranet IIAP! Tu perfil ha sido creado exitosamente.",
     "protectedArea": "Esta es el área protegida del panel de control.",
     "welcomeBack": "¡Bienvenido de vuelta, {name}!"
   },
@@ -630,10 +634,10 @@
   },
   "Email": {
     "welcome": {
-      "subject": "¡Bienvenido a B.E.A IIAP!",
+      "subject": "¡Bienvenido a la Intranet IIAP!",
       "title": "¡Bienvenido a la comunidad!",
       "greeting": "Hola {name},",
-      "message": "Nos emociona tenerte como parte de B.E.A IIAP. Tu perfil ha sido creado exitosamente y ahora puedes comenzar a conectar con otros investigadores.",
+      "message": "Nos emociona tenerte como parte de la Intranet IIAP. Tu perfil ha sido creado exitosamente y ahora puedes comenzar a conectar con otros investigadores.",
       "cta": "Ir al Dashboard",
       "footer": "Si tienes alguna pregunta, no dudes en contactarnos."
     }

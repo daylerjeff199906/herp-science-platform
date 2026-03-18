@@ -16,7 +16,7 @@ export function EmptyState({
     return (
         <div className={`flex flex-col items-center justify-center p-6 antialiased ${className}`}>
             {/* Tarjeta de Estado Vacío */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60 w-full max-w-sm p-10 flex flex-col items-center justify-center gap-6 transition-colors duration-300">
+            <div className="bg-background rounded-3xl shadow-sm w-full max-w-sm p-10 flex flex-col items-center justify-center gap-6 transition-colors duration-300">
 
                 {/* Estilos de animación embebidos */}
                 <style jsx>

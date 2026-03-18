@@ -66,9 +66,12 @@ export default function Page() {
                     {/* Centered Logo */}
                     <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                         <Link href={`/${locale}`} className="flex items-center justify-center">
-                            <div className={`px-4 py-2 border-2 transition-colors border-white`}>
-                                <span className={`text-xl font-bold tracking-wider text-white`}>
-                                    B.E.A IIAP
+                            <div className={`px-4 py-1.5 border-2 transition-colors border-white flex flex-col items-center`}>
+                                <span className={`text-xl uppercase font-extrabold tracking-wider text-white`}>
+                                    IIAP
+                                </span>
+                                <span className="text-[9px] uppercase font-light tracking-wide text-white/90 text-center max-w-[180px] leading-tight">
+                                    Instituto de Investigaciones de la Amazonía Peruana
                                 </span>
                             </div>
                         </Link>

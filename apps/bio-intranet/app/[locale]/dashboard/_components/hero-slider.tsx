@@ -43,7 +43,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
     const items = slides.length > 0 ? slides : [defaultSlide]
 
     return (
-        <div className="w-full py-6">
+        <div className="w-full">
             <Carousel
                 opts={{
                     align: "start",
@@ -64,7 +64,7 @@ export function HeroSlider({ slides = [] }: HeroSliderProps) {
                                         href={slide.href}
                                         target={slide.target}
                                         className={cn(
-                                            "block group relative overflow-hidden rounded-xl border bg-card text-card-foreground shadow transition-all focus:outline-none",
+                                            "block group relative overflow-hidden rounded-3xl border bg-card text-card-foreground shadow transition-all focus:outline-none",
                                             isFullClick ? "hover:shadow-lg focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer" : ""
                                         )}
                                     >

@@ -109,12 +109,12 @@ export default async function ConvocatoriasPage({
                                     </div>
 
                                     {/* Main Image */}
-                                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-border transition-all duration-300 group-hover:shadow-md group-hover:ring-primary/20">
+                                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-border transition-all duration-300 group-hover:shadow-md group-hover:ring-primary/20 max-h-48">
                                         {callImage ? (
                                             <img
                                                 src={callImage}
                                                 alt={callTitle}
-                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 max-h-48"
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-muted to-muted/50">
@@ -123,7 +123,7 @@ export default async function ConvocatoriasPage({
                                         )}
                                         {/* Role Badge Over Image */}
                                         <div className="absolute left-3 top-3">
-                                            <span className="inline-flex items-center rounded-full bg-background/90 backdrop-blur-sm border px-2.5 py-0.5 text-xs font-bold text-foreground shadow-sm">
+                                            <span className="inline-flex items-center rounded-full bg-background backdrop-blur-sm border px-2.5 py-0.5 text-xs font-bold text-foreground shadow-sm">
                                                 {callRole}
                                             </span>
                                         </div>

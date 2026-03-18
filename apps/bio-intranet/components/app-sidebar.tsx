@@ -20,8 +20,8 @@ import { getNavItems, getNavProjects } from '@/lib/constants/navigation'
 // Team data for the switcher
 const teams = [
   {
-    name: 'IIAP',
-    logo: Leaf,
+    name: 'Intranet IIAP',
+    logo: '/brands/logo-iiap.webp',
     plan: 'Instituto',
   },
 ]

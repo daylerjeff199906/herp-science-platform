@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
 import { Button } from '@repo/ui/components/ui/button'
 import { AlertCircle, Loader2, Leaf, ArrowRight } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   submitOnboarding,
   getActiveTopics,
@@ -56,6 +56,8 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
     researchInterests: '',
   })
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || searchParams.get('next')
 
   useEffect(() => {
     async function loadData() {
@@ -111,7 +113,11 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
         return
       }
 
-      router.push(`/${locale}/dashboard?welcome=true`)
+      let url = redirectTo || `/${locale}/dashboard?welcome=true`
+      if (!url.startsWith('http') && !url.startsWith(`/${locale}`)) {
+          url = `/${locale}${url.startsWith('/') ? url : '/' + url}`
+      }
+      router.push(url)
     } catch (err) {
       setError(t('Onboarding.Errors.saveError'))
       setIsSubmitting(false)
@@ -147,10 +153,8 @@ export default function OnboardingForm({ locale }: OnboardingFormProps) {
       {/* Header con Logo */}
       <div className="text-center mb-8  flex flex-col items-center">
         <Logo
-          name={'B.E.A'}
           textClassName="text-black"
           imageClassName="rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white"
-          description='Bio Ecosistema Avanzado'
           showDescription
           orientation='vertical'
           size="lg"

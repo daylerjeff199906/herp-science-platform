@@ -79,9 +79,13 @@ export function CertificationList({ certifications }: CertificationListProps) {
                                 <CardContent className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
                                     <Award className="h-10 w-10 mb-4 opacity-20" />
                                     <h3 className="mt-2 text-lg font-semibold">{t('emptyStateTitle')}</h3>
-                                    <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
+                                    <p className="mb-2 mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
                                         {t('emptyStateDescription')}
                                     </p>
+                                    <Button onClick={handleCreate} size="sm" className="mt-2">
+                                        <Plus className="mr-2 h-4 w-4" />
+                                        {t('form.add')}
+                                    </Button>
                                 </CardContent>
                             </Card>
                         </motion.div>
