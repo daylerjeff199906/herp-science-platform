@@ -57,11 +57,11 @@ export default function DashboardPage() {
 
   return (
     <LayoutWrapper sectionTitle={t("Dashboard.title")}>
-      <div className="container mx-auto p-4 md:p-6 lg:p-8">
+      <div className="container mx-auto p-4 md:p-6">
         <div className="flex flex-col lg:flex-row gap-8">
 
           {/* Main Content Area */}
-          <main className="flex-1 min-w-0 space-y-8">
+          <main className="flex-1 min-w-0 flex flex-col gap-8">
             <HeroSlider slides={slides} />
 
             <div className="space-y-4">

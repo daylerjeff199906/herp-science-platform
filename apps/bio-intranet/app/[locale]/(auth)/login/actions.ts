@@ -59,7 +59,8 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         // Si existe check de onboarding, lo conservamos
         if (profile && !profile.onboarding_completed) {
             revalidatePath('/', 'layout')
-            return { redirectUrl: `/${locale}/onboarding` }
+            const redirectParam = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''
+            return { redirectUrl: `/${locale}/onboarding${redirectParam}` }
         }
 
         // Consultar los roles del usuario asignados en user_roles usando el ID del perfil
@@ -73,6 +74,14 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         }
         
         const roles: string[] = userRolesData?.map((ur: any) => ur.roles?.name).filter(Boolean) || []
+
+        // Si hay una redirección explícita de destino, priorizarla antes de filtrar por roles
+        if (redirectTo) {
+            revalidatePath('/', 'layout')
+            const defaultFallback = roles.includes('admin') ? `/${locale}/admin` : `/${locale}/dashboard`
+            const redirectUrl = resolveRedirect(redirectTo, defaultFallback, locale)
+            return { redirectUrl }
+        }
 
         // Mapa de roles internos de la aplicación y sus redirecciones
         const roleRedirects: Record<string, string> = {
@@ -99,11 +108,11 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
 
         // Fallback genérico para cualquier otro escenario
         revalidatePath('/', 'layout')
-        return { redirectUrl: `/${locale}/admin` }
+        return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/admin`, locale) }
     }
 
     revalidatePath('/', 'layout')
-    return { redirectUrl: `/${locale}/admin` }
+    return { redirectUrl: resolveRedirect(redirectTo, `/${locale}/admin`, locale) }
 }
 
 export async function signup(formData: FormData) {
