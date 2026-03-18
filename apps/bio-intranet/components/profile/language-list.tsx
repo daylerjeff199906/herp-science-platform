@@ -60,9 +60,9 @@ export function LanguageList({ languages }: LanguageListProps) {
                     <Card className="border-dashed">
                         <CardContent className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
                             <GraduationCap className="h-10 w-10 mb-4 opacity-20" />
-                            <h3 className="mt-2 text-lg font-semibold">{t('emptyStateTitle')}</h3>
+                            <h3 className="mt-2 text-lg font-semibold">{t.has('emptyStateTitle') ? t('emptyStateTitle') : t('title')}</h3>
                             <p className="mb-2 mt-2 text-sm text-muted-foreground max-w-sm mx-auto">
-                                {t('emptyStateDescription')}
+                                {t.has('emptyStateDescription') ? t('emptyStateDescription') : t('description')}
                             </p>
                             <div className="mt-2">
                                 <LanguageCreateButton />
@@ -150,7 +150,7 @@ function LanguageItem({ language, onEdit, onDelete }: LanguageItemProps) {
     }
 
     return (
-        <Card className="overflow-hidden border-l-4 border-l-primary/20 hover:border-l-primary transition-all duration-300">
+        <Card className="overflow-hidden transition-all duration-300">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-muted/30 border-b gap-4">
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                     <Button
@@ -206,7 +206,7 @@ function LanguageItem({ language, onEdit, onDelete }: LanguageItemProps) {
                 <div className="flex justify-between items-start">
                     <div>
                         <div className="font-medium">
-                            {tForm(`level.${language.level}` as any)}
+                            {tForm(language.level as any)}
                         </div>
                         {language.is_native && (
                             <div className="text-sm text-muted-foreground mt-1">
