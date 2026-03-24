@@ -38,7 +38,7 @@ export default function LoginPage() {
     const [isPending, setIsPending] = React.useState(false)
 
     const form = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(loginSchema) as any,
         defaultValues: {
             email: '',
             password: '',

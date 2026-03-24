@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+// Helper tool to handle numeric fields from HTML inputs that send empty strings.
+const numberOrNull = z.preprocess(
+  (v) => (v === "" || v === undefined || v === null ? null : v),
+  z.coerce.number().nullable().optional()
+);
+
 // --- Locations ---
 export const locationSchema = z.object({
   id: z.string().optional(),
@@ -10,11 +16,11 @@ export const locationSchema = z.object({
   stateProvince: z.string().optional().nullable(),
   county: z.string().optional().nullable(),
   locality: z.string().min(1, "Locality is required"),
-  decimalLatitude: z.number().optional().nullable(),
-  decimalLongitude: z.number().optional().nullable(),
-  coordinateUncertaintyInMeters: z.number().optional().nullable(),
-  elevation: z.number().optional().nullable(),
-  elevationAccuracy: z.number().optional().nullable(),
+  decimalLatitude: numberOrNull,
+  decimalLongitude: numberOrNull,
+  coordinateUncertaintyInMeters: numberOrNull,
+  elevation: numberOrNull,
+  elevationAccuracy: numberOrNull,
   habitat: z.string().optional().nullable(),
 });
 
@@ -81,12 +87,12 @@ export const multimediaSchema = z.object({
   license: z.string().default("http://creativecommons.org/licenses/by-nc/4.0/"),
   equipmentUsed: z.string().optional().nullable(),
   software: z.string().optional().nullable(),
-  samplingRate: z.coerce.number().optional().nullable(),
+  samplingRate: numberOrNull,
   bitrate: z.string().optional().nullable(),
   audioChannel: z.string().optional().nullable(),
   lensAperture: z.string().optional().nullable(),
   exposureTime: z.string().optional().nullable(),
-  iso: z.coerce.number().optional().nullable(),
+  iso: numberOrNull,
   focalLength: z.string().optional().nullable(),
 });
 

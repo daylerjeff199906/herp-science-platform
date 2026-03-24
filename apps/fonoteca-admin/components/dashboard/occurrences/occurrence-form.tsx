@@ -21,7 +21,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
   const [locations, setLocations] = useState<Location[]>([]);
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<OccurrenceInput>({
-    resolver: zodResolver(occurrenceSchema),
+    resolver: zodResolver(occurrenceSchema) as any,
     defaultValues: {
       basisOfRecord: "HumanObservation",
       institutionCode: "IIAP",

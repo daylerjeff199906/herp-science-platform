@@ -5,12 +5,10 @@ import { cookies } from 'next/headers'
 
 export default async function AdminLayout({
   children,
-  params
 }: {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
+  const locale = "es";
   const cookieStore = await cookies()
   const supabase = await createBioIntranetServer(cookieStore)
 

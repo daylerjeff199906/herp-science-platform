@@ -1,6 +1,6 @@
 "use server"
 
-import { createBioIntranetServer } from "@/utils/supabase/bio-intranet/server";
+import { createFonotecaServer } from "@/utils/supabase/fonoteca/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { LocationInput, locationSchema } from "@/lib/validations/fonoteca";
@@ -16,7 +16,7 @@ export async function getLocations({
   search?: string;
 }) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -46,7 +46,7 @@ export async function getLocations({
 
 export async function getLocation(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { data, error } = await supabase
     .from("locations")
@@ -63,7 +63,7 @@ export async function getLocation(id: string) {
 
 export async function createLocation(input: LocationInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = locationSchema.safeParse(input);
   if (!parsed.success) {
@@ -86,7 +86,7 @@ export async function createLocation(input: LocationInput) {
 
 export async function updateLocation(id: string, input: LocationInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = locationSchema.safeParse(input);
   if (!parsed.success) {
@@ -112,7 +112,7 @@ export async function updateLocation(id: string, input: LocationInput) {
 
 export async function deleteLocation(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { error } = await supabase
     .from("locations")

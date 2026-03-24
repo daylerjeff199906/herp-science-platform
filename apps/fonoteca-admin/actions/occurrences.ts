@@ -1,6 +1,6 @@
 "use server"
 
-import { createBioIntranetServer } from "@/utils/supabase/bio-intranet/server";
+import { createFonotecaServer } from "@/utils/supabase/fonoteca/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { OccurrenceInput, occurrenceSchema } from "@/lib/validations/fonoteca";
@@ -16,7 +16,7 @@ export async function getOccurrences({
   search?: string;
 }) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -53,7 +53,7 @@ export async function getOccurrences({
 
 export async function getOccurrence(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { data, error } = await supabase
     .from("occurrences")
@@ -76,12 +76,7 @@ export async function getOccurrence(id: string) {
 
 export async function createOccurrence(input: OccurrenceInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
-
-  const parsed = occurrenceSchema.safeParse(input);
-  if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors };
-  }
+  const supabase = await createFonotecaServer(cookieStore);
 
   // Get current user profile ID to link correctly
   const { data: { user } } = await supabase.auth.getUser();
@@ -96,14 +91,20 @@ export async function createOccurrence(input: OccurrenceInput) {
     if (profile) profileId = profile.id;
   }
 
-  const insertData = {
-    ...parsed.data,
+  // Inject real profile ID BEFORE validation
+  const dataToValidate = {
+    ...input,
     profile_id: profileId,
   };
 
+  const parsed = occurrenceSchema.safeParse(dataToValidate);
+  if (!parsed.success) {
+    return { error: parsed.error.flatten().fieldErrors };
+  }
+
   const { data, error } = await supabase
     .from("occurrences")
-    .insert([insertData])
+    .insert([parsed.data])
     .select()
     .single();
 
@@ -117,7 +118,7 @@ export async function createOccurrence(input: OccurrenceInput) {
 
 export async function updateOccurrence(id: string, input: OccurrenceInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = occurrenceSchema.safeParse(input);
   if (!parsed.success) {
@@ -142,7 +143,7 @@ export async function updateOccurrence(id: string, input: OccurrenceInput) {
 
 export async function deleteOccurrence(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { error } = await supabase
     .from("occurrences")

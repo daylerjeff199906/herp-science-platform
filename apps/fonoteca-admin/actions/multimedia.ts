@@ -1,6 +1,6 @@
 "use server"
 
-import { createBioIntranetServer } from "@/utils/supabase/bio-intranet/server";
+import { createFonotecaServer } from "@/utils/supabase/fonoteca/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { MultimediaInput, multimediaSchema } from "@/lib/validations/fonoteca";
@@ -18,7 +18,7 @@ export async function getMultimediaList({
   type?: string;
 }) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -60,7 +60,7 @@ export async function getMultimediaList({
 
 export async function getMultimedia(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { data, error } = await supabase
     .from("multimedia")
@@ -85,7 +85,7 @@ export async function getMultimedia(id: string) {
 
 export async function createMultimedia(input: MultimediaInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = multimediaSchema.safeParse(input);
   if (!parsed.success) {
@@ -108,7 +108,7 @@ export async function createMultimedia(input: MultimediaInput) {
 
 export async function updateMultimedia(id: string, input: MultimediaInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = multimediaSchema.safeParse(input);
   if (!parsed.success) {
@@ -133,7 +133,7 @@ export async function updateMultimedia(id: string, input: MultimediaInput) {
 
 export async function deleteMultimedia(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { error } = await supabase
     .from("multimedia")

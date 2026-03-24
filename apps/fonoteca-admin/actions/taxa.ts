@@ -1,10 +1,10 @@
 "use server"
 
-import { createBioIntranetServer } from "@/utils/supabase/bio-intranet/server";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { TaxonInput, taxonSchema } from "@/lib/validations/fonoteca";
 import { Taxon } from "@/types/fonoteca";
+import { createFonotecaServer } from "@/utils/supabase/fonoteca/server";
 
 export async function getTaxa({
   page = 1,
@@ -16,7 +16,7 @@ export async function getTaxa({
   search?: string;
 }) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -46,7 +46,7 @@ export async function getTaxa({
 
 export async function getTaxon(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { data, error } = await supabase
     .from("taxa")
@@ -63,7 +63,7 @@ export async function getTaxon(id: string) {
 
 export async function createTaxon(input: TaxonInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = taxonSchema.safeParse(input);
   if (!parsed.success) {
@@ -86,7 +86,7 @@ export async function createTaxon(input: TaxonInput) {
 
 export async function updateTaxon(id: string, input: TaxonInput) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const parsed = taxonSchema.safeParse(input);
   if (!parsed.success) {
@@ -111,7 +111,7 @@ export async function updateTaxon(id: string, input: TaxonInput) {
 
 export async function deleteTaxon(id: string) {
   const cookieStore = await cookies();
-  const supabase = await createBioIntranetServer(cookieStore);
+  const supabase = await createFonotecaServer(cookieStore);
 
   const { error } = await supabase
     .from("taxa")

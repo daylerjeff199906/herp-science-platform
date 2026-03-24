@@ -1,6 +1,8 @@
-import { getMultimediaList } from "@/actions/multimedia";
+import { getMultimediaList, deleteMultimedia } from "@/actions/multimedia";
+import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Table,
   TableBody,
@@ -76,9 +78,11 @@ export default async function MultimediaPage({
                       <Link href={`/dashboard/multimedia/${media.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Link>
-                      <Button variant="ghost" className="text-destructive hover:text-destructive" size="icon" title="Eliminar">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <DeleteButtonWithConfirm 
+                        id={media.id} 
+                        onConfirm={deleteMultimedia} 
+                        itemName="archivo multimedia" 
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

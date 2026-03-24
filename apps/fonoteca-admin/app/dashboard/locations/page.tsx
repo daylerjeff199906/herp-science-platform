@@ -1,7 +1,9 @@
-import { getLocations } from "@/actions/locations";
+import { getLocations, deleteLocation } from "@/actions/locations";
+import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
 import { SearchInput } from "@/components/dashboard/search-input";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Table,
   TableBody,
@@ -77,9 +79,11 @@ export default async function LocationsPage({
                       <Link href={`/dashboard/locations/${loc.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Link>
-                      <Button variant="ghost" className="text-destructive hover:text-destructive" size="icon" title="Eliminar">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <DeleteButtonWithConfirm 
+                        id={loc.id} 
+                        onConfirm={deleteLocation} 
+                        itemName="lugar / ubicación" 
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

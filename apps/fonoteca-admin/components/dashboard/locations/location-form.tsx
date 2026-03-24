@@ -15,7 +15,7 @@ export function LocationForm({ id }: { id?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<LocationInput>({
-    resolver: zodResolver(locationSchema),
+    resolver: zodResolver(locationSchema) as any,
     defaultValues: {
       continent: "South America",
       country: "Peru",
