@@ -7,12 +7,13 @@ import { occurrenceSchema, OccurrenceInput } from "@/lib/validations/fonoteca";
 import { createOccurrence, updateOccurrence, getOccurrence } from "@/actions/occurrences";
 import { getTaxa } from "@/actions/taxa";
 import { getLocations } from "@/actions/locations";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Location, Taxon } from "@/types/fonoteca";
+import { FileText, FolderTree, Calendar, Building } from "lucide-react";
+import { Button } from "@repo/ui/components/ui/button";
 
 export function OccurrenceForm({ id }: { id?: string }) {
   const router = useRouter();
@@ -20,18 +21,17 @@ export function OccurrenceForm({ id }: { id?: string }) {
   const [taxa, setTaxa] = useState<Taxon[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<OccurrenceInput>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<OccurrenceInput>({
     resolver: zodResolver(occurrenceSchema) as any,
     defaultValues: {
       basisOfRecord: "HumanObservation",
       institutionCode: "IIAP",
       collectionCode: "Fonoteca",
-      profile_id: "00000000-0000-0000-0000-000000000000" // We'll mock this for now or ignore since no profiles list available yet. Wait, schema NOT NULL!
+      profile_id: "00000000-0000-0000-0000-000000000000"
     }
   });
 
   useEffect(() => {
-    // Load lists for the pickers
     getTaxa({ limit: 100 }).then(resp => setTaxa(resp.data));
     getLocations({ limit: 100 }).then(resp => setLocations(resp.data));
 
@@ -67,82 +67,118 @@ export function OccurrenceForm({ id }: { id?: string }) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-3xl bg-card border p-6 rounded-lg">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Occurrence ID / Código *</label>
-          <Input {...register("occurrenceID")} placeholder="Ex: FON-001" />
-          {errors.occurrenceID && <p className="text-xs text-red-500">{errors.occurrenceID.message}</p>}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full max-w-7xl">
+      {/* 1. Datos Básicos */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <FileText className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Datos Básicos</h3>
         </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Basis of Record *</label>
-          <Input {...register("basisOfRecord")} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 border-t pt-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Taxón *</label>
-          <select
-            {...register("taxon_id")}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">Seleccionar Taxón...</option>
-            {taxa.map(t => (
-              <option key={t.id} value={t.id}>{t.scientificName} ({t.vernacularName || "-"})</option>
-            ))}
-          </select>
-          {errors.taxon_id && <p className="text-xs text-red-500">{errors.taxon_id.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Ubicación *</label>
-          <select
-            {...register("location_id")}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          >
-            <option value="">Seleccionar Ubicación...</option>
-            {locations.map(l => (
-              <option key={l.id} value={l.id}>{l.locality} ({l.stateProvince || l.country})</option>
-            ))}
-          </select>
-          {errors.location_id && <p className="text-xs text-red-500">{errors.location_id.message}</p>}
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase cursor-pointer">Occurrence ID / Código *</label>
+            <Input {...register("occurrenceID")} placeholder="Ex: FON-001" className="h-9 shadow-none max-w-xl" />
+            {errors.occurrenceID && <p className="text-xs text-red-500">{errors.occurrenceID.message}</p>}
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Basis of Record *</label>
+            <Input {...register("basisOfRecord")} className="h-9 shadow-none max-w-xl" />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Fecha *</label>
-          <Input type="date" {...register("eventDate")} />
+      <div className="border-t border-muted/30 my-2" />
+
+      {/* 2. Taxonomía y Ubicación */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <FolderTree className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Taxonomía y Ubicación</h3>
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Registrado Por *</label>
-          <Input {...register("recordedBy")} />
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
+            <select
+              {...register("taxon_id")}
+              className="flex h-9 w-full max-w-xl rounded-md border border-input bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
+            >
+              <option value="">Seleccionar Taxón...</option>
+              {taxa.map(t => (
+                <option key={t.id} value={t.id}>{t.scientificName} ({t.vernacularName || "-"})</option>
+              ))}
+            </select>
+            {errors.taxon_id && <p className="text-xs text-red-500">{errors.taxon_id.message}</p>}
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Ubicación *</label>
+            <select
+              {...register("location_id")}
+              className="flex h-9 w-full max-w-xl rounded-md border border-input bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
+            >
+              <option value="">Seleccionar Ubicación...</option>
+              {locations.map(l => (
+                <option key={l.id} value={l.id}>{l.locality} ({l.stateProvince || l.country})</option>
+              ))}
+            </select>
+            {errors.location_id && <p className="text-xs text-red-500">{errors.location_id.message}</p>}
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Institución</label>
-          <Input {...register("institutionCode")} />
+      <div className="border-t border-muted/30 my-2" />
+
+      {/* 3. Temporalidad y Monitoreo */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Temporalidad y Monitoreo</h3>
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Colección</label>
-          <Input {...register("collectionCode")} />
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Fecha *</label>
+            <Input type="date" {...register("eventDate")} className="h-9 shadow-none max-w-xl" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Registrado Por *</label>
+            <Input {...register("recordedBy")} className="h-9 shadow-none max-w-xl" />
+          </div>
         </div>
       </div>
 
-      <div className="space-y-2 border-t pt-4">
-        <label className="text-sm font-medium">Observaciones / Comentarios</label>
-        <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento." />
+      <div className="border-t border-muted/30 my-2" />
+
+      {/* 4. Institución */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Building className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Institución y Colección</h3>
+        </div>
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Institución</label>
+            <Input {...register("institutionCode")} className="h-9 shadow-none max-w-xl" />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Colección</label>
+            <Input {...register("collectionCode")} className="h-9 shadow-none max-w-xl" />
+          </div>
+        </div>
       </div>
 
-      <div className="flex justify-end gap-2 pt-4">
-        <Button variant="outline">
+      <div className="border-t border-muted/30 my-2" />
+
+      {/* 5. Extra */}
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-muted-foreground uppercase">Observaciones / Comentarios</label>
+        <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento." className="h-9 shadow-none max-w-xl" />
+      </div>
+
+      <div className="flex justify-end gap-2 pt-4 border-t border-muted/20 mt-6">
+        <Button variant="outline" asChild>
           <Link href="/dashboard/occurrences">Cancelar</Link>
         </Button>
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="min-w-[120px]">
           {loading ? "Guardando..." : id ? "Guardar Cambios" : "Registrar"}
         </Button>
       </div>

@@ -305,9 +305,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const imageItems = items.filter(it => it.type === "Still" && it.tag !== "spectrogram");
 
   const RenderGrid = ({ list, typeTitle, uploadType }: { list: Multimedia[], typeTitle: string, uploadType: "Sound" | "Still" }) => (
-    <div className="space-y-3 border rounded-lg p-4 bg-background">
+    <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between border-b pb-2">
-        <h3 className="font-semibold text-base">{typeTitle}</h3>
+        <h3 className="text-sm font-semibold text-foreground/85">{typeTitle}</h3>
 
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -401,14 +401,18 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   );
 
   return (
-    <div className="space-y-4 border rounded-lg p-5 bg-card mt-6">
-      <div>
-        <h2 className="text-xl font-bold tracking-tight">Carga Multimedia de Especie</h2>
-        <p className="text-sm text-muted-foreground">Sube audios e imágenes por secciones y arrastra para cambiar el orden.</p>
+    <div className="space-y-6 mt-6">
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <Upload className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Carga Multimedia de Especie</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Sube audios e imágenes por secciones y arrastra para cambiar el orden.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <RenderGrid list={audioItems} typeTitle="Multimedia - Audios & Espectrogramas" uploadType="Sound" />
+      <div className="grid grid-cols-1 gap-6">
+        <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType="Sound" />
+        <div className="border-t border-muted/50 my-2" />
         <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType="Still" />
       </div>
 
