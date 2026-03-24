@@ -1,4 +1,4 @@
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AdminSidebar } from "@/components/panel-admin/admin-sidebar"
 import { createBioIntranetServer } from '@/utils/supabase/bio-intranet/server'
 import { cookies } from 'next/headers'
@@ -52,8 +52,16 @@ export default async function AdminLayout({
   return (
     <SidebarProvider>
       <AdminSidebar user={userData} locale={locale} />
-      {children}
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4">
+          {children}
+        </div>
+      </SidebarInset>
     </SidebarProvider>
   )
 }
+
 
