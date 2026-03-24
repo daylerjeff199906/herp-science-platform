@@ -84,6 +84,8 @@ export interface Multimedia {
   iso: number | null;
   focalLength: string | null;
   created_at: string;
+  tag: string | null;
+  parent_multimedia_id: string | null;
 
   // Joins (optional)
   occurrence?: Occurrence;

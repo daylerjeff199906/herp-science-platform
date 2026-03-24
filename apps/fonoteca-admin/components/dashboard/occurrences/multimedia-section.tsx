@@ -228,7 +228,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
     const filterType = draggedItem.type;
     const sameTypeItems = items.filter(it => it.type === filterType);
-    
+
     const updated = items.map(it => {
       if (it.id === draggedItem.id) return { ...it, order_index: targetItem.order_index };
       if (it.id === targetItem.id) return { ...it, order_index: draggedItem.order_index };
@@ -263,23 +263,23 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     <div className="space-y-3 border rounded-lg p-4 bg-background">
       <div className="flex items-center justify-between border-b pb-2">
         <h3 className="font-semibold text-base">{typeTitle}</h3>
-        
+
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button size="xs" variant="outline" className="gap-1 text-xs">
               <Plus className="h-3.5 w-3.5" /> Agregar
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem>
               <label className="w-full h-full cursor-pointer flex items-center gap-2">
                 <Upload className="h-3.5 w-3.5" /> Subir Archivo
-                <input 
-                  type="file" 
-                  multiple 
-                  accept={uploadType === "Sound" ? "audio/*" : "image/*"} 
-                  className="hidden" 
-                  onChange={(e) => handleFileUpload(e, uploadType)} 
+                <input
+                  type="file"
+                  multiple
+                  accept={uploadType === "Sound" ? "audio/*" : "image/*"}
+                  className="hidden"
+                  onChange={(e) => handleFileUpload(e, uploadType)}
                 />
               </label>
             </DropdownMenuItem>
@@ -299,10 +299,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {list.map((item) => {
             // Locate spectrogram child row linked to this main audio
-            const spectrogram = items.find(it => (it as any).parent_multimedia_id === item.id && (it as any).tag === "spectrogram");
+            const spectrogram = items.find(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram");
 
             return (
-              <div 
+              <div
                 key={item.id}
                 draggable
                 onDragStart={() => handleDragStart(item)}
@@ -327,7 +327,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         <img src={spectrogram.identifier} alt="Spectrogram" className="h-10 w-full object-cover rounded border" />
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
                           <button className="text-[10px] text-white underline cursor-pointer hover:text-red-300" onClick={() => handleDelete(spectrogram.id, true)}>
-                              Eliminar
+                            Eliminar
                           </button>
                         </div>
                       </div>
@@ -401,8 +401,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 {libItems.filter(i => i.type === activeUploadType).map((item) => (
-                  <div 
-                    key={item.id} 
+                  <div
+                    key={item.id}
                     className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center"
                     onClick={() => handleLinkFromLibrary(item)}
                   >
