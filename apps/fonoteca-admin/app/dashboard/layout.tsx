@@ -50,7 +50,7 @@ export default async function AdminLayout({
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar userData={userData} />
       {children}
     </SidebarProvider>
   )
