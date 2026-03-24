@@ -27,29 +27,33 @@ export function PaginationButtons({
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between gap-2 px-2 py-4">
-      <div className="text-sm text-muted-foreground">
-        Mostrando {Math.min((currentPage - 1) * pageSize + 1, totalCount)} - {Math.min(currentPage * pageSize, totalCount)} de {totalCount} resultados
+    <div className="flex items-center justify-between gap-2 px-3 py-4 border-t border-muted/30">
+      <div className="text-xs text-muted-foreground">
+        Mostrando <span className="font-semibold text-foreground">{Math.min((currentPage - 1) * pageSize + 1, totalCount)}</span> - <span className="font-semibold text-foreground">{Math.min(currentPage * pageSize, totalCount)}</span> de <span className="font-semibold text-foreground">{totalCount}</span> resultados
       </div>
       <div className="flex items-center gap-2">
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8 rounded-full border-muted/60 disabled:opacity-40 transition-all"
           disabled={currentPage <= 1}
           onClick={() => setPage(currentPage - 1)}
+          aria-label="Página anterior"
         >
-          <ChevronLeft className="h-4 w-4" /> Anterior
+          <ChevronLeft className="h-4 w-4 text-muted-foreground" />
         </Button>
-        <div className="text-sm font-medium">
-          Página {currentPage} de {totalPages}
+        <div className="text-xs font-semibold px-2 text-foreground/85">
+          {currentPage} <span className="text-muted-foreground/60">/</span> {totalPages}
         </div>
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8 rounded-full border-muted/60 disabled:opacity-40 transition-all"
           disabled={currentPage >= totalPages}
           onClick={() => setPage(currentPage + 1)}
+          aria-label="Página siguiente"
         >
-          Siguiente <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </Button>
       </div>
     </div>
