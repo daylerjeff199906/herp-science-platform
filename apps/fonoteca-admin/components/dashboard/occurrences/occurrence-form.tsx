@@ -74,20 +74,27 @@ export function OccurrenceForm({ id }: { id?: string }) {
           <FileText className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Datos Básicos</h3>
         </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase cursor-pointer">Occurrence ID / Código *</label>
-            <Input {...register("occurrenceID")} placeholder="Ex: FON-001" className="h-9 shadow-none max-w-xl" />
-            {errors.occurrenceID && <p className="text-xs text-red-500">{errors.occurrenceID.message}</p>}
+        <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase cursor-pointer">Occurrence ID *</label>
+            </div>
+            <div className="w-3/4">
+              <Input {...register("occurrenceID")} placeholder="Ex: FON-001" className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.occurrenceID && <p className="text-xs text-red-500 mt-1 px-2">{errors.occurrenceID.message}</p>}
+            </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Basis of Record *</label>
-            <Input {...register("basisOfRecord")} className="h-9 shadow-none max-w-xl" />
+
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Basis of Record *</label>
+            </div>
+            <div className="w-3/4">
+              <Input {...register("basisOfRecord")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="border-t border-muted/30 my-2" />
 
       {/* 2. Taxonomía y Ubicación */}
       <div className="space-y-4">
@@ -95,38 +102,44 @@ export function OccurrenceForm({ id }: { id?: string }) {
           <FolderTree className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Taxonomía y Ubicación</h3>
         </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
-            <select
-              {...register("taxon_id")}
-              className="flex h-9 w-full max-w-xl rounded-md border border-input bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
-            >
-              <option value="">Seleccionar Taxón...</option>
-              {taxa.map(t => (
-                <option key={t.id} value={t.id}>{t.scientificName} ({t.vernacularName || "-"})</option>
-              ))}
-            </select>
-            {errors.taxon_id && <p className="text-xs text-red-500">{errors.taxon_id.message}</p>}
+        <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
+            </div>
+            <div className="w-3/4">
+              <select
+                {...register("taxon_id")}
+                className="flex h-8 w-full max-w-xl rounded-md border-none bg-transparent px-2 text-sm shadow-none font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20"
+              >
+                <option value="">Seleccionar Taxón...</option>
+                {taxa.map(t => (
+                  <option key={t.id} value={t.id}>{t.scientificName} ({t.vernacularName || "-"})</option>
+                ))}
+              </select>
+              {errors.taxon_id && <p className="text-xs text-red-500 mt-1 px-2">{errors.taxon_id.message}</p>}
+            </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Ubicación *</label>
-            <select
-              {...register("location_id")}
-              className="flex h-9 w-full max-w-xl rounded-md border border-input bg-background px-3 py-1 text-sm shadow-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/40"
-            >
-              <option value="">Seleccionar Ubicación...</option>
-              {locations.map(l => (
-                <option key={l.id} value={l.id}>{l.locality} ({l.stateProvince || l.country})</option>
-              ))}
-            </select>
-            {errors.location_id && <p className="text-xs text-red-500">{errors.location_id.message}</p>}
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Ubicación *</label>
+            </div>
+            <div className="w-3/4">
+              <select
+                {...register("location_id")}
+                className="flex h-8 w-full max-w-xl rounded-md border-none bg-transparent px-2 text-sm shadow-none font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20"
+              >
+                <option value="">Seleccionar Ubicación...</option>
+                {locations.map(l => (
+                  <option key={l.id} value={l.id}>{l.locality} ({l.stateProvince || l.country})</option>
+                ))}
+              </select>
+              {errors.location_id && <p className="text-xs text-red-500 mt-1 px-2">{errors.location_id.message}</p>}
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="border-t border-muted/30 my-2" />
 
       {/* 3. Temporalidad y Monitoreo */}
       <div className="space-y-4">
@@ -134,19 +147,26 @@ export function OccurrenceForm({ id }: { id?: string }) {
           <Calendar className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Temporalidad y Monitoreo</h3>
         </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Fecha *</label>
-            <Input type="date" {...register("eventDate")} className="h-9 shadow-none max-w-xl" />
+        <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Fecha *</label>
+            </div>
+            <div className="w-3/4">
+              <Input type="date" {...register("eventDate")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Registrado Por *</label>
-            <Input {...register("recordedBy")} className="h-9 shadow-none max-w-xl" />
+
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Registrado Por *</label>
+            </div>
+            <div className="w-3/4">
+              <Input {...register("recordedBy")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            </div>
           </div>
         </div>
       </div>
-
-      <div className="border-t border-muted/30 my-2" />
 
       {/* 4. Institución */}
       <div className="space-y-4">
@@ -154,24 +174,37 @@ export function OccurrenceForm({ id }: { id?: string }) {
           <Building className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold text-foreground">Institución y Colección</h3>
         </div>
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Institución</label>
-            <Input {...register("institutionCode")} className="h-9 shadow-none max-w-xl" />
+        <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Institución</label>
+            </div>
+            <div className="w-3/4">
+              <Input {...register("institutionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-muted-foreground uppercase">Colección</label>
-            <Input {...register("collectionCode")} className="h-9 shadow-none max-w-xl" />
+
+          <div className="flex items-center justify-between gap-4 py-3">
+            <div className="w-1/4 flex items-center">
+              <label className="text-xs font-semibold text-muted-foreground uppercase">Colección</label>
+            </div>
+            <div className="w-3/4">
+              <Input {...register("collectionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="border-t border-muted/30 my-2" />
-
       {/* 5. Extra */}
-      <div className="space-y-1">
-        <label className="text-xs font-semibold text-muted-foreground uppercase">Observaciones / Comentarios</label>
-        <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento." className="h-9 shadow-none max-w-xl" />
+      <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
+        <div className="flex items-center justify-between gap-4 py-3">
+          <div className="w-1/4 flex items-center">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">Observaciones</label>
+          </div>
+          <div className="w-3/4">
+            <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento..." className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-2 pt-4 border-t border-muted/20 mt-6">

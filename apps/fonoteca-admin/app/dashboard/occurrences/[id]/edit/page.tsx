@@ -11,7 +11,7 @@ export default async function EditOccurrencePage({
 
   return (
     <LayoutWrapper sectionTitle="Editar Ocurrencia">
-      <div className="w-full max-w-9xl mx-auto space-y-4 py-4 px-4">
+      <div className="w-full max-w-7xl mx-auto space-y-4 py-4 px-4">
         <OccurrenceForm id={id} />
         <MultimediaSection occurrenceId={id} />
       </div>

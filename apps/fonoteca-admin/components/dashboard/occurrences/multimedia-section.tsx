@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, FileVideo, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
 import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia } from "@/actions/multimedia";
@@ -311,7 +311,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button size="xs" variant="outline" className="gap-1 text-xs">
+            <Button size="sm" variant="outline" className="gap-1 text-xs">
               <Plus className="h-3.5 w-3.5" /> Agregar
             </Button>
           </DropdownMenuTrigger>
