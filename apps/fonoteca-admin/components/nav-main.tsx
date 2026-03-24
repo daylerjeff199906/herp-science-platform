@@ -49,12 +49,14 @@ export function NavMain({
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
-                  render={<Link href={item.url} />}
+                  asChild
                   tooltip={item.title}
                   isActive={isActive}
                 >
-                  {item.icon && <item.icon className="size-4" />}
-                  <span>{item.title}</span>
+                  <Link href={item.url}>
+                    {item.icon && <item.icon className="size-4" />}
+                    <span>{item.title}</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             )
@@ -63,34 +65,38 @@ export function NavMain({
           return (
             <Collapsible
               key={item.title}
+              asChild
               defaultOpen={isActive}
               className="group/collapsible"
-              render={<SidebarMenuItem />}
             >
-              <CollapsibleTrigger
-                render={<SidebarMenuButton tooltip={item.title} isActive={isActive} />}
-              >
-                {item.icon && <item.icon className="size-4" />}
-                <span>{item.title}</span>
-                <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => {
-                    const isSubActive = pathname === subItem.url
-                    return (
-                      <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton
-                          render={<Link href={subItem.url} />}
-                          isActive={isSubActive}
-                        >
-                          <span>{subItem.title}</span>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    )
-                  })}
-                </SidebarMenuSub>
-              </CollapsibleContent>
+              <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                  <SidebarMenuButton tooltip={item.title} isActive={isActive}>
+                    {item.icon && <item.icon className="size-4" />}
+                    <span>{item.title}</span>
+                    <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {item.items?.map((subItem) => {
+                      const isSubActive = pathname === subItem.url
+                      return (
+                        <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubButton
+                            asChild
+                            isActive={isSubActive}
+                          >
+                            <Link href={subItem.url}>
+                              <span>{subItem.title}</span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      )
+                    })}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </SidebarMenuItem>
             </Collapsible>
           )
         })}
@@ -98,4 +104,3 @@ export function NavMain({
     </SidebarGroup>
   )
 }
-
