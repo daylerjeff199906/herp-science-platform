@@ -1,5 +1,6 @@
 import { getOccurrences, deleteOccurrence } from "@/actions/occurrences";
 import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
+import { BulkUploadSheet } from "@/components/dashboard/occurrences/bulk-upload-sheet";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
 import { SearchInput } from "@/components/dashboard/search-input";
 import { Button } from "@/components/ui/button";
@@ -44,9 +45,12 @@ export default async function OccurrencesPage({
             Gestión de monitoreo de especies avistadas.
           </p>
         </div>
-        <Link href="/dashboard/occurrences/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-          <Plus className="h-4 w-4" /> Registrar Ocurrencia
-        </Link>
+        <div className="flex items-center gap-2">
+          <BulkUploadSheet />
+          <Link href="/dashboard/occurrences/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
+            <Plus className="h-4 w-4" /> Registrar Ocurrencia
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-4">

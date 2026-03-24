@@ -157,3 +157,41 @@ export async function deleteOccurrence(id: string) {
   revalidatePath("/dashboard/occurrences");
   return { success: true };
 }
+
+export async function bulkCreateOccurrences(inputs: any[]) {
+  const cookieStore = await cookies();
+  const supabase = await createFonotecaServer(cookieStore);
+
+  const { data: { user } } = await supabase.auth.getUser();
+  let profileId = "00000000-0000-0000-0000-000000000000";
+  if (user) {
+    const { data: profile } = await supabase.from("profiles").select("id").eq("auth_id", user.id).single();
+    if (profile) profileId = profile.id;
+  }
+
+  let successCount = 0;
+  let errorCount = 0;
+  const errors: string[] = [];
+
+  for (const input of inputs) {
+    const dataToValidate = { ...input, profile_id: profileId };
+    const parsed = occurrenceSchema.safeParse(dataToValidate);
+    
+    if (!parsed.success) {
+      errorCount++;
+      errors.push(`ID ${input.occurrenceID || '?'}: Error validación de campos`);
+      continue;
+    }
+
+    const { error } = await supabase.from("occurrences").insert([parsed.data]);
+    if (error) {
+      errorCount++;
+      errors.push(`ID ${input.occurrenceID || '?'}: ${error.message}`);
+    } else {
+      successCount++;
+    }
+  }
+
+  revalidatePath("/dashboard/occurrences");
+  return { success: true, successCount, errorCount, errors };
+}
