@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, FileVideo, Loader2, Link, FolderOpen } from "lucide-react";
+import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, FileVideo, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
-import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList } from "@/actions/multimedia";
+import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia } from "@/actions/multimedia";
 import { Multimedia } from "@/types/fonoteca";
 import { toast } from "sonner";
 import {
@@ -24,11 +24,15 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   // Modals
   const [urlSheetOpen, setUrlSheetOpen] = useState(false);
   const [libSheetOpen, setLibSheetOpen] = useState(false);
+  const [editSheetOpen, setEditSheetOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Multimedia | null>(null);
   const [activeUploadType, setActiveUploadType] = useState<"Sound" | "Still" | null>(null);
 
   // URL States
   const [urlInput, setUrlInput] = useState("");
   const [urlTitle, setUrlTitle] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editUrl, setEditUrl] = useState("");
 
   // Library States
   const [libItems, setLibItems] = useState<Multimedia[]>([]);
@@ -163,6 +167,47 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       loadMultimedia();
     } catch (err) {
       toast.error("Error vinculando elemento");
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const handleEditClick = (item: Multimedia) => {
+    setEditingItem(item);
+    setEditTitle(item.title || "");
+    setEditUrl(item.identifier);
+    setEditSheetOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingItem) return;
+    setUploading("editing");
+
+    try {
+      const resp = await updateMultimedia(editingItem.id, {
+        occurrence_id: editingItem.occurrence_id,
+        identifier: editUrl,
+        type: editingItem.type,
+        format: editingItem.format,
+        title: editTitle,
+        creator: editingItem.creator,
+        order_index: editingItem.order_index,
+        rightsHolder: editingItem.rightsHolder,
+        license: editingItem.license,
+        tag: editingItem.tag,
+        parent_multimedia_id: editingItem.parent_multimedia_id
+      });
+
+      if (resp.error) {
+        toast.error("Error al actualizar");
+      } else {
+        toast.success("Elemento actualizado correctamente");
+        setEditSheetOpen(false);
+        setEditingItem(null);
+        loadMultimedia();
+      }
+    } catch (err) {
+      toast.error("Error actualizando elemento");
     } finally {
       setUploading(null);
     }
@@ -311,7 +356,14 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 className="relative border rounded-lg p-3 bg-muted/20 flex flex-col items-center justify-center text-center cursor-move hover:bg-muted/50 transition-all duration-150"
               >
                 <div className="absolute top-1.5 left-1.5 text-muted-foreground"><GripVertical className="h-3 w-3" /></div>
-                <button className="absolute top-1.5 right-1.5 text-destructive hover:bg-red-50 p-1 rounded-md" onClick={() => handleDelete(item.id)}><Trash2 className="h-3.5 w-3.5" /></button>
+                <div className="absolute top-1.5 right-1.5 flex items-center gap-1 z-10">
+                  <button className="text-blue-500 hover:bg-blue-50 p-1 rounded-md" onClick={(e) => { e.stopPropagation(); handleEditClick(item); }} title="Editar">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
+                  <button className="text-destructive hover:bg-red-50 p-1 rounded-md" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} title="Eliminar">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
 
                 <div className="py-2">
                   {item.type === "Still" && <FileImage className="h-10 w-10 text-blue-500" />}
@@ -413,6 +465,32 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 ))}
               </div>
             )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* --- Dialog: Edit --- */}
+      <Sheet open={editSheetOpen} onOpenChange={(open) => { setEditSheetOpen(open); if (!open) setEditingItem(null); }}>
+        <SheetContent className="sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>Editar Elemento</SheetTitle>
+            <SheetDescription>Modifica el título o el enlace de la multimedia.</SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 py-4 border-t mt-4">
+            <div>
+              <label className="text-sm font-medium">Título del Archivo</label>
+              <Input placeholder="Ej: Canto de ave" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-sm font-medium">URL (Solo para enlaces)</label>
+              <Input placeholder="https://..." value={editUrl} onChange={(e) => setEditUrl(e.target.value)} />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => { setEditSheetOpen(false); setEditingItem(null); }}>Cancelar</Button>
+              <Button size="sm" onClick={handleSaveEdit} disabled={!editUrl || uploading !== null}>
+                {uploading === "editing" ? "Guardando..." : "Guardar"}
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
