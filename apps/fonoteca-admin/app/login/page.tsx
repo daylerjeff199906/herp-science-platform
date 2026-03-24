@@ -188,13 +188,6 @@ export default function LoginPage() {
                         </Button>
                     </form>
                 </Form>
-
-                <div className="text-center text-sm">
-                    ¿No tienes una cuenta?{" "}
-                    <Link href="/signup" className="underline text-primary">
-                        Regístrate
-                    </Link>
-                </div>
             </div>
         </div>
     )

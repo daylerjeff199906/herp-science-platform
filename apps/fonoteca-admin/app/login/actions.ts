@@ -61,14 +61,13 @@ export async function login(formData: FormData, redirectTo?: string | null): Pro
         if (rolesError) {
             console.error('Error fetching user roles:', rolesError)
         }
-
-        const roles: string[] = userRolesData?.map((ur: any) => ur.roles?.name).filter(Boolean) || []
-        const roleIds: string[] = userRolesData?.map((ur: any) => ur.role_id).filter(Boolean) || []
+        const roles: string[] = userRolesData?.map((ur: any) => ur.roles?.name) || []
+        const roleIds: string[] = userRolesData?.map((ur: any) => ur.role_id) || []
 
         // Check if user is explicit Admin, which might grant super access
         if (roles.includes('admin')) {
-             revalidatePath('/', 'layout')
-             return { redirectUrl: resolveRedirect(redirectTo, '/dashboard') }
+            revalidatePath('/', 'layout')
+            return { redirectUrl: resolveRedirect(redirectTo, '/dashboard') }
         }
 
         // 3. Fetch permissions for those roles
@@ -77,6 +76,7 @@ export async function login(formData: FormData, redirectTo?: string | null): Pro
                 .from('role_permissions')
                 .select(`permission_id, permissions(module_name)`)
                 .in('role_id', roleIds)
+            console.log(rolePermissionsData)
 
             if (permissionsError) {
                 console.error('Error fetching role permissions:', permissionsError)
@@ -109,7 +109,7 @@ export async function signout() {
     const headerList = await headers()
     const host = headerList.get('host') || ''
     const supabase = await createBioIntranetServer(cookieStore, host)
-    
+
     await supabase.auth.signOut()
 
     revalidatePath('/', 'layout')
