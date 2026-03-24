@@ -23,10 +23,10 @@ export async function getTaxa({
 
   let query = supabase
     .from("taxa")
-    .select("*", { count: "exact" });
+    .select("*, genus:genera(*, family:families(*))", { count: "exact" });
 
   if (search) {
-    query = query.or(`scientificName.ilike.%${search}%,vernacularName.ilike.%${search}%,family.ilike.%${search}%,genus.ilike.%${search}%`);
+    query = query.or(`scientificName.ilike.%${search}%,vernacularName.ilike.%${search}%`);
   }
 
   const { data, count, error } = await query
@@ -50,7 +50,7 @@ export async function getTaxon(id: string) {
 
   const { data, error } = await supabase
     .from("taxa")
-    .select("*")
+    .select("*, genus:genera(*, family:families(*))")
     .eq("id", id)
     .single();
 
@@ -60,6 +60,23 @@ export async function getTaxon(id: string) {
 
   return { data: (data as any) as Taxon };
 }
+
+export async function getGenera() {
+  const cookieStore = await cookies();
+  const supabase = await createFonotecaServer(cookieStore);
+
+  const { data, error } = await supabase
+    .from("genera")
+    .select("*, family:families(name)")
+    .order("name");
+
+  if (error) {
+    return { data: [], error: error.message };
+  }
+
+  return { data: data || [] };
+}
+
 
 export async function createTaxon(input: TaxonInput) {
   const cookieStore = await cookies();

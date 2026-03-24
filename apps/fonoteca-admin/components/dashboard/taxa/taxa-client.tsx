@@ -72,11 +72,12 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
               data.map((taxon) => (
                 <TableRow key={taxon.id}>
                   <TableCell className="font-medium italic">{taxon.scientificName}</TableCell>
-                  <TableCell>{taxon.kingdom}</TableCell>
-                  <TableCell>{taxon.family || "-"}</TableCell>
-                  <TableCell>{taxon.genus || "-"}</TableCell>
+                  <TableCell>{taxon.genus?.family?.kingdom || "Animalia"}</TableCell>
+                  <TableCell>{taxon.genus?.family?.name || "-"}</TableCell>
+                  <TableCell>{taxon.genus?.name || "-"}</TableCell>
                   <TableCell>{taxon.taxonRank}</TableCell>
                   <TableCell>
+
                     <div className="flex items-center gap-2">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(taxon.id)} title="Editar">
                         <Edit className="h-4 w-4" />
