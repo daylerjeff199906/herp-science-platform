@@ -94,7 +94,8 @@ export const multimediaSchema = z.object({
   exposureTime: z.string().optional().nullable(),
   iso: numberOrNull,
   focalLength: z.string().optional().nullable(),
-  spectrogram_url: z.string().optional().nullable(),
+  tag: z.string().optional().nullable(),
+  parent_multimedia_id: z.string().uuid().optional().nullable(),
 });
 
 export type MultimediaInput = z.infer<typeof multimediaSchema>;
