@@ -21,6 +21,8 @@ import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-wi
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+import { PageHeader } from "@/components/panel-admin/page-header";
+
 export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -36,23 +38,20 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
     setOpen(true);
   };
 
-
-
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Catálogo de Taxones</h1>
-          <p className="text-muted-foreground">
-            Gestión de familias, géneros y especies para las ocurrencias.
-          </p>
-        </div>
-        <Button onClick={handleCreate} className="gap-2">
-          <Plus className="h-4 w-4" /> Registrar Taxón
-        </Button>
-      </div>
+    <div className="space-y-4">
+      <PageHeader
+        title="Catálogo de Taxones"
+        description="Gestión de familias, géneros y especies para las ocurrencias."
+        action={{
+          label: "Registrar Taxón",
+          onClick: handleCreate,
+          icon: <Plus className="h-4 w-4" />,
+        }}
+      />
 
       <div className="flex items-center justify-between gap-4">
+
         <SearchInput placeholder="Buscar por nombre científico, familia, etc." />
       </div>
 

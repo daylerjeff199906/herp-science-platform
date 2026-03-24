@@ -17,6 +17,9 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
+import { PageHeader } from "@/components/panel-admin/page-header";
+
 export default async function OccurrencesPage({
   searchParams,
 }: {
@@ -37,21 +40,27 @@ export default async function OccurrencesPage({
   }
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ocurrencias</h1>
-          <p className="text-muted-foreground">
-            Gestión de monitoreo de especies avistadas.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
+    <LayoutWrapper sectionTitle="Monitoreo">
+      <div className="space-y-4">
+        <PageHeader
+          title="Ocurrencias"
+          description="Gestión de monitoreo de especies avistadas."
+        >
           <BulkUploadSheet />
-          <Link href="/dashboard/occurrences/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-            <Plus className="h-4 w-4" /> Registrar Ocurrencia
-          </Link>
-        </div>
-      </div>
+          <Button
+            size="sm"
+            className="h-8 text-xs flex items-center gap-1"
+            render={
+              <Link
+                href="/dashboard/occurrences/create"
+              />
+            }
+          >
+            <Plus className="h-4 w-4" />
+            <span>Registrar Ocurrencia</span>
+          </Button>
+        </PageHeader>
+
 
       <div className="flex items-center justify-between gap-4">
         <SearchInput placeholder="Buscar por código u observador..." />
@@ -107,6 +116,8 @@ export default async function OccurrencesPage({
       </div>
 
       <PaginationButtons totalCount={count} pageSize={10} />
-    </div>
+      </div>
+    </LayoutWrapper>
   );
 }
+

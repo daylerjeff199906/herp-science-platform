@@ -16,6 +16,9 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
+import { PageHeader } from "@/components/panel-admin/page-header";
+
 export default async function LocationsPage({
   searchParams,
 }: {
@@ -32,18 +35,18 @@ export default async function LocationsPage({
   });
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ubicaciones</h1>
-          <p className="text-muted-foreground">
-            Gestión de lugares para las ocurrencias monitoreadas.
-          </p>
-        </div>
-        <Link href="/dashboard/locations/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-          <Plus className="h-4 w-4" /> Registrar Ubicación
-        </Link>
-      </div>
+    <LayoutWrapper sectionTitle="Geografía">
+      <div className="space-y-4">
+        <PageHeader
+          title="Ubicaciones"
+          description="Gestión de lugares para las ocurrencias monitoreadas."
+          action={{
+            label: "Registrar Ubicación",
+            href: "/dashboard/locations/create",
+            icon: <Plus className="h-4 w-4" />,
+          }}
+        />
+
 
       <div className="flex items-center justify-between gap-4">
         <SearchInput placeholder="Buscar por localidad, provincia, etc." />
@@ -100,6 +103,8 @@ export default async function LocationsPage({
       </div>
 
       <PaginationButtons totalCount={count} pageSize={10} />
-    </div>
+      </div>
+    </LayoutWrapper>
   );
 }
+

@@ -1,5 +1,6 @@
 import { getTaxa } from "@/actions/taxa";
 import { TaxaClient } from "@/components/dashboard/taxa/taxa-client";
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
 
 export default async function TaxaPage({
   searchParams,
@@ -20,5 +21,10 @@ export default async function TaxaPage({
     return <div className="p-4 text-red-500">{error}</div>;
   }
 
-  return <TaxaClient data={data} count={count} />;
+  return (
+    <LayoutWrapper sectionTitle="Taxonomía">
+      <TaxaClient data={data} count={count} />
+    </LayoutWrapper>
+  );
 }
+
