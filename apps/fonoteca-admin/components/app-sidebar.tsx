@@ -1,8 +1,6 @@
 'use client'
 import * as React from 'react'
-import { Leaf } from 'lucide-react'
 import { NavMain } from '@/components/nav-main'
-import { NavProjects } from '@/components/nav-projects'
 import { NavUser } from '@/components/nav-user'
 import { TeamSwitcher } from '@/components/team-switcher'
 import {
@@ -12,6 +10,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { getAdminRoutes } from '@/config/admin-routes'
 
 // Team data for the switcher
 const teams = [
@@ -33,7 +32,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 }
 
 export function AppSidebar({ userData, ...props }: AppSidebarProps) {
-
+  const navMain = getAdminRoutes()
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -50,3 +49,4 @@ export function AppSidebar({ userData, ...props }: AppSidebarProps) {
     </Sidebar>
   )
 }
+
