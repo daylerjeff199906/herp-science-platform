@@ -17,7 +17,7 @@ export default async function ProfileLayout({
 
     return (
         <LayoutWrapper
-            sectionTitle="Informacion general"
+            sectionTitle="Informacion de ocurrencias"
         >
             <PageHeader
                 title="Ocurrencias"
