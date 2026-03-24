@@ -82,10 +82,10 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(taxon.id)} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <DeleteButtonWithConfirm 
-                        id={taxon.id} 
-                        onConfirm={deleteTaxon} 
-                        itemName="taxón" 
+                      <DeleteButtonWithConfirm
+                        id={taxon.id}
+                        onConfirm={deleteTaxon}
+                        itemName="taxón"
                       />
                     </div>
                   </TableCell>
@@ -105,11 +105,11 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
       <PaginationButtons totalCount={count} pageSize={10} />
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="sm:max-w-xl overflow-y-auto">
-          <SheetHeader>
+        <SheetContent className="overflow-y-auto md:min-w-[60vw] max-w-5xl">
+          <SheetHeader className="pb-0">
             <SheetTitle>{selectedTaxonId ? "Editar Taxón" : "Registrar Taxón"}</SheetTitle>
           </SheetHeader>
-          <div className="py-4">
+          <div className="px-4 py-0 min-w-5xl">
             <TaxonForm id={selectedTaxonId} onSuccess={() => { setOpen(false); router.refresh(); }} />
           </div>
         </SheetContent>
