@@ -9,19 +9,30 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 export function TaxonForm({ id, onSuccess }: { id: string | null; onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const [genera, setGenera] = useState<any[]>([]);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TaxonInput>({
-    resolver: zodResolver(taxonSchema) as any,
+  const [openCombobox, setOpenCombobox] = useState(false);
+
+  const form = useForm<TaxonInput>({
+    resolver: zodResolver(taxonSchema),
     defaultValues: {
+      scientificName: "",
       taxonRank: "species",
       nomenclaturalCode: "ICZN",
-    } as any
+      genus_id: "",
+    }
   });
 
+  const { reset, handleSubmit } = form;
+
   useEffect(() => {
-    // Fetch genera list for the select
     getGenera().then(res => {
       if (res.data) setGenera(res.data);
     });
@@ -68,72 +79,199 @@ export function TaxonForm({ id, onSuccess }: { id: string | null; onSuccess: () 
   };
 
   if (loading && id) {
-    return <div className="text-center py-4">Cargando datos...</div>;
+    return <div className="text-center py-4 text-sm text-muted-foreground">Cargando datos...</div>;
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2 border-b pb-4">
-        <h3 className="text-sm font-semibold text-foreground">Información Científica</h3>
-        <p className="text-xs text-muted-foreground">Define nombre y epítetos relativos.</p>
-      </div>
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Sección: Información Científica */}
+        <div className="space-y-4">
+          <div className="border-b pb-2">
+            <h3 className="text-sm font-semibold text-foreground">Información Científica</h3>
+            <p className="text-xs text-muted-foreground">Define nombre y rango del taxón.</p>
+          </div>
 
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Nombre Científico *</label>
-        <Input {...register("scientificName")} placeholder="Example species" />
-        {errors.scientificName && <p className="text-xs text-red-500">{errors.scientificName.message}</p>}
-      </div>
+          <FormField
+            control={form.control}
+            name="scientificName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nombre Científico *</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="p. ej. Leptodactylus leptodactyloides" className="font-medium italic" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Género (Familia) *</label>
-          <select
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            {...register("genus_id")}
-          >
-            <option value="">Seleccionar Género</option>
-            {genera.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.name} ({g.family?.name || "Sin Familia"})
-              </option>
-            ))}
-          </select>
-          {errors.genus_id && <p className="text-xs text-red-500">{errors.genus_id.message}</p>}
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Rango Taxonómico</label>
-          <Input {...register("taxonRank")} />
-        </div>
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="genus_id"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="mb-px leading-6">Género (Familia) *</FormLabel>
+                  <Popover open={openCombobox} onOpenChange={setOpenCombobox}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openCombobox}
+                          className={cn(
+                            "w-full justify-between font-normal text-sm h-10 px-3",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? (() => {
+                                const g = genera.find((g) => g.id === field.value);
+                                return g ? `${g.name} (${g.family?.name || "Sin Familia"})` : "Seleccionar Género";
+                              })()
+                            : "Seleccionar Género"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Buscar género..." className="h-9" />
+                        <CommandList className="max-h-[250px]">
+                          <CommandEmpty>No se encontraron géneros.</CommandEmpty>
+                          <CommandGroup>
+                            {genera.map((g) => (
+                              <CommandItem
+                                key={g.id}
+                                value={`${g.name} ${g.family?.name || ""}`}
+                                onSelect={() => {
+                                  form.setValue("genus_id", g.id);
+                                  form.clearErrors("genus_id");
+                                  setOpenCombobox(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    g.id === field.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{g.name}</span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {g.family?.name || "Sin Familia"}
+                                  </span>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Epíteto Específico</label>
-          <Input {...register("specificEpithet")} />
+            <FormField
+              control={form.control}
+              name="taxonRank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rango Taxonómico</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="species" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Epíteto Infraspecífico</label>
-          <Input {...register("infraspecificEpithet")} />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Nombre Común/Vernacular</label>
-          <Input {...register("vernacularName")} />
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Autoría</label>
-          <Input {...register("scientificNameAuthorship")} />
-        </div>
-      </div>
+        {/* Sección: Epítetos */}
+        <div className="space-y-4">
+          <div className="border-b pb-2">
+            <h3 className="text-sm font-semibold text-foreground">Epítetos</h3>
+          </div>
 
-      <div className="flex justify-end gap-2 pt-4 border-t">
-        <Button type="submit" disabled={loading}>
-          {loading ? "Guardando..." : id ? "Guardar Cambios" : "Registrar"}
-        </Button>
-      </div>
-    </form>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="specificEpithet"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Epíteto Específico</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} placeholder="..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="infraspecificEpithet"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Epíteto Infraspecífico</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} placeholder="..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Sección: Nombres y Autoría */}
+        <div className="space-y-4">
+          <div className="border-b pb-2">
+            <h3 className="text-sm font-semibold text-foreground">Nombres Comunes y Autoría</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="vernacularName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre Común/Vernacular</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} placeholder="Nombre local..." />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="scientificNameAuthorship"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Autoría (Cita)</FormLabel>
+                  <FormControl>
+                    <Input {...field} value={field.value || ""} placeholder="p. ej. Boulenger, 1898" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          -- no-op --
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-4 border-t">
+          <Button type="submit" disabled={loading} className="min-w-[120px]">
+            {loading ? "Guardando..." : id ? "Guardar Cambios" : "Registrar"}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
-

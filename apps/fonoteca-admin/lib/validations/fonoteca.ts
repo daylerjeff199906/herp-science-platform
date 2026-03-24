@@ -34,11 +34,11 @@ export const taxonSchema = z.object({
   acceptedNameUsage: z.string().optional().nullable(),
   specificEpithet: z.string().optional().nullable(),
   infraspecificEpithet: z.string().optional().nullable(),
-  taxonRank: z.string().default("species"),
+  taxonRank: z.string(),
   scientificNameAuthorship: z.string().optional().nullable(),
   vernacularName: z.string().optional().nullable(),
-  nomenclaturalCode: z.string().default("ICZN"),
-  genus_id: z.string().uuid("Genus is required"),
+  nomenclaturalCode: z.string(),
+  genus_id: z.string(),
 });
 
 
