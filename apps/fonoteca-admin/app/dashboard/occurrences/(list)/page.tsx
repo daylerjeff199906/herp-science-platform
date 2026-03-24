@@ -80,6 +80,9 @@ export default async function OccurrencesPage({
                   <TableCell>{oc.recordedBy}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
+                      <Link href={`/dashboard/occurrences/${oc.id}`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Ver Detalles">
+                        <Plus className="h-4 w-4 rotate-45" /> {/* Eye or any view icon */}
+                      </Link>
                       <Link href={`/dashboard/occurrences/${oc.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Link>

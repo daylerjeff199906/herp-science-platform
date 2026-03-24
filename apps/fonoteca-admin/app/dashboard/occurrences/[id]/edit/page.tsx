@@ -1,4 +1,6 @@
 import { OccurrenceForm } from "@/components/dashboard/occurrences/occurrence-form";
+import { MultimediaSection } from "@/components/dashboard/occurrences/multimedia-section";
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
 
 export default async function EditOccurrencePage({
   params,
@@ -8,10 +10,11 @@ export default async function EditOccurrencePage({
   const { id } = await params;
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <h1 className="text-3xl font-bold tracking-tight">Editar Ocurrencia</h1>
-      <p className="text-muted-foreground">Actualiza los datos del monitoreo seleccionado.</p>
-      <OccurrenceForm id={id} />
-    </div>
+    <LayoutWrapper sectionTitle="Editar Ocurrencia">
+      <div className="container mx-auto space-y-4 py-4">
+        <OccurrenceForm id={id} />
+        <MultimediaSection occurrenceId={id} />
+      </div>
+    </LayoutWrapper>
   );
 }
