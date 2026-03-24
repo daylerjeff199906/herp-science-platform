@@ -1,16 +1,15 @@
-import { SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { AdminSidebar } from "@/components/panel-admin/admin-sidebar"
 import { createBioIntranetServer } from '@/utils/supabase/bio-intranet/server'
 import { cookies } from 'next/headers'
+import { AppSidebar } from "@/components/app-sidebar"
 
 export default async function AdminLayout({
   children,
-  params
 }: {
   children: React.ReactNode
-  params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
+  const locale = "es";
   const cookieStore = await cookies()
   const supabase = await createBioIntranetServer(cookieStore)
 
@@ -51,9 +50,10 @@ export default async function AdminLayout({
 
   return (
     <SidebarProvider>
-      <AdminSidebar user={userData} locale={locale} />
+      <AppSidebar />
       {children}
     </SidebarProvider>
   )
 }
+
 

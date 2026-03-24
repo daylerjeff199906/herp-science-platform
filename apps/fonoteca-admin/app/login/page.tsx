@@ -30,7 +30,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-export default function LoginPage() {
+function LoginContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const redirectTo = searchParams.get('redirect') || searchParams.get('next')
@@ -38,7 +38,7 @@ export default function LoginPage() {
     const [isPending, setIsPending] = React.useState(false)
 
     const form = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(loginSchema) as any,
         defaultValues: {
             email: '',
             password: '',
@@ -190,5 +190,17 @@ export default function LoginPage() {
                 </Form>
             </div>
         </div>
+    )
+}
+
+export default function LoginPage() {
+    return (
+        <React.Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+        }>
+            <LoginContent />
+        </React.Suspense>
     )
 }
