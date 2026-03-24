@@ -116,8 +116,8 @@ export function LocationForm({ id }: { id?: string }) {
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button variant="outline" asChild>
-          <Link href="/dashboard/locations">Cancelar</Link>
+        <Button variant="outline" onClick={() => router.push("/dashboard/locations")}>
+          Cancelar
         </Button>
         <Button type="submit" disabled={loading}>
           {loading ? "Guardando..." : id ? "Guardar Cambios" : "Registrar"}

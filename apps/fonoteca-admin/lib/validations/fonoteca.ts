@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // --- Locations ---
 export const locationSchema = z.object({
-  id: z.string().uuid().optional(),
+  id: z.string().optional(),
   locationID: z.string().optional().nullable(),
   continent: z.string(),
   country: z.string(),
@@ -10,11 +10,11 @@ export const locationSchema = z.object({
   stateProvince: z.string().optional().nullable(),
   county: z.string().optional().nullable(),
   locality: z.string().min(1, "Locality is required"),
-  decimalLatitude: z.coerce.number().optional().nullable(),
-  decimalLongitude: z.coerce.number().optional().nullable(),
-  coordinateUncertaintyInMeters: z.coerce.number().optional().nullable(),
-  elevation: z.coerce.number().optional().nullable(),
-  elevationAccuracy: z.coerce.number().optional().nullable(),
+  decimalLatitude: z.number().optional().nullable(),
+  decimalLongitude: z.number().optional().nullable(),
+  coordinateUncertaintyInMeters: z.number().optional().nullable(),
+  elevation: z.number().optional().nullable(),
+  elevationAccuracy: z.number().optional().nullable(),
   habitat: z.string().optional().nullable(),
 });
 
