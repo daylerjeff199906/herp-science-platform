@@ -17,6 +17,7 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { TaxonForm } from "./taxon-form";
 import { deleteTaxon } from "@/actions/taxa";
+import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -35,17 +36,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
     setOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm("¿Estás seguro de eliminar este taxón?")) {
-      const resp = await deleteTaxon(id);
-      if (resp.success) {
-        toast.success("Taxón eliminado");
-        router.refresh()
-      } else {
-        toast.error("Error al eliminar: " + resp.error);
-      }
-    }
-  };
+
 
   return (
     <div className="container mx-auto space-y-4 py-6">
@@ -91,9 +82,11 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(taxon.id)} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" className="text-destructive hover:text-destructive" size="icon" onClick={() => handleDelete(taxon.id)} title="Eliminar">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <DeleteButtonWithConfirm 
+                        id={taxon.id} 
+                        onConfirm={deleteTaxon} 
+                        itemName="taxón" 
+                      />
                     </div>
                   </TableCell>
                 </TableRow>

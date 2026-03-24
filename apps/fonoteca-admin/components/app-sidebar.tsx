@@ -1,21 +1,23 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
+import { AudioLinesIcon, ClipboardListIcon, FrameIcon, GalleryVerticalEndIcon, LayersIcon, Leaf, MapIcon, PieChartIcon, TerminalIcon } from 'lucide-react'
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from '@/components/nav-main'
+import { NavProjects } from '@/components/nav-projects'
+import { NavUser } from '@/components/nav-user'
+import { TeamSwitcher } from '@/components/team-switcher'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, AudioLinesIcon, TerminalIcon, TerminalSquareIcon, BotIcon, BookOpenIcon, Settings2Icon, FrameIcon, PieChartIcon, MapIcon, LayersIcon, ClipboardListIcon } from "lucide-react"
+} from '@/components/ui/sidebar'
 
-// This is sample data.
+
+
+
 const data = {
   user: {
     name: "shadcn",
@@ -123,11 +125,32 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// Team data for the switcher
+const teams = [
+  {
+    name: 'Intranet IIAP',
+    logo: '/brands/logo-iiap.webp',
+    plan: 'Instituto',
+  },
+]
+
+interface UserData {
+  name: string
+  email: string
+  avatar: string | null
+}
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  userData?: UserData | null
+}
+
+export function AppSidebar({ userData, ...props }: AppSidebarProps) {
+
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
@@ -139,3 +162,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   )
 }
+

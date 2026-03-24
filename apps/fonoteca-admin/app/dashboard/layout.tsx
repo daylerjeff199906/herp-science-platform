@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { AdminSidebar } from "@/components/panel-admin/admin-sidebar"
 import { createBioIntranetServer } from '@/utils/supabase/bio-intranet/server'
 import { cookies } from 'next/headers'
+import { AppSidebar } from "@/components/app-sidebar"
 
 export default async function AdminLayout({
   children,
@@ -49,15 +50,8 @@ export default async function AdminLayout({
 
   return (
     <SidebarProvider>
-      <AdminSidebar user={userData} locale={locale} />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          {children}
-        </div>
-      </SidebarInset>
+      <AppSidebar />
+      {children}
     </SidebarProvider>
   )
 }
