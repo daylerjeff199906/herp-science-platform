@@ -83,9 +83,27 @@ export async function createOccurrence(input: OccurrenceInput) {
     return { error: parsed.error.flatten().fieldErrors };
   }
 
+  // Get current user profile ID to link correctly
+  const { data: { user } } = await supabase.auth.getUser();
+  let profileId = "00000000-0000-0000-0000-000000000000"; // Fallback
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("auth_id", user.id)
+      .single();
+    if (profile) profileId = profile.id;
+  }
+
+  const insertData = {
+    ...parsed.data,
+    profile_id: profileId,
+  };
+
   const { data, error } = await supabase
     .from("occurrences")
-    .insert([parsed.data])
+    .insert([insertData])
     .select()
     .single();
 

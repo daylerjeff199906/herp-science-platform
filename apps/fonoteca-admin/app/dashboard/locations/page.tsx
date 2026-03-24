@@ -1,7 +1,7 @@
 import { getLocations } from "@/actions/locations";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
 import { SearchInput } from "@/components/dashboard/search-input";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default async function LocationsPage({
   searchParams,
@@ -37,11 +38,9 @@ export default async function LocationsPage({
             Gestión de lugares para las ocurrencias monitoreadas.
           </p>
         </div>
-        <Button asChild className="gap-2">
-          <Link href="/dashboard/locations/create">
-            <Plus className="h-4 w-4" /> Registrar Ubicación
-          </Link>
-        </Button>
+        <Link href="/dashboard/locations/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
+          <Plus className="h-4 w-4" /> Registrar Ubicación
+        </Link>
       </div>
 
       <div className="flex items-center justify-between gap-4">
@@ -75,11 +74,9 @@ export default async function LocationsPage({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" asChild title="Editar">
-                        <Link href={`/dashboard/locations/${loc.id}/edit`}>
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
+                      <Link href={`/dashboard/locations/${loc.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
+                        <Edit className="h-4 w-4" />
+                      </Link>
                       <Button variant="ghost" className="text-destructive hover:text-destructive" size="icon" title="Eliminar">
                         <Trash2 className="h-4 w-4" />
                       </Button>

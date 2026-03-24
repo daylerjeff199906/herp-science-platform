@@ -1,6 +1,6 @@
 import { getMultimediaList } from "@/actions/multimedia";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2, } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default async function MultimediaPage({
   searchParams,
@@ -40,11 +41,9 @@ export default async function MultimediaPage({
             Gestión de grabaciones o audios relativos a las ocurrencias.
           </p>
         </div>
-        <Button asChild className="gap-2">
-          <Link href="/dashboard/multimedia/create">
-            <Plus className="h-4 w-4" /> Subir Archivo
-          </Link>
-        </Button>
+        <Link href="/dashboard/multimedia/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
+          <Plus className="h-4 w-4" /> Subir Archivo
+        </Link>
       </div>
 
       <div className="rounded-md border">
@@ -74,11 +73,9 @@ export default async function MultimediaPage({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" asChild title="Editar">
-                        <Link href={`/dashboard/multimedia/${media.id}/edit`}>
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
+                      <Link href={`/dashboard/multimedia/${media.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
+                        <Edit className="h-4 w-4" />
+                      </Link>
                       <Button variant="ghost" className="text-destructive hover:text-destructive" size="icon" title="Eliminar">
                         <Trash2 className="h-4 w-4" />
                       </Button>

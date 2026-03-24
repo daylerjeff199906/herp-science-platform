@@ -12,12 +12,12 @@ import { toast } from "sonner";
 export function TaxonForm({ id, onSuccess }: { id: string | null; onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TaxonInput>({
-    resolver: zodResolver(taxonSchema),
+    resolver: zodResolver(taxonSchema) as any,
     defaultValues: {
       kingdom: "Animalia",
       taxonRank: "species",
       nomenclaturalCode: "ICZN",
-    }
+    } as any
   });
 
   useEffect(() => {

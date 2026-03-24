@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { TaxonForm } from "./taxon-form"; // We will create this
+import { TaxonForm } from "./taxon-form";
 import { deleteTaxon } from "@/actions/taxa";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

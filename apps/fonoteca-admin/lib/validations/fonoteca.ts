@@ -4,9 +4,9 @@ import { z } from "zod";
 export const locationSchema = z.object({
   id: z.string().uuid().optional(),
   locationID: z.string().optional().nullable(),
-  continent: z.string().default("South America"),
-  country: z.string().default("Peru"),
-  countryCode: z.string().default("PE"),
+  continent: z.string(),
+  country: z.string(),
+  countryCode: z.string(),
   stateProvince: z.string().optional().nullable(),
   county: z.string().optional().nullable(),
   locality: z.string().min(1, "Locality is required"),
@@ -34,10 +34,10 @@ export const taxonSchema = z.object({
   genus: z.string().optional().nullable(),
   specificEpithet: z.string().optional().nullable(),
   infraspecificEpithet: z.string().optional().nullable(),
-  taxonRank: z.string().default("species"),
+  taxonRank: z.string(),
   scientificNameAuthorship: z.string().optional().nullable(),
   vernacularName: z.string().optional().nullable(),
-  nomenclaturalCode: z.string().default("ICZN"),
+  nomenclaturalCode: z.string(),
 });
 
 export type TaxonInput = z.infer<typeof taxonSchema>;
@@ -50,8 +50,8 @@ export const occurrenceSchema = z.object({
   location_id: z.string().uuid("Invalid Location ID"),
   profile_id: z.string().uuid("Invalid Profile ID"),
   basisOfRecord: z.string().min(1, "Basis of record is required"),
-  institutionCode: z.string().default("IIAP"),
-  collectionCode: z.string().default("Fonoteca"),
+  institutionCode: z.string(),
+  collectionCode: z.string(),
   catalogNumber: z.string().optional().nullable(),
   recordedBy: z.string().min(1, "Recorded By is required"),
   identifiedBy: z.string().optional().nullable(),
