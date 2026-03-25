@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { occurrenceSchema, OccurrenceInput } from "@/lib/validations/fonoteca";
 import { createOccurrence, updateOccurrence, getOccurrence } from "@/actions/occurrences";
@@ -12,16 +12,31 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Location, Taxon } from "@/types/fonoteca";
-import { FileText, FolderTree, Calendar, Building } from "lucide-react";
+import { FileText, FolderTree, Calendar, Building, Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
+import { cn } from "@repo/ui/lib/utils";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@repo/ui/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@repo/ui/components/ui/popover";
 
 export function OccurrenceForm({ id }: { id?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [taxa, setTaxa] = useState<Taxon[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
+  const [openTaxon, setOpenTaxon] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<OccurrenceInput>({
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<OccurrenceInput>({
     resolver: zodResolver(occurrenceSchema) as any,
     defaultValues: {
       basisOfRecord: "HumanObservation",
@@ -41,6 +56,24 @@ export function OccurrenceForm({ id }: { id?: string }) {
         setLoading(false);
         if (resp.data) {
           reset(resp.data);
+          
+          if (resp.data.taxon) {
+            setTaxa(prev => {
+              if (!prev.find(t => t.id === resp.data.taxon?.id)) {
+                return [resp.data.taxon as Taxon, ...prev];
+              }
+              return prev;
+            });
+          }
+          
+          if (resp.data.location) {
+            setLocations(prev => {
+              if (!prev.find(l => l.id === resp.data.location?.id)) {
+                return [resp.data.location as Location, ...prev];
+              }
+              return prev;
+            });
+          }
         } else {
           toast.error("Error al cargar ocurrencia");
         }
@@ -107,17 +140,63 @@ export function OccurrenceForm({ id }: { id?: string }) {
             <div className="w-1/4 flex items-center">
               <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
             </div>
-            <div className="w-3/4">
-              <select
-                {...register("taxon_id")}
-                className="flex h-8 w-full max-w-xl rounded-md border-none bg-transparent px-2 text-sm shadow-none font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/20"
-              >
-                <option value="">Seleccionar Taxón...</option>
-                {taxa.map(t => (
-                  <option key={t.id} value={t.id}>{t.scientificName} ({t.vernacularName || "-"})</option>
-                ))}
-              </select>
-              {errors.taxon_id && <p className="text-xs text-red-500 mt-1 px-2">{errors.taxon_id.message}</p>}
+            <div className="w-3/4 flex flex-col items-start gap-1 max-w-xl">
+              <Controller
+                control={control}
+                name="taxon_id"
+                render={({ field }) => (
+                  <Popover open={openTaxon} onOpenChange={setOpenTaxon}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className={cn(
+                          "flex h-8 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <span className="truncate">
+                        {field.value
+                          ? (() => {
+                              const t = taxa.find((t) => t.id === field.value);
+                              return t ? `${t.scientificName} (${t.vernacularName || "-"})` : "Seleccionar Taxón...";
+                            })()
+                          : "Seleccionar Taxón..."}
+                        </span>
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Buscar taxón..." />
+                        <CommandList>
+                          <CommandEmpty>No se encontró taxón.</CommandEmpty>
+                          <CommandGroup>
+                            {taxa.map((t) => (
+                              <CommandItem
+                                key={t.id}
+                                value={`${t.scientificName} ${t.vernacularName || ""}`}
+                                onSelect={() => {
+                                  field.onChange(t.id);
+                                  setOpenTaxon(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4 shrink-0",
+                                    t.id === field.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {t.scientificName} ({t.vernacularName || "-"})
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                )}
+              />
+              {errors.taxon_id && <p className="text-xs text-red-500 px-2">{errors.taxon_id.message}</p>}
             </div>
           </div>
 
