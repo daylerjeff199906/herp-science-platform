@@ -27,6 +27,7 @@ export function TeamSwitcher({
     name: string
     logo: string
     plan: string
+    url: string
   }[]
 }) {
   const { isMobile } = useSidebar()
@@ -68,7 +69,13 @@ export function TeamSwitcher({
               {teams.map((team, index) => (
                 <DropdownMenuItem
                   key={team.name}
-                  onClick={() => setActiveTeam(team)}
+                  onClick={() => {
+                    if (team.url && team.url !== '#' && team.url !== '/') {
+                      window.open(team.url, "_blank");
+                    } else {
+                      setActiveTeam(team);
+                    }
+                  }}
                   className="gap-2 p-2"
                 >
                   <img src={team.logo} alt={team.name} width={32} height={32} />
