@@ -1,4 +1,6 @@
 import { LocationForm } from "@/components/dashboard/locations/location-form";
+import { PageHeader } from "@/components/panel-admin/page-header";
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
 
 export default async function EditLocationPage({
   params,
@@ -8,10 +10,15 @@ export default async function EditLocationPage({
   const { id } = await params;
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <h1 className="text-3xl font-bold tracking-tight">Editar Ubicación</h1>
-      <p className="text-muted-foreground">Actualiza los datos del área geográfica seleccionada.</p>
-      <LocationForm id={id} />
-    </div>
+    <LayoutWrapper sectionTitle="Editar Ubicación">
+      <div className="w-full max-w-5xl mx-auto space-y-4 py-4 px-4">
+        <PageHeader 
+          title="Editar Ubicación" 
+          description="Gestiona las coordenadas y metadatos geográficos." 
+          backUrl="/dashboard/locations" 
+        />
+        <LocationForm id={id} />
+      </div>
+    </LayoutWrapper>
   );
 }
