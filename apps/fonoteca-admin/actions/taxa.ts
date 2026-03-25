@@ -10,10 +10,16 @@ export async function getTaxa({
   page = 1,
   limit = 10,
   search = "",
+  kingdom = "",
+  family_id = "",
+  genus_id = "",
 }: {
   page?: number;
   limit?: number;
   search?: string;
+  kingdom?: string;
+  family_id?: string;
+  genus_id?: string;
 }) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -21,12 +27,31 @@ export async function getTaxa({
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
+  let selectStr = "*, genus:genera(*, family:families(*))";
+
+  if (kingdom || family_id) {
+    // !inner join translates to filter parent when children are verified
+    selectStr = "*, genus:genera!inner(*, family:families!inner(*))";
+  }
+
   let query = supabase
     .from("taxa")
-    .select("*", { count: "exact" });
+    .select(selectStr, { count: "exact" });
 
   if (search) {
-    query = query.or(`scientificName.ilike.%${search}%,vernacularName.ilike.%${search}%,family.ilike.%${search}%,genus.ilike.%${search}%`);
+    query = query.or(`scientificName.ilike.%${search}%,vernacularName.ilike.%${search}%`);
+  }
+
+  if (genus_id) {
+    query = query.eq("genus_id", genus_id);
+  }
+
+  if (family_id) {
+    query = query.eq("genus.family_id", family_id);
+  }
+
+  if (kingdom) {
+    query = query.eq("genus.family.kingdom", kingdom);
   }
 
   const { data, count, error } = await query
@@ -50,7 +75,7 @@ export async function getTaxon(id: string) {
 
   const { data, error } = await supabase
     .from("taxa")
-    .select("*")
+    .select("*, genus:genera(*, family:families(*))")
     .eq("id", id)
     .single();
 
@@ -59,6 +84,38 @@ export async function getTaxon(id: string) {
   }
 
   return { data: (data as any) as Taxon };
+}
+
+export async function getGenera() {
+  const cookieStore = await cookies();
+  const supabase = await createFonotecaServer(cookieStore);
+
+  const { data, error } = await supabase
+    .from("genera")
+    .select("*, family:families(name)")
+    .order("name");
+
+  if (error) {
+    return { data: [], error: error.message };
+  }
+
+  return { data: data || [] };
+}
+
+export async function getFamilies() {
+  const cookieStore = await cookies();
+  const supabase = await createFonotecaServer(cookieStore);
+
+  const { data, error } = await supabase
+    .from("families")
+    .select("*")
+    .order("name");
+
+  if (error) {
+    return { data: [], error: error.message };
+  }
+
+  return { data: data || [] };
 }
 
 export async function createTaxon(input: TaxonInput) {

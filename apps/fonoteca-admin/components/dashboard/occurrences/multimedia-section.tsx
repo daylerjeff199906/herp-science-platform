@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, FileVideo, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
 import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia } from "@/actions/multimedia";
@@ -31,8 +31,16 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   // URL States
   const [urlInput, setUrlInput] = useState("");
   const [urlTitle, setUrlTitle] = useState("");
+  const [urlCreator, setUrlCreator] = useState("Dashboard");
+  const [urlRightsHolder, setUrlRightsHolder] = useState("Instituto de Investigaciones de la Amazonía Peruana (IIAP)");
+  const [urlLicense, setUrlLicense] = useState("http://creativecommons.org/licenses/by-nc/4.0/");
+
   const [editTitle, setEditTitle] = useState("");
   const [editUrl, setEditUrl] = useState("");
+  const [editCreator, setEditCreator] = useState("");
+  const [editRightsHolder, setEditRightsHolder] = useState("");
+  const [editLicense, setEditLicense] = useState("");
+  const [editTag, setEditTag] = useState("");
 
   // Library States
   const [libItems, setLibItems] = useState<Multimedia[]>([]);
@@ -125,10 +133,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         type: activeUploadType as any,
         format: activeUploadType === "Sound" ? "audio/mpeg" : "image/jpeg",
         title: urlTitle || "Enlace URL",
-        creator: "Dashboard",
+        creator: urlCreator || "Dashboard",
         order_index: items.length,
-        rightsHolder: "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
-        license: "http://creativecommons.org/licenses/by-nc/4.0/",
+        rightsHolder: urlRightsHolder || "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
+        license: urlLicense || "http://creativecommons.org/licenses/by-nc/4.0/",
         tag: activeUploadType === "Sound" ? "main_audio" : "gallery",
       });
 
@@ -155,7 +163,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         type: item.type,
         format: item.format,
         title: item.title,
-        creator: "Dashboard",
+        creator: item.creator || "Dashboard",
         order_index: items.length,
         rightsHolder: item.rightsHolder,
         license: item.license,
@@ -176,6 +184,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     setEditingItem(item);
     setEditTitle(item.title || "");
     setEditUrl(item.identifier);
+    setEditCreator(item.creator || "Dashboard");
+    setEditRightsHolder(item.rightsHolder || "Instituto de Investigaciones de la Amazonía Peruana (IIAP)");
+    setEditLicense(item.license || "http://creativecommons.org/licenses/by-nc/4.0/");
+    setEditTag(item.tag || "");
     setEditSheetOpen(true);
   };
 
@@ -190,11 +202,11 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         type: editingItem.type,
         format: editingItem.format,
         title: editTitle,
-        creator: editingItem.creator,
+        creator: editCreator,
         order_index: editingItem.order_index,
-        rightsHolder: editingItem.rightsHolder,
-        license: editingItem.license,
-        tag: editingItem.tag,
+        rightsHolder: editRightsHolder,
+        license: editLicense,
+        tag: editTag,
         parent_multimedia_id: editingItem.parent_multimedia_id
       });
 
@@ -305,13 +317,13 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const imageItems = items.filter(it => it.type === "Still" && it.tag !== "spectrogram");
 
   const RenderGrid = ({ list, typeTitle, uploadType }: { list: Multimedia[], typeTitle: string, uploadType: "Sound" | "Still" }) => (
-    <div className="space-y-3 border rounded-lg p-4 bg-background">
+    <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between border-b pb-2">
-        <h3 className="font-semibold text-base">{typeTitle}</h3>
+        <h3 className="text-sm font-semibold text-foreground/85">{typeTitle}</h3>
 
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button size="xs" variant="outline" className="gap-1 text-xs">
+            <Button size="sm" variant="outline" className="gap-1 text-xs">
               <Plus className="h-3.5 w-3.5" /> Agregar
             </Button>
           </DropdownMenuTrigger>
@@ -401,37 +413,92 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   );
 
   return (
-    <div className="space-y-4 border rounded-lg p-5 bg-card mt-6">
-      <div>
-        <h2 className="text-xl font-bold tracking-tight">Carga Multimedia de Especie</h2>
-        <p className="text-sm text-muted-foreground">Sube audios e imágenes por secciones y arrastra para cambiar el orden.</p>
+    <div className="space-y-6 mt-6">
+      <div className="space-y-1">
+        <div className="flex items-center gap-2">
+          <Upload className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Carga Multimedia de Especie</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Sube audios e imágenes por secciones y arrastra para cambiar el orden.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <RenderGrid list={audioItems} typeTitle="Multimedia - Audios & Espectrogramas" uploadType="Sound" />
+      <div className="grid grid-cols-1 gap-6">
+        <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType="Sound" />
+        <div className="border-t border-muted/50 my-2" />
         <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType="Still" />
       </div>
 
       {/* --- Dialog: URL --- */}
       <Sheet open={urlSheetOpen} onOpenChange={setUrlSheetOpen}>
-        <SheetContent className="sm:max-w-md">
+        <SheetContent className="sm:max-w-xl pb-0">
           <SheetHeader>
             <SheetTitle>Agregar desde URL</SheetTitle>
             <SheetDescription>Inserta un enlace externo del audio o imagen.</SheetDescription>
           </SheetHeader>
-          <div className="space-y-4 py-4 border-t mt-4">
-            <div>
-              <label className="text-sm font-medium">Título del Archivo</label>
-              <Input placeholder="Ej: Canto de ave en MP3" value={urlTitle} onChange={(e) => setUrlTitle(e.target.value)} />
+          <div className="space-y-4 border-t mt-4 p-2 md:p-4">
+
+            {/* Visualizer */}
+            {urlInput && (
+              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
+                {activeUploadType === "Still" ? (
+                  <img src={urlInput} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
+                ) : (
+                  <audio src={urlInput} controls className="w-[90%] mt-auto mb-4" />
+                )}
+              </div>
+            )}
+
+            <div className="rounded-md border bg-card">
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase cursor-pointer">Título *</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="p. ej. Canto de ave en MP3" value={urlTitle} onChange={(e) => setUrlTitle(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">URL *</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="https://mi-servidor.com/audio.mp3" value={urlInput} onChange={(e) => setUrlInput(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Creador</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="p. ej. Investigador" value={urlCreator} onChange={(e) => setUrlCreator(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Derechos</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="Institución" value={urlRightsHolder} onChange={(e) => setUrlRightsHolder(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Licencia</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="http://..." value={urlLicense} onChange={(e) => setUrlLicense(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">URL (.mp3, .jpg, etc.)</label>
-              <Input placeholder="https://mi-servidor.com/audio.mp3" value={urlInput} onChange={(e) => setUrlInput(e.target.value)} />
-            </div>
-            <div className="flex justify-end gap-2">
+
+            <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => setUrlSheetOpen(false)}>Cancelar</Button>
               <Button size="sm" onClick={handleAddFromUrl} disabled={!urlInput || uploading !== null}>
-                {uploading ? "Agregando..." : "Agregar"}
+                {uploading ? "Agregando..." : "Agregar Desde URL"}
               </Button>
             </div>
           </div>
@@ -440,7 +507,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
       {/* --- Dialog: Library --- */}
       <Sheet open={libSheetOpen} onOpenChange={setLibSheetOpen}>
-        <SheetContent className="sm:max-w-lg overflow-y-auto">
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Biblioteca de Archivos</SheetTitle>
             <SheetDescription>Selecciona un archivo existente en el sistema para vincularlo a esta ocurrencia.</SheetDescription>
@@ -451,16 +518,16 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             ) : libItems.filter(i => i.type === activeUploadType).length === 0 ? (
               <div className="text-center text-xs text-muted-foreground p-4">No hay archivos de este tipo en la biblioteca.</div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {libItems.filter(i => i.type === activeUploadType).map((item) => (
                   <div
                     key={item.id}
-                    className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center"
+                    className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center transition-all bg-muted/10 hover:shadow-sm"
                     onClick={() => handleLinkFromLibrary(item)}
                   >
                     {item.type === "Still" && <FileImage className="h-10 w-10 text-blue-500 mb-1" />}
                     {item.type === "Sound" && <FileAudio className="h-10 w-10 text-green-500 mb-1" />}
-                    <span className="text-xs font-medium line-clamp-2 w-full">{item.title || "Archivo"}</span>
+                    <span className="text-xs font-semibold line-clamp-2 w-full text-foreground/80">{item.title || "Archivo"}</span>
                   </div>
                 ))}
               </div>
@@ -471,24 +538,84 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
       {/* --- Dialog: Edit --- */}
       <Sheet open={editSheetOpen} onOpenChange={(open) => { setEditSheetOpen(open); if (!open) setEditingItem(null); }}>
-        <SheetContent className="sm:max-w-md">
+        <SheetContent className="sm:max-w-xl">
           <SheetHeader>
             <SheetTitle>Editar Elemento</SheetTitle>
             <SheetDescription>Modifica el título o el enlace de la multimedia.</SheetDescription>
           </SheetHeader>
           <div className="space-y-4 py-4 border-t mt-4">
-            <div>
-              <label className="text-sm font-medium">Título del Archivo</label>
-              <Input placeholder="Ej: Canto de ave" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+
+            {/* Visualizer */}
+            {editUrl && (
+              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
+                {editingItem?.type === "Still" ? (
+                  <img src={editUrl} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
+                ) : (
+                  <audio src={editUrl} controls className="w-[90%] mt-auto mb-4" />
+                )}
+              </div>
+            )}
+
+            <div className="rounded-md border bg-card">
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase cursor-pointer">Título *</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="p. ej. Canto de ave" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">URL *</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="https://..." value={editUrl} onChange={(e) => setEditUrl(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Creador</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="p. ej. Investigador" value={editCreator} onChange={(e) => setEditCreator(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Derechos</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="Institución" value={editRightsHolder} onChange={(e) => setEditRightsHolder(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Licencia</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="http://..." value={editLicense} onChange={(e) => setEditLicense(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 p-3 border-b border-muted/50 last:border-0">
+                <div className="w-1/3 flex items-center">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Etiqueta</label>
+                </div>
+                <div className="w-2/3">
+                  <Input placeholder="p. ej. main_audio" value={editTag} onChange={(e) => setEditTag(e.target.value)} className="font-medium border-none shadow-none focus-visible:ring-1 focus-visible:ring-primary/20 h-8 px-2" />
+                </div>
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">URL (Solo para enlaces)</label>
-              <Input placeholder="https://..." value={editUrl} onChange={(e) => setEditUrl(e.target.value)} />
-            </div>
-            <div className="flex justify-end gap-2">
+
+            <div className="flex justify-end gap-2 pt-2">
               <Button variant="outline" size="sm" onClick={() => { setEditSheetOpen(false); setEditingItem(null); }}>Cancelar</Button>
               <Button size="sm" onClick={handleSaveEdit} disabled={!editUrl || uploading !== null}>
-                {uploading === "editing" ? "Guardando..." : "Guardar"}
+                {uploading === "editing" ? "Guardando..." : "Guardar Cambios"}
               </Button>
             </div>
           </div>

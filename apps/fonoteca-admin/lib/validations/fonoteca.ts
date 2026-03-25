@@ -32,19 +32,15 @@ export const taxonSchema = z.object({
   taxonID: z.string().optional().nullable(),
   scientificName: z.string().min(1, "Scientific Name is required"),
   acceptedNameUsage: z.string().optional().nullable(),
-  kingdom: z.string().default("Animalia"),
-  phylum: z.string().optional().nullable(),
-  class: z.string().optional().nullable(),
-  order: z.string().optional().nullable(),
-  family: z.string().optional().nullable(),
-  genus: z.string().optional().nullable(),
   specificEpithet: z.string().optional().nullable(),
   infraspecificEpithet: z.string().optional().nullable(),
   taxonRank: z.string(),
   scientificNameAuthorship: z.string().optional().nullable(),
   vernacularName: z.string().optional().nullable(),
   nomenclaturalCode: z.string(),
+  genus_id: z.string(),
 });
+
 
 export type TaxonInput = z.infer<typeof taxonSchema>;
 

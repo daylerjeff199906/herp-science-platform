@@ -16,25 +16,44 @@ export interface Location {
   created_at: string;
 }
 
+export interface Family {
+  id: string;
+  kingdom: string;
+  phylum: string | null;
+  class: string;
+  order: string;
+  name: string;
+  created_at: string;
+}
+
+export interface Genus {
+  id: string;
+  family_id: string;
+  name: string;
+  created_at: string;
+
+  // Joined (optional)
+  family?: Family;
+}
+
 export interface Taxon {
   id: string;
   taxonID: string | null;
   scientificName: string;
   acceptedNameUsage: string | null;
-  kingdom: string;
-  phylum: string | null;
-  class: string | null;
-  order: string | null;
-  family: string | null;
-  genus: string | null;
   specificEpithet: string | null;
   infraspecificEpithet: string | null;
   taxonRank: string;
   scientificNameAuthorship: string | null;
   vernacularName: string | null;
   nomenclaturalCode: string;
+  genus_id: string | null;
   created_at: string;
+
+  // Joined (optional)
+  genus?: Genus;
 }
+
 
 export interface Occurrence {
   id: string;

@@ -1,6 +1,5 @@
 "use client"
-
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 
@@ -49,29 +48,28 @@ export function NavAdmin({
                         return (
                             <Collapsible
                                 key={item.title}
-                                render={<SidebarMenuItem />}
                                 defaultOpen={isActive}
                                 className="group/collapsible"
                             >
-                                <CollapsibleTrigger render={<SidebarMenuButton tooltip={item.title} isActive={isActive} />}>
-                                        {item.icon && <item.icon />}
-                                        <span>{item.title}</span>
-                                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                <CollapsibleTrigger>
+                                    {item.icon && <item.icon />}
+                                    <span>{item.title}</span>
+                                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                                 </CollapsibleTrigger>
-                                    <CollapsibleContent>
-                                        <SidebarMenuSub>
-                                            {item.items?.map((subItem) => {
-                                                const isSubActive = pathname === subItem.url
-                                                return (
-                                                    <SidebarMenuSubItem key={subItem.title}>
-                                                        <SidebarMenuSubButton render={<Link href={subItem.url} />} isActive={isSubActive}>
-                                                                <span>{subItem.title}</span>
-                                                        </SidebarMenuSubButton>
-                                                    </SidebarMenuSubItem>
-                                                )
-                                            })}
-                                        </SidebarMenuSub>
-                                    </CollapsibleContent>
+                                <CollapsibleContent>
+                                    <SidebarMenuSub>
+                                        {item.items?.map((subItem) => {
+                                            const isSubActive = pathname === subItem.url
+                                            return (
+                                                <SidebarMenuSubItem key={subItem.title}>
+                                                    <SidebarMenuSubButton isActive={isSubActive}>
+                                                        <span>{subItem.title}</span>
+                                                    </SidebarMenuSubButton>
+                                                </SidebarMenuSubItem>
+                                            )
+                                        })}
+                                    </SidebarMenuSub>
+                                </CollapsibleContent>
                             </Collapsible>
                         )
                     }
@@ -79,9 +77,9 @@ export function NavAdmin({
                     // Si el item no tiene "items", renderizamos un link directo
                     return (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton render={<Link href={item.url} />} tooltip={item.title} isActive={isActive}>
-                                    {item.icon && <item.icon />}
-                                    <span>{item.title}</span>
+                            <SidebarMenuButton tooltip={item.title} isActive={isActive}>
+                                {item.icon && <item.icon />}
+                                <span>{item.title}</span>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     )

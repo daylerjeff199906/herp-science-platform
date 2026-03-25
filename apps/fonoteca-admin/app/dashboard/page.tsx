@@ -1,10 +1,13 @@
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
 
 export default function Page() {
   return (
     <>
-      <div>
-        asdasd
-      </div>
+      <LayoutWrapper>
+        <div>
+          asdasd
+        </div>
+      </LayoutWrapper>
     </>
   )
 }

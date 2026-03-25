@@ -20,7 +20,8 @@ export const LayoutWrapper = ({
                 {children}
             </div>
             <footer className="p-4 md:p-6 text-xs text-muted-foreground text-center mt-auto">
-                &copy; {new Date().getFullYear()} IIAP.{' '} Todos los derechos reservados.
+                &copy; {new Date().getFullYear()} IIAP.{' '}
+                {'Todos los derechos reservados.'}
             </footer>
         </SidebarInset>
     )

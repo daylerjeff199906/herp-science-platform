@@ -15,6 +15,9 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
+import { PageHeader } from "@/components/panel-admin/page-header";
+
 export default async function MultimediaPage({
   searchParams,
 }: {
@@ -35,18 +38,18 @@ export default async function MultimediaPage({
   }
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Archivos Multimedia</h1>
-          <p className="text-muted-foreground">
-            Gestión de grabaciones o audios relativos a las ocurrencias.
-          </p>
-        </div>
-        <Link href="/dashboard/multimedia/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-          <Plus className="h-4 w-4" /> Subir Archivo
-        </Link>
-      </div>
+    <LayoutWrapper sectionTitle="Mediateca">
+      <div className="space-y-4">
+        <PageHeader
+          title="Archivos Multimedia"
+          description="Gestión de grabaciones o audios relativos a las ocurrencias."
+          action={{
+            label: "Subir Archivo",
+            href: "/dashboard/multimedia/create",
+            icon: <Plus className="h-4 w-4" />,
+          }}
+        />
+
 
       <div className="rounded-md border">
         <Table>
@@ -99,6 +102,8 @@ export default async function MultimediaPage({
       </div>
 
       <PaginationButtons totalCount={count} pageSize={10} />
-    </div>
+      </div>
+    </LayoutWrapper>
   );
 }
+

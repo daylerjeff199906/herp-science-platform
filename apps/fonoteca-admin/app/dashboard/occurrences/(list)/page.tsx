@@ -1,9 +1,7 @@
 import { getOccurrences, deleteOccurrence } from "@/actions/occurrences";
 import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
-import { BulkUploadSheet } from "@/components/dashboard/occurrences/bulk-upload-sheet";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
 import { SearchInput } from "@/components/dashboard/search-input";
-import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Table,
@@ -13,9 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Edit, Eye } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 export default async function OccurrencesPage({
   searchParams,
@@ -37,22 +34,7 @@ export default async function OccurrencesPage({
   }
 
   return (
-    <div className="container mx-auto space-y-4 py-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Ocurrencias</h1>
-          <p className="text-muted-foreground">
-            Gestión de monitoreo de especies avistadas.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <BulkUploadSheet />
-          <Link href="/dashboard/occurrences/create" className={cn(buttonVariants({ variant: "default" }), "gap-2")}>
-            <Plus className="h-4 w-4" /> Registrar Ocurrencia
-          </Link>
-        </div>
-      </div>
-
+    <>
       <div className="flex items-center justify-between gap-4">
         <SearchInput placeholder="Buscar por código u observador..." />
       </div>
@@ -81,15 +63,15 @@ export default async function OccurrencesPage({
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Link href={`/dashboard/occurrences/${oc.id}`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Ver Detalles">
-                        <Plus className="h-4 w-4 rotate-45" /> {/* Eye or any view icon */}
+                        <Eye className="h-4 w-4" />
                       </Link>
                       <Link href={`/dashboard/occurrences/${oc.id}/edit`} className={buttonVariants({ variant: "ghost", size: "icon" })} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Link>
-                      <DeleteButtonWithConfirm 
-                        id={oc.id} 
-                        onConfirm={deleteOccurrence} 
-                        itemName="ocurrencia / registro" 
+                      <DeleteButtonWithConfirm
+                        id={oc.id}
+                        onConfirm={deleteOccurrence}
+                        itemName="ocurrencia / registro"
                       />
                     </div>
                   </TableCell>
@@ -107,6 +89,7 @@ export default async function OccurrencesPage({
       </div>
 
       <PaginationButtons totalCount={count} pageSize={10} />
-    </div>
+    </>
   );
 }
+
