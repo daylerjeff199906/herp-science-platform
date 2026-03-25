@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
-import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, FileVideo, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
+import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
 import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia } from "@/actions/multimedia";
 import { Multimedia } from "@/types/fonoteca";
@@ -12,9 +12,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
+} from "@repo/ui/components/ui/dropdown-menu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@repo/ui/components/ui/sheet";
+import { Input } from "@repo/ui/components/ui/input";
 
 export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [items, setItems] = useState<Multimedia[]>([]);
@@ -27,6 +27,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [editSheetOpen, setEditSheetOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Multimedia | null>(null);
   const [activeUploadType, setActiveUploadType] = useState<"Sound" | "Still" | null>(null);
+  const [activeParentItemId, setActiveParentItemId] = useState<string | null>(null);
 
   // URL States
   const [urlInput, setUrlInput] = useState("");
@@ -123,27 +124,30 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   };
 
   const handleAddFromUrl = async () => {
-    if (!urlInput || !activeUploadType) return;
+    if (!urlInput || (!activeUploadType && !activeParentItemId)) return;
 
-    setUploading(activeUploadType);
+    setUploading(activeParentItemId ? "spectrogram" : activeUploadType);
     try {
+      const isSpectro = !!activeParentItemId;
       await createMultimedia({
         occurrence_id: occurrenceId,
         identifier: urlInput,
-        type: activeUploadType as any,
-        format: activeUploadType === "Sound" ? "audio/mpeg" : "image/jpeg",
-        title: urlTitle || "Enlace URL",
+        type: isSpectro ? "Still" : (activeUploadType as any),
+        format: isSpectro ? "image/jpeg" : (activeUploadType === "Sound" ? "audio/mpeg" : "image/jpeg"),
+        title: urlTitle || (isSpectro ? `Histograma de ${items.find(i => i.id === activeParentItemId)?.title || "Audio"}` : "Enlace URL"),
         creator: urlCreator || "Dashboard",
-        order_index: items.length,
+        order_index: isSpectro ? items.filter(it => it.parent_multimedia_id === activeParentItemId).length : items.length,
         rightsHolder: urlRightsHolder || "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
         license: urlLicense || "http://creativecommons.org/licenses/by-nc/4.0/",
-        tag: activeUploadType === "Sound" ? "main_audio" : "gallery",
+        tag: isSpectro ? "spectrogram" : (activeUploadType === "Sound" ? "main_audio" : "gallery"),
+        parent_multimedia_id: activeParentItemId || undefined,
       });
 
-      toast.success("Enlace agregado correctamente");
+      toast.success(isSpectro ? "Histograma agregado" : "Enlace agregado correctamente");
       setUrlSheetOpen(false);
       setUrlInput("");
       setUrlTitle("");
+      setActiveParentItemId(null);
       loadMultimedia();
     } catch (err) {
       toast.error("Error agregando enlace");
@@ -225,10 +229,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     }
   };
 
-  const handleSpectrogramUpload = async (e: React.ChangeEvent<HTMLInputElement>, itemId: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const uploadSpectrogramFile = async (file: File, itemId: string) => {
     setUploading(itemId);
     try {
       const fileExt = file.name.split('.').pop();
@@ -239,35 +240,41 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) {
-        toast.error("Error al subir espectrograma: " + uploadError.message);
-        setUploading(null);
-        return;
+        toast.error("Error al subir imagen: " + uploadError.message);
+        return false;
       }
 
       const { data: urlData } = supabase.storage.from("multimedia").getPublicUrl(fileName);
       const publicUrl = urlData.publicUrl;
 
-      // Creates a new ROW in multimedia with tag='spectrogram' and parent_multimedia_id != null
       await createMultimedia({
         occurrence_id: occurrenceId,
         identifier: publicUrl,
         type: "Still",
         format: file.type,
-        title: `Espectrograma de ${items.find(i => i.id === itemId)?.title || itemId}`,
+        title: `Histograma de ${items.find(i => i.id === itemId)?.title || itemId}`,
         creator: "Dashboard",
-        order_index: 0,
+        order_index: items.filter(it => it.parent_multimedia_id === itemId).length,
         rightsHolder: "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
         license: "http://creativecommons.org/licenses/by-nc/4.0/",
         tag: "spectrogram",
         parent_multimedia_id: itemId,
       });
-
-      toast.success("Espectrograma registrado correctamente");
-      loadMultimedia();
+      return true;
     } catch (err) {
-      toast.error("Error registrando espectrograma");
+      toast.error("Error registrando imagen");
+      return false;
     } finally {
       setUploading(null);
+    }
+  };
+
+  const handleSpectrogramUpload = async (e: React.ChangeEvent<HTMLInputElement>, itemId: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (await uploadSpectrogramFile(file, itemId)) {
+      toast.success("Histograma registrado correctamente");
+      loadMultimedia();
     }
   };
 
@@ -279,13 +286,31 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     e.preventDefault();
   };
 
-  const handleDrop = async (targetItem: Multimedia) => {
+  const handleDrop = async (e: React.DragEvent, targetItem: Multimedia) => {
+    e.preventDefault();
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      if (targetItem.type === "Sound") {
+        const imageFiles = files.filter(f => f.type.startsWith("image/"));
+        if (imageFiles.length > 0) {
+          let count = 0;
+          for (const file of imageFiles) {
+            if (await uploadSpectrogramFile(file, targetItem.id)) count++;
+          }
+          if (count > 0) {
+            toast.success(`${count} histograma(s) subido(s)`);
+            loadMultimedia();
+          }
+          return;
+        }
+      }
+      return;
+    }
+
     if (!draggedItem || draggedItem.id === targetItem.id) return;
     if (draggedItem.type !== targetItem.type) return;
 
     const filterType = draggedItem.type;
-    const sameTypeItems = items.filter(it => it.type === filterType);
-
     const updated = items.map(it => {
       if (it.id === draggedItem.id) return { ...it, order_index: targetItem.order_index };
       if (it.id === targetItem.id) return { ...it, order_index: draggedItem.order_index };
@@ -293,12 +318,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     });
 
     setItems([...updated].sort((a, b) => (a.order_index || 0) - (b.order_index || 0)));
-
     await bulkUpdateMultimediaIndexes([
       { id: draggedItem.id, order_index: targetItem.order_index || 0 },
       { id: targetItem.id, order_index: draggedItem.order_index || 0 }
     ]);
-
     toast.success("Orden actualizado");
     setDraggedItem(null);
   };
@@ -355,8 +378,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {list.map((item) => {
-            // Locate spectrogram child row linked to this main audio
-            const spectrogram = items.find(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram");
+            // spectrograms rendered dynamically inside card
 
             return (
               <div
@@ -364,7 +386,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 draggable
                 onDragStart={() => handleDragStart(item)}
                 onDragOver={handleDragOver}
-                onDrop={() => handleDrop(item)}
+                onDrop={(e) => handleDrop(e, item)}
                 className="relative border rounded-lg p-3 bg-muted/20 flex flex-col items-center justify-center text-center cursor-move hover:bg-muted/50 transition-all duration-150"
               >
                 <div className="absolute top-1.5 left-1.5 text-muted-foreground"><GripVertical className="h-3 w-3" /></div>
@@ -385,23 +407,39 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 <span className="text-xs font-medium truncate w-full" title={item.title || "Archivo"}>{item.title || "Archivo"}</span>
 
                 {item.type === "Sound" && (
-                  <div className="mt-2 w-full border-t pt-2 space-y-1">
-                    {spectrogram ? (
-                      <div className="relative group">
-                        <img src={spectrogram.identifier} alt="Spectrogram" className="h-10 w-full object-cover rounded border" />
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                          <button className="text-[10px] text-white underline cursor-pointer hover:text-red-300" onClick={() => handleDelete(spectrogram.id, true)}>
-                            Eliminar
-                          </button>
-                        </div>
+                  <div className="mt-2 w-full border-t pt-2 space-y-2">
+                    {items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram").length > 0 && (
+                      <div className="grid grid-cols-2 gap-1 w-full">
+                        {items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram")
+                          .map(sp => (
+                            <div key={sp.id} className="relative group rounded border overflow-hidden aspect-video bg-muted/20">
+                              <img src={sp.identifier} className="h-full w-full object-cover" alt="Histograma" />
+                              <button className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-destructive/80 text-white p-1 rounded-sm hover:bg-destructive transition-opacity" onClick={(e) => { e.stopPropagation(); handleDelete(sp.id, true); }}>
+                                <Trash2 className="h-2.5 w-2.5" />
+                              </button>
+                            </div>
+                          ))}
                       </div>
-                    ) : (
-                      <label className="flex items-center justify-center text-[10px] gap-1 text-blue-600 hover:underline cursor-pointer">
-                        {uploading === item.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Plus className="h-2.5 w-2.5" />}
-                        Espectrograma
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSpectrogramUpload(e, item.id)} />
-                      </label>
                     )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <button className="flex items-center justify-center w-full text-[10px] gap-1 text-blue-600 hover:underline cursor-pointer border border-dashed rounded py-1 bg-blue-50/10" onClick={e => e.stopPropagation()}>
+                          {uploading === item.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Plus className="h-2.5 w-2.5" />}
+                          Agregar Histograma
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem className="p-0">
+                          <label className="w-full flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs">
+                            <Upload className="h-3 w-3" /> Subir Imagen
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSpectrogramUpload(e, item.id)} />
+                          </label>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType("Still"); setUrlSheetOpen(true); }}>
+                          <Link className="h-3 w-3 mr-1" /> Desde URL
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 )}
               </div>
@@ -429,7 +467,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       </div>
 
       {/* --- Dialog: URL --- */}
-      <Sheet open={urlSheetOpen} onOpenChange={setUrlSheetOpen}>
+      <Sheet open={urlSheetOpen} onOpenChange={(open) => { setUrlSheetOpen(open); if (!open) setActiveParentItemId(null); }}>
         <SheetContent className="sm:max-w-xl pb-0">
           <SheetHeader>
             <SheetTitle>Agregar desde URL</SheetTitle>
@@ -508,7 +546,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       {/* --- Dialog: Library --- */}
       <Sheet open={libSheetOpen} onOpenChange={setLibSheetOpen}>
         <SheetContent className="sm:max-w-xl overflow-y-auto">
-          <SheetHeader>
+          <SheetHeader className="">
             <SheetTitle>Biblioteca de Archivos</SheetTitle>
             <SheetDescription>Selecciona un archivo existente en el sistema para vincularlo a esta ocurrencia.</SheetDescription>
           </SheetHeader>
@@ -538,7 +576,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
       {/* --- Dialog: Edit --- */}
       <Sheet open={editSheetOpen} onOpenChange={(open) => { setEditSheetOpen(open); if (!open) setEditingItem(null); }}>
-        <SheetContent className="sm:max-w-xl">
+        <SheetContent className="sm:max-w-xl p-2 md:p-4">
           <SheetHeader>
             <SheetTitle>Editar Elemento</SheetTitle>
             <SheetDescription>Modifica el título o el enlace de la multimedia.</SheetDescription>
