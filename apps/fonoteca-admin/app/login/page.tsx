@@ -61,7 +61,12 @@ function LoginContent() {
             if (result?.error) {
                 setError(result.error)
             } else if (result?.redirectUrl) {
-                toast.success('¡Bienvenido de vuelta!')
+                toast.success(
+                    <div className="flex flex-col gap-0.5">
+                        <span className="font-bold text-sm">¡Bienvenido de vuelta!</span>
+                        <span className="text-xs opacity-90">Has iniciado sesión correctamente en el panel.</span>
+                    </div>
+                )
                 router.push(result.redirectUrl)
             }
         } catch (err) {

@@ -151,7 +151,12 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
     setUploading(null);
     if (successCount > 0) {
-      toast.success(`${successCount} archivos subidos correctamente`);
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Archivos subidos</span>
+          <span className="text-xs opacity-90">{successCount} archivo(s) se han procesado correctamente.</span>
+        </div>
+      );
       loadMultimedia();
     }
   };
@@ -176,7 +181,12 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         parent_multimedia_id: activeParentItemId || undefined,
       });
 
-      toast.success(isSpectro ? "Histograma agregado" : "Enlace agregado correctamente");
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Operación Exitosa</span>
+          <span className="text-xs opacity-90">{isSpectro ? "Histograma agregado" : "Enlace agregado correctamente"} a la multimedia actual.</span>
+        </div>
+      );
       setUrlSheetOpen(false);
       setUrlInput("");
       setUrlTitle("");
@@ -319,7 +329,12 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (await uploadSpectrogramFile(file, itemId)) {
-      toast.success("Histograma registrado correctamente");
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Histograma Registrado</span>
+          <span className="text-xs opacity-90">El histograma se guardó exitosamente y se vinculó al audio.</span>
+        </div>
+      );
       loadMultimedia();
     }
   };
@@ -375,7 +390,12 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const handleDelete = async (id: string, isAudioChild = false) => {
     const resp = await deleteMultimedia(id);
     if (resp.success) {
-      toast.success(isAudioChild ? "Espectrograma eliminado" : "Archivo eliminado");
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Archivo Eliminado</span>
+          <span className="text-xs opacity-90">{isAudioChild ? "El espectrograma fue eliminado." : "El archivo multimedia fue eliminado con éxito."}</span>
+        </div>
+      );
       loadMultimedia();
     } else {
       toast.error("Error al eliminar");

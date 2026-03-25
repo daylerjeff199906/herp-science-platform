@@ -77,7 +77,12 @@ export function OccurrenceForm({ id }: { id?: string }) {
             });
           }
         } else {
-          toast.error("Error al cargar ocurrencia");
+          toast.error(
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bold text-sm">Error de carga</span>
+              <span className="text-xs opacity-90">No se pudo cargar la ocurrencia.</span>
+            </div>
+          );
         }
       });
     }
@@ -94,10 +99,20 @@ export function OccurrenceForm({ id }: { id?: string }) {
     setLoading(false);
 
     if (resp.success) {
-      toast.success(id ? "Ocurrencia actualizada" : "Ocurrencia registrada");
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Operación Exitosa</span>
+          <span className="text-xs opacity-90">{id ? "La ocurrencia se actualizó correctamente." : "La ocurrencia se registró correctamente en el sistema."}</span>
+        </div>
+      );
       router.push("/dashboard/occurrences");
     } else {
-      toast.error("Error: " + (typeof resp.error === "string" ? resp.error : "Falló la validación"));
+      toast.error(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Ocurrió un error</span>
+          <span className="text-xs opacity-90">{typeof resp.error === "string" ? resp.error : "Falló la validación."}</span>
+        </div>
+      );
     }
   };
 
