@@ -12,6 +12,9 @@ export function SearchInput({ placeholder = "Buscar..." }: { placeholder?: strin
   const [search, setSearch] = useState(searchParams.get("search") || "");
 
   useEffect(() => {
+    const currentSearch = searchParams.get("search") || "";
+    if (search === currentSearch) return;
+
     const delayDebounceFn = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
       if (search) {

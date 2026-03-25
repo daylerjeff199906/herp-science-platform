@@ -25,7 +25,7 @@ export function TeamSwitcher({
 }: {
   teams: {
     name: string
-    logo: React.ReactNode
+    logo: string
     plan: string
   }[]
 }) {
@@ -46,8 +46,8 @@ export function TeamSwitcher({
               />
             }
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              {activeTeam.logo}
+            <div className="flex aspect-square size-8 items-center justify-center rounded bg-gray-100 text-sidebar-primary-foreground">
+              <img src={activeTeam.logo} alt={activeTeam.name} width={32} height={32} />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{activeTeam.name}</span>
@@ -71,9 +71,7 @@ export function TeamSwitcher({
                   onClick={() => setActiveTeam(team)}
                   className="gap-2 p-2"
                 >
-                  <div className="flex size-6 items-center justify-center rounded-md border">
-                    {team.logo}
-                  </div>
+                  <img src={team.logo} alt={team.name} width={32} height={32} />
                   {team.name}
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>

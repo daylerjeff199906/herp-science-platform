@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
-import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia } from "@/actions/multimedia";
-import { Multimedia } from "@/types/fonoteca";
+import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia, uploadToR2 } from "@/actions/multimedia";
+import { Multimedia, MEDIA_TYPE, MEDIA_TAG, MediaType, MediaTag } from "@/types/fonoteca";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -16,6 +16,24 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@repo/ui/components/ui/sheet";
 import { Input } from "@repo/ui/components/ui/input";
 
+const getDriveEmbedUrl = (url: string) => {
+  if (!url) return null;
+  const match = url.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=|open\?id%3D)|docs\.google\.com\/.*?srcid=)([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/file/d/${match[1]}/preview`;
+  }
+  return null;
+};
+
+const getDriveThumbnailUrl = (url: string) => {
+  if (!url) return null;
+  const match = url.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=|open\?id%3D)|docs\.google\.com\/.*?srcid=)([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
+  }
+  return null;
+};
+
 export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [items, setItems] = useState<Multimedia[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -25,8 +43,11 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [urlSheetOpen, setUrlSheetOpen] = useState(false);
   const [libSheetOpen, setLibSheetOpen] = useState(false);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
+  const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
   const [editingItem, setEditingItem] = useState<Multimedia | null>(null);
-  const [activeUploadType, setActiveUploadType] = useState<"Sound" | "Still" | null>(null);
+  const [activeUploadType, setActiveUploadType] = useState<MediaType | null>(null);
   const [activeParentItemId, setActiveParentItemId] = useState<string | null>(null);
 
   // URL States
@@ -73,31 +94,36 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     }
   }, [libSheetOpen]);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "Sound" | "Still") => {
-    const files = e.target.files;
+  const handleFileUpload = async (files: File[], type: MediaType) => {
     if (!files || files.length === 0) return;
 
     setUploading(type);
     let successCount = 0;
 
-    for (const file of Array.from(files)) {
+    for (const file of files) {
       try {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${occurrenceId}/${type.toLowerCase()}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const fileName = `${type.toLowerCase()}-${occurrenceId}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from("multimedia")
-          .upload(fileName, file, { upsert: true });
-
-        if (uploadError) {
-          toast.error(`Error al subir ${file.name}: ${uploadError.message}`);
+        if (file.size > 4 * 1024 * 1024) {
+          toast.error(`El archivo ${file.name} supera el límite de 4MB`);
           continue;
         }
 
-        const { data: urlData } = supabase.storage.from("multimedia").getPublicUrl(fileName);
-        const publicUrl = urlData.publicUrl;
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("path", fileName);
 
-        await createMultimedia({
+        const uploadResp = await uploadToR2(formData);
+
+        if (uploadResp.error || !uploadResp.url) {
+          toast.error(`Error al subir ${file.name}: ${uploadResp.error}`);
+          continue;
+        }
+
+        const publicUrl = uploadResp.url;
+
+        const createResp = await createMultimedia({
           occurrence_id: occurrenceId,
           identifier: publicUrl,
           type: type as any,
@@ -107,12 +133,18 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           order_index: items.length + successCount,
           rightsHolder: "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
           license: "http://creativecommons.org/licenses/by-nc/4.0/",
-          tag: type === "Sound" ? "main_audio" : "gallery",
+          tag: type === MEDIA_TYPE.SOUND ? MEDIA_TAG.MAIN_AUDIO : MEDIA_TAG.GALLERY,
         });
+
+        if (createResp.error) {
+          toast.error(`Error al registrar ${file.name} en BD: ` + JSON.stringify(createResp.error));
+          continue;
+        }
 
         successCount++;
       } catch (err) {
-        toast.error(`Error procesando ${file.name}`);
+        console.error(`File processing error for ${file.name}:`, err);
+        toast.error(`Error procesando ${file.name}: ` + (err instanceof Error ? err.message : String(err)));
       }
     }
 
@@ -126,20 +158,20 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const handleAddFromUrl = async () => {
     if (!urlInput || (!activeUploadType && !activeParentItemId)) return;
 
-    setUploading(activeParentItemId ? "spectrogram" : activeUploadType);
+    setUploading(activeParentItemId ? MEDIA_TAG.SPECTROGRAM : activeUploadType);
     try {
       const isSpectro = !!activeParentItemId;
       await createMultimedia({
         occurrence_id: occurrenceId,
         identifier: urlInput,
-        type: isSpectro ? "Still" : (activeUploadType as any),
-        format: isSpectro ? "image/jpeg" : (activeUploadType === "Sound" ? "audio/mpeg" : "image/jpeg"),
+        type: isSpectro ? MEDIA_TYPE.STILL : (activeUploadType as any),
+        format: isSpectro ? "image/jpeg" : (activeUploadType === MEDIA_TYPE.SOUND ? "audio/mpeg" : "image/jpeg"),
         title: urlTitle || (isSpectro ? `Histograma de ${items.find(i => i.id === activeParentItemId)?.title || "Audio"}` : "Enlace URL"),
         creator: urlCreator || "Dashboard",
         order_index: isSpectro ? items.filter(it => it.parent_multimedia_id === activeParentItemId).length : items.length,
         rightsHolder: urlRightsHolder || "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
         license: urlLicense || "http://creativecommons.org/licenses/by-nc/4.0/",
-        tag: isSpectro ? "spectrogram" : (activeUploadType === "Sound" ? "main_audio" : "gallery"),
+        tag: isSpectro ? MEDIA_TAG.SPECTROGRAM : (activeUploadType === MEDIA_TYPE.SOUND ? MEDIA_TAG.MAIN_AUDIO : MEDIA_TAG.GALLERY),
         parent_multimedia_id: activeParentItemId || undefined,
       });
 
@@ -233,36 +265,49 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     setUploading(itemId);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${occurrenceId}/spectrogram-${itemId}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const fileName = `spectrogram-${occurrenceId}-${itemId}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("multimedia")
-        .upload(fileName, file, { upsert: true });
-
-      if (uploadError) {
-        toast.error("Error al subir imagen: " + uploadError.message);
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("El espectrograma supera el límite de 2MB");
         return false;
       }
 
-      const { data: urlData } = supabase.storage.from("multimedia").getPublicUrl(fileName);
-      const publicUrl = urlData.publicUrl;
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("path", fileName);
 
-      await createMultimedia({
+      const uploadResp = await uploadToR2(formData);
+
+      if (uploadResp.error || !uploadResp.url) {
+        toast.error("Error al subir imagen: " + uploadResp.error);
+        return false;
+      }
+
+      const publicUrl = uploadResp.url;
+
+      const createResp = await createMultimedia({
         occurrence_id: occurrenceId,
         identifier: publicUrl,
-        type: "Still",
+        type: MEDIA_TYPE.STILL,
         format: file.type,
         title: `Histograma de ${items.find(i => i.id === itemId)?.title || itemId}`,
         creator: "Dashboard",
         order_index: items.filter(it => it.parent_multimedia_id === itemId).length,
         rightsHolder: "Instituto de Investigaciones de la Amazonía Peruana (IIAP)",
         license: "http://creativecommons.org/licenses/by-nc/4.0/",
-        tag: "spectrogram",
+        tag: MEDIA_TAG.SPECTROGRAM,
         parent_multimedia_id: itemId,
       });
+
+      if (createResp.error) {
+        toast.error("Error al registrar espectrograma en BD: " + JSON.stringify(createResp.error));
+        return false;
+      }
+
       return true;
     } catch (err) {
-      toast.error("Error registrando imagen");
+      console.error("Spectrogram upload error:", err);
+      toast.error("Error registrando imagen: " + (err instanceof Error ? err.message : String(err)));
       return false;
     } finally {
       setUploading(null);
@@ -290,7 +335,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
-      if (targetItem.type === "Sound") {
+      if (targetItem.type === MEDIA_TYPE.SOUND) {
         const imageFiles = files.filter(f => f.type.startsWith("image/"));
         if (imageFiles.length > 0) {
           let count = 0;
@@ -336,10 +381,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     }
   };
 
-  const audioItems = items.filter(it => it.type === "Sound" && it.tag !== "spectrogram");
-  const imageItems = items.filter(it => it.type === "Still" && it.tag !== "spectrogram");
+  const audioItems = items.filter(it => it.type === MEDIA_TYPE.SOUND && it.tag !== MEDIA_TAG.SPECTROGRAM);
+  const imageItems = items.filter(it => it.type === MEDIA_TYPE.STILL && it.tag !== MEDIA_TAG.SPECTROGRAM);
 
-  const RenderGrid = ({ list, typeTitle, uploadType }: { list: Multimedia[], typeTitle: string, uploadType: "Sound" | "Still" }) => (
+  const RenderGrid = ({ list, typeTitle, uploadType }: { list: Multimedia[], typeTitle: string, uploadType: MediaType }) => (
     <div className="space-y-3 mt-2">
       <div className="flex items-center justify-between border-b pb-2">
         <h3 className="text-sm font-semibold text-foreground/85">{typeTitle}</h3>
@@ -351,17 +396,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <label className="w-full h-full cursor-pointer flex items-center gap-2">
-                <Upload className="h-3.5 w-3.5" /> Subir Archivo
-                <input
-                  type="file"
-                  multiple
-                  accept={uploadType === "Sound" ? "audio/*" : "image/*"}
-                  className="hidden"
-                  onChange={(e) => handleFileUpload(e, uploadType)}
-                />
-              </label>
+            <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setSelectedFiles([]); setUploadSheetOpen(true); }}>
+              <Upload className="h-3.5 w-3.5 mr-2" /> Subir Archivo
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setUrlSheetOpen(true); }}>
               <Link className="h-3.5 w-3.5 mr-2" /> Desde URL
@@ -399,26 +435,49 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                   </button>
                 </div>
 
-                <div className="py-2">
-                  {item.type === "Still" && <FileImage className="h-10 w-10 text-blue-500" />}
-                  {item.type === "Sound" && <FileAudio className="h-10 w-10 text-green-500" />}
+                <div className="py-2 w-full flex items-center justify-center">
+                  {item.type === MEDIA_TYPE.STILL ? (
+                    <div className="aspect-video w-full max-h-24 rounded border overflow-hidden bg-muted/20">
+                      <img
+                        src={getDriveThumbnailUrl(item.identifier) || item.identifier}
+                        className="h-full w-full object-cover"
+                        alt={item.title || "Imagen"}
+                        onError={(e) => {
+                          const parent = (e.target as any).parentNode;
+                          if (parent) {
+                            parent.innerHTML = '<div class="flex items-center justify-center h-full"><svg class="h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>';
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <FileAudio className="h-10 w-10 text-green-500" />
+                  )}
                 </div>
 
                 <span className="text-xs font-medium truncate w-full" title={item.title || "Archivo"}>{item.title || "Archivo"}</span>
 
-                {item.type === "Sound" && (
+                {item.type === MEDIA_TYPE.SOUND && (
                   <div className="mt-2 w-full border-t pt-2 space-y-2">
-                    {items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram").length > 0 && (
+                    {items.filter(it => it.parent_multimedia_id === item.id && it.tag === MEDIA_TAG.SPECTROGRAM).length > 0 && (
                       <div className="grid grid-cols-2 gap-1 w-full">
-                        {items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram")
-                          .map(sp => (
-                            <div key={sp.id} className="relative group rounded border overflow-hidden aspect-video bg-muted/20">
-                              <img src={sp.identifier} className="h-full w-full object-cover" alt="Histograma" />
-                              <button className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-destructive/80 text-white p-1 rounded-sm hover:bg-destructive transition-opacity" onClick={(e) => { e.stopPropagation(); handleDelete(sp.id, true); }}>
-                                <Trash2 className="h-2.5 w-2.5" />
-                              </button>
-                            </div>
-                          ))}
+                        {items
+                          .filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram")
+                          .map((sp) => {
+                            const spImg = getDriveThumbnailUrl(sp.identifier) || sp.identifier;
+                            return (
+                              <div key={sp.id} className="relative group rounded border overflow-hidden aspect-video bg-muted/20">
+                                <img src={spImg} className="h-full w-full object-cover" alt="Histograma" />
+                                <button
+                                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-destructive/80 text-white p-1 rounded-sm hover:bg-destructive transition-opacity"
+                                  onClick={(e) => { e.stopPropagation(); handleDelete(sp.id, true); }}
+                                  title="Eliminar Histograma"
+                                >
+                                  <Trash2 className="h-2.5 w-2.5" />
+                                </button>
+                              </div>
+                            );
+                          })}
                       </div>
                     )}
                     <DropdownMenu>
@@ -429,13 +488,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem className="p-0">
-                          <label className="w-full flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs">
-                            <Upload className="h-3 w-3" /> Subir Imagen
-                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSpectrogramUpload(e, item.id)} />
-                          </label>
+                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setSelectedFiles([]); setUploadSheetOpen(true); }}>
+                          <Upload className="h-3 w-3 mr-1" /> Subir Imagen
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType("Still"); setUrlSheetOpen(true); }}>
+                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setUrlSheetOpen(true); }}>
                           <Link className="h-3 w-3 mr-1" /> Desde URL
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -461,9 +517,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType="Sound" />
+        <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType={MEDIA_TYPE.SOUND} />
         <div className="border-t border-muted/50 my-2" />
-        <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType="Still" />
+        <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType={MEDIA_TYPE.STILL} />
       </div>
 
       {/* --- Dialog: URL --- */}
@@ -473,12 +529,14 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             <SheetTitle>Agregar desde URL</SheetTitle>
             <SheetDescription>Inserta un enlace externo del audio o imagen.</SheetDescription>
           </SheetHeader>
-          <div className="space-y-4 border-t mt-4 p-2 md:p-4">
+          <div className="space-y-4 border-t mt-4 p-2 md:p-4 flex-1 overflow-y-auto max-h-[80vh]">
 
             {/* Visualizer */}
             {urlInput && (
               <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
-                {activeUploadType === "Still" ? (
+                {getDriveEmbedUrl(urlInput) ? (
+                  <iframe src={getDriveEmbedUrl(urlInput)!} className="absolute inset-0 w-full h-full" frameBorder="0" allowFullScreen />
+                ) : activeUploadType === MEDIA_TYPE.STILL ? (
                   <img src={urlInput} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
                 ) : (
                   <audio src={urlInput} controls className="w-[90%] mt-auto mb-4" />
@@ -563,8 +621,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                     className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center transition-all bg-muted/10 hover:shadow-sm"
                     onClick={() => handleLinkFromLibrary(item)}
                   >
-                    {item.type === "Still" && <FileImage className="h-10 w-10 text-blue-500 mb-1" />}
-                    {item.type === "Sound" && <FileAudio className="h-10 w-10 text-green-500 mb-1" />}
+                    {item.type === MEDIA_TYPE.STILL && <FileImage className="h-10 w-10 text-blue-500 mb-1" />}
+                    {item.type === MEDIA_TYPE.SOUND && <FileAudio className="h-10 w-10 text-green-500 mb-1" />}
                     <span className="text-xs font-semibold line-clamp-2 w-full text-foreground/80">{item.title || "Archivo"}</span>
                   </div>
                 ))}
@@ -581,12 +639,14 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             <SheetTitle>Editar Elemento</SheetTitle>
             <SheetDescription>Modifica el título o el enlace de la multimedia.</SheetDescription>
           </SheetHeader>
-          <div className="space-y-4 py-4 border-t mt-4">
+          <div className="space-y-4 py-4 border-t mt-4 flex-1 overflow-y-auto max-h-[80vh]">
 
             {/* Visualizer */}
             {editUrl && (
               <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
-                {editingItem?.type === "Still" ? (
+                {getDriveEmbedUrl(editUrl) ? (
+                  <iframe src={getDriveEmbedUrl(editUrl)!} className="absolute inset-0 w-full h-full" frameBorder="0" allowFullScreen />
+                ) : editingItem?.type === MEDIA_TYPE.STILL ? (
                   <img src={editUrl} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
                 ) : (
                   <audio src={editUrl} controls className="w-[90%] mt-auto mb-4" />
@@ -654,6 +714,90 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
               <Button variant="outline" size="sm" onClick={() => { setEditSheetOpen(false); setEditingItem(null); }}>Cancelar</Button>
               <Button size="sm" onClick={handleSaveEdit} disabled={!editUrl || uploading !== null}>
                 {uploading === "editing" ? "Guardando..." : "Guardar Cambios"}
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+      {/* --- Dialog: Local Upload --- */}
+      <Sheet open={uploadSheetOpen} onOpenChange={(open) => { setUploadSheetOpen(open); if (!open) setSelectedFiles([]); }}>
+        <SheetContent className="sm:max-w-xl p-2 md:p-4 flex flex-col h-full">
+          <SheetHeader>
+            <SheetTitle>Subir Archivos</SheetTitle>
+            <SheetDescription>Arrastra y suelta tus archivos aquí o haz clic para seleccionar.</SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 py-4 border-t mt-4 flex-1 flex flex-col overflow-y-auto max-h-[80vh]">
+            
+            <div 
+              className={`border-2 border-dashed rounded-xl p-8 flex-1 flex flex-col items-center justify-center cursor-pointer transition-all max-h-[250px] ${
+                isDragOver ? "border-primary bg-primary/5" : "border-muted-foreground/20 hover:border-primary/50"
+              }`}
+              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={(e) => {
+                e.preventDefault();
+                setIsDragOver(false);
+                if (e.dataTransfer.files) {
+                  const files = Array.from(e.dataTransfer.files);
+                  const validFiles = files.filter(f => 
+                    activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? f.type.startsWith("audio/") : f.type.startsWith("image/")
+                  );
+                  setSelectedFiles([...selectedFiles, ...validFiles]);
+                }
+              }}
+              onClick={() => document.getElementById("file-sheet-upload")?.click()}
+            >
+              <Upload className="h-10 w-10 text-muted-foreground mb-4" />
+              <p className="text-sm font-medium">Arrastra tus archivos aquí</p>
+              <p className="text-xs text-muted-foreground mt-1">O haz clic para explorar</p>
+              <input 
+                id="file-sheet-upload" 
+                type="file" 
+                multiple 
+                accept={activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? "audio/*" : "image/*"} 
+                className="hidden" 
+                onChange={(e) => {
+                  if (e.target.files) {
+                    const files = Array.from(e.target.files);
+                    setSelectedFiles([...selectedFiles, ...files]);
+                  }
+                }} 
+              />
+            </div>
+
+            {selectedFiles.length > 0 && (
+              <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-2 bg-muted/20">
+                {selectedFiles.map((f, i) => (
+                  <div key={i} className="flex items-center justify-between text-xs p-1.5 border-b last:border-0">
+                    <span className="truncate max-w-[80%] font-medium">{f.name}</span>
+                    <Button variant="ghost" size="icon" className="h-5 w-5 text-destructive" onClick={(e) => { e.stopPropagation(); setSelectedFiles(selectedFiles.filter((_, idx) => idx !== i)) }}>
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>Cancelar</Button>
+              <Button size="sm" disabled={selectedFiles.length === 0 || uploading !== null} onClick={async () => {
+                if (activeParentItemId) {
+                  let count = 0;
+                  for (const file of selectedFiles) {
+                    if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
+                  }
+                  if (count > 0) {
+                    toast.success(`${count} histogramas registrados correctamente`);
+                    loadMultimedia();
+                  }
+                } else {
+                  await handleFileUpload(selectedFiles, activeUploadType!);
+                }
+                setSelectedFiles([]);
+                setUploadSheetOpen(false);
+                setActiveParentItemId(null);
+              }}>
+                {uploading ? "Subiendo..." : "Iniciar Carga"}
               </Button>
             </div>
           </div>
