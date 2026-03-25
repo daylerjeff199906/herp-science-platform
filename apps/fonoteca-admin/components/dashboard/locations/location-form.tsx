@@ -7,7 +7,7 @@ import { locationSchema, LocationInput } from "@/lib/validations/fonoteca";
 import { createLocation, updateLocation, getLocation } from "@/actions/locations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

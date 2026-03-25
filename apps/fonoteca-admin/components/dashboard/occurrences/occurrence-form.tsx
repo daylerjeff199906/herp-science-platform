@@ -8,11 +8,11 @@ import { createOccurrence, updateOccurrence, getOccurrence } from "@/actions/occ
 import { getTaxa } from "@/actions/taxa";
 import { getLocations } from "@/actions/locations";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Location, Taxon } from "@/types/fonoteca";
-import { FileText, FolderTree, Calendar, Building, Check, ChevronsUpDown } from "lucide-react";
+import { FileText, FolderTree, Calendar, Building, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
 import {
@@ -32,6 +32,7 @@ import {
 export function OccurrenceForm({ id }: { id?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(!!id);
   const [taxa, setTaxa] = useState<Taxon[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [openTaxon, setOpenTaxon] = useState(false);
@@ -54,6 +55,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
       setLoading(true);
       getOccurrence(id).then((resp) => {
         setLoading(false);
+        setIsFetching(false);
         if (resp.data) {
           reset(resp.data);
 
@@ -98,6 +100,15 @@ export function OccurrenceForm({ id }: { id?: string }) {
       toast.error("Error: " + (typeof resp.error === "string" ? resp.error : "Falló la validación"));
     }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground w-full max-w-7xl">
+        <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+        <span className="text-sm font-medium">Cargando detalles de la ocurrencia...</span>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full max-w-7xl">

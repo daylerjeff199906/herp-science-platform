@@ -7,6 +7,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { login, loginWithGoogle } from './actions'
+import { toast } from 'react-toastify'
 import { PasswordInput } from '@/components/auth/password-input'
 import { Alert, AlertDescription } from '@repo/ui/components/ui/alert'
 import { Button } from '@repo/ui/components/ui/button'
@@ -60,6 +61,7 @@ function LoginContent() {
             if (result?.error) {
                 setError(result.error)
             } else if (result?.redirectUrl) {
+                toast.success('¡Bienvenido de vuelta!')
                 router.push(result.redirectUrl)
             }
         } catch (err) {

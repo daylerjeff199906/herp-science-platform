@@ -6,7 +6,7 @@ import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, Loader2, Link
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
 import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia, uploadToR2 } from "@/actions/multimedia";
 import { Multimedia, MEDIA_TYPE, MEDIA_TAG, MediaType, MediaTag } from "@/types/fonoteca";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -105,8 +105,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         const fileExt = file.name.split('.').pop();
         const fileName = `${type.toLowerCase()}-${occurrenceId}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
 
-        if (file.size > 4 * 1024 * 1024) {
-          toast.error(`El archivo ${file.name} supera el límite de 4MB`);
+        const sizeLimit = type === MEDIA_TYPE.SOUND ? 50 * 1024 * 1024 : 4 * 1024 * 1024;
+        if (file.size > sizeLimit) {
+          toast.error(`El archivo ${file.name} supera el límite de ${type === MEDIA_TYPE.SOUND ? '50MB' : '4MB'}`);
           continue;
         }
 

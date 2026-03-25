@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { Upload, Download, Loader2 } from "lucide-react";
 import { bulkCreateOccurrences } from "@/actions/occurrences";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
 export function BulkUploadSheet() {
