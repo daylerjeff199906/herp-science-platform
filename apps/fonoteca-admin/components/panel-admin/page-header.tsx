@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button"
+import { ChevronLeft } from "lucide-react"
 import Link from "next/link"
 
 interface PageHeaderProps {
     title: string
     description?: string
+    backUrl?: string
     action?: {
         label: string
         href?: string
@@ -13,14 +15,28 @@ interface PageHeaderProps {
     children?: React.ReactNode
 }
 
-export function PageHeader({ title, description, action, children }: PageHeaderProps) {
+export function PageHeader({ title, description, backUrl, action, children }: PageHeaderProps) {
     return (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
-            <div className="flex flex-col gap-0.5">
-                <h2 className="text-lg font-semibold tracking-tight text-foreground">{title}</h2>
-                {description && (
-                    <p className="text-xs text-muted-foreground">{description}</p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b pb-4">
+            <div className="flex items-center gap-2.5">
+                {backUrl && (
+                    <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full shadow-none border-muted/40" 
+                        render={
+                            <Link href={backUrl}>
+                                <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                            </Link>
+                        }
+                    />
                 )}
+                <div className="flex flex-col gap-0.5">
+                    <h2 className="text-lg font-bold tracking-tight text-foreground">{title}</h2>
+                    {description && (
+                        <p className="text-sm text-muted-foreground">{description}</p>
+                    )}
+                </div>
             </div>
             {(action || children) && (
                 <div className="flex items-center gap-2">
