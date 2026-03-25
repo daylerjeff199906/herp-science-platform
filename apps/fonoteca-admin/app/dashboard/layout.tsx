@@ -3,6 +3,7 @@ import { AdminSidebar } from "@/components/panel-admin/admin-sidebar"
 import { createBioIntranetServer } from '@/utils/supabase/bio-intranet/server'
 import { cookies } from 'next/headers'
 import { AppSidebar } from "@/components/app-sidebar"
+import { getAuthorizedTeams } from "@/actions/auth-teams"
 
 export default async function AdminLayout({
   children,
@@ -47,10 +48,12 @@ export default async function AdminLayout({
     avatar: '', // O poner la imagen si la hay
     role: role.toUpperCase()
   }
+  
+  const authorizedTeams = await getAuthorizedTeams()
 
   return (
     <SidebarProvider>
-      <AppSidebar userData={userData} />
+      <AppSidebar userData={userData} teams={authorizedTeams} />
       {children}
     </SidebarProvider>
   )

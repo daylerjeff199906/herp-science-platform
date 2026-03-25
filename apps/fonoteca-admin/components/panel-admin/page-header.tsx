@@ -21,15 +21,15 @@ export function PageHeader({ title, description, backUrl, action, children }: Pa
             <div className="flex items-center gap-2.5">
                 {backUrl && (
                     <Button 
+                        asChild
                         variant="outline" 
                         size="icon" 
                         className="h-8 w-8 rounded-full shadow-none border-muted/40" 
-                        render={
-                            <Link href={backUrl}>
-                                <ChevronLeft className="h-4 w-4 text-muted-foreground" />
-                            </Link>
-                        }
-                    />
+                    >
+                        <Link href={backUrl}>
+                            <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+                        </Link>
+                    </Button>
                 )}
                 <div className="flex flex-col gap-0.5">
                     <h2 className="text-lg font-bold tracking-tight text-foreground">{title}</h2>
@@ -43,17 +43,17 @@ export function PageHeader({ title, description, backUrl, action, children }: Pa
                     {children}
                     {action && action.href ? (
                         <Button
+                            asChild
                             size="sm"
                             className="h-8 text-xs rounded-full"
-                            render={
-                                <Link
-                                    href={action.href}
-                                    className="flex items-center gap-1"
-                                />
-                            }
                         >
-                            {action.icon}
-                            <span>{action.label}</span>
+                            <Link
+                                href={action.href}
+                                className="flex items-center gap-1"
+                            >
+                                {action.icon}
+                                <span>{action.label}</span>
+                            </Link>
                         </Button>
                     ) : action && action.onClick ? (
                         <Button

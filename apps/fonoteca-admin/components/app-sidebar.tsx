@@ -12,26 +12,25 @@ import {
 } from '@/components/ui/sidebar'
 import { getAdminRoutes } from '@/config/admin-routes'
 
-// Team data for the switcher
-const teams = [
-  {
-    name: 'Intranet IIAP',
-    logo: '/brands/logo-iiap.webp',
-    plan: 'Instituto',
-  },
-]
 
 interface UserData {
   name: string
   email: string
   avatar: string | null
+  role: string
 }
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   userData?: UserData | null
+  teams?: {
+    name: string
+    logo: string
+    plan: string
+    url: string
+  }[]
 }
 
-export function AppSidebar({ userData, ...props }: AppSidebarProps) {
+export function AppSidebar({ userData, teams = [], ...props }: AppSidebarProps) {
   const navMain = getAdminRoutes()
 
   return (

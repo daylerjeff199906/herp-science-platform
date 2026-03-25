@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 import { cn } from "@/lib/utils";
+import { ToastContainer } from "react-toastify";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -22,6 +24,7 @@ export default function RootLayout({
         className={`${inter.variable} antialiased`}
       >
         {children}
+        <ToastContainer position="bottom-right" />
       </body>
     </html>
   );

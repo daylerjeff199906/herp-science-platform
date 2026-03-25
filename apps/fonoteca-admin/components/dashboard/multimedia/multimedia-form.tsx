@@ -8,7 +8,7 @@ import { createMultimedia, updateMultimedia, getMultimedia } from "@/actions/mul
 import { getOccurrences } from "@/actions/occurrences";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Occurrence } from "@/types/fonoteca";

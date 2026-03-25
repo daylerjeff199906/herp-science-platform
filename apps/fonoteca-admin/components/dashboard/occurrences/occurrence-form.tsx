@@ -8,11 +8,11 @@ import { createOccurrence, updateOccurrence, getOccurrence } from "@/actions/occ
 import { getTaxa } from "@/actions/taxa";
 import { getLocations } from "@/actions/locations";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Location, Taxon } from "@/types/fonoteca";
-import { FileText, FolderTree, Calendar, Building, Check, ChevronsUpDown } from "lucide-react";
+import { FileText, FolderTree, Calendar, Building, Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { cn } from "@repo/ui/lib/utils";
 import {
@@ -32,6 +32,7 @@ import {
 export function OccurrenceForm({ id }: { id?: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(!!id);
   const [taxa, setTaxa] = useState<Taxon[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [openTaxon, setOpenTaxon] = useState(false);
@@ -54,9 +55,10 @@ export function OccurrenceForm({ id }: { id?: string }) {
       setLoading(true);
       getOccurrence(id).then((resp) => {
         setLoading(false);
+        setIsFetching(false);
         if (resp.data) {
           reset(resp.data);
-          
+
           if (resp.data.taxon) {
             setTaxa(prev => {
               if (!prev.find(t => t.id === resp.data.taxon?.id)) {
@@ -65,7 +67,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
               return prev;
             });
           }
-          
+
           if (resp.data.location) {
             setLocations(prev => {
               if (!prev.find(l => l.id === resp.data.location?.id)) {
@@ -75,7 +77,12 @@ export function OccurrenceForm({ id }: { id?: string }) {
             });
           }
         } else {
-          toast.error("Error al cargar ocurrencia");
+          toast.error(
+            <div className="flex flex-col gap-0.5">
+              <span className="font-bold text-sm">Error de carga</span>
+              <span className="text-xs opacity-90">No se pudo cargar la ocurrencia.</span>
+            </div>
+          );
         }
       });
     }
@@ -92,12 +99,31 @@ export function OccurrenceForm({ id }: { id?: string }) {
     setLoading(false);
 
     if (resp.success) {
-      toast.success(id ? "Ocurrencia actualizada" : "Ocurrencia registrada");
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Operación Exitosa</span>
+          <span className="text-xs opacity-90">{id ? "La ocurrencia se actualizó correctamente." : "La ocurrencia se registró correctamente en el sistema."}</span>
+        </div>
+      );
       router.push("/dashboard/occurrences");
     } else {
-      toast.error("Error: " + (typeof resp.error === "string" ? resp.error : "Falló la validación"));
+      toast.error(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-bold text-sm">Ocurrió un error</span>
+          <span className="text-xs opacity-90">{typeof resp.error === "string" ? resp.error : "Falló la validación."}</span>
+        </div>
+      );
     }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-muted-foreground w-full max-w-7xl">
+        <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+        <span className="text-sm font-medium">Cargando detalles de la ocurrencia...</span>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 w-full max-w-7xl">
@@ -124,6 +150,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("basisOfRecord")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.basisOfRecord && <p className="text-xs text-red-500 mt-1 px-2">{errors.basisOfRecord.message}</p>}
             </div>
           </div>
         </div>
@@ -137,10 +164,10 @@ export function OccurrenceForm({ id }: { id?: string }) {
         </div>
         <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
           <div className="flex items-center justify-between gap-4 py-3">
-            <div className="w-1/4 flex items-center">
+            <div className="flex items-center">
               <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
             </div>
-            <div className="w-3/4 flex flex-col items-start gap-1 max-w-xl">
+            <div className="w-full flex flex-col items-start gap-1 max-w-xl md:min-w-[74%]">
               <Controller
                 control={control}
                 name="taxon_id"
@@ -155,12 +182,12 @@ export function OccurrenceForm({ id }: { id?: string }) {
                         )}
                       >
                         <span className="truncate">
-                        {field.value
-                          ? (() => {
+                          {field.value
+                            ? (() => {
                               const t = taxa.find((t) => t.id === field.value);
                               return t ? `${t.scientificName} (${t.vernacularName || "-"})` : "Seleccionar Taxón...";
                             })()
-                          : "Seleccionar Taxón..."}
+                            : "Seleccionar Taxón..."}
                         </span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </button>
@@ -233,6 +260,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input type="date" {...register("eventDate")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.eventDate && <p className="text-xs text-red-500 mt-1 px-2">{errors.eventDate.message}</p>}
             </div>
           </div>
 
@@ -242,6 +270,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("recordedBy")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.recordedBy && <p className="text-xs text-red-500 mt-1 px-2">{errors.recordedBy.message}</p>}
             </div>
           </div>
         </div>
@@ -260,6 +289,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("institutionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.institutionCode && <p className="text-xs text-red-500 mt-1 px-2">{errors.institutionCode.message}</p>}
             </div>
           </div>
 
@@ -269,6 +299,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("collectionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.collectionCode && <p className="text-xs text-red-500 mt-1 px-2">{errors.collectionCode.message}</p>}
             </div>
           </div>
         </div>
@@ -282,6 +313,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
           </div>
           <div className="w-3/4">
             <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento..." className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            {errors.occurrenceRemarks && <p className="text-xs text-red-500 mt-1 px-2">{errors.occurrenceRemarks.message}</p>}
           </div>
         </div>
       </div>

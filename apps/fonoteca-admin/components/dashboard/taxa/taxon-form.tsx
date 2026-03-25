@@ -7,7 +7,7 @@ import { taxonSchema, TaxonInput } from "@/lib/validations/fonoteca";
 import { getTaxon, createTaxon, updateTaxon, getGenera } from "@/actions/taxa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
