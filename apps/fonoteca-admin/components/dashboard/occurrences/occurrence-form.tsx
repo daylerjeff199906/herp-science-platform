@@ -56,7 +56,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
         setLoading(false);
         if (resp.data) {
           reset(resp.data);
-          
+
           if (resp.data.taxon) {
             setTaxa(prev => {
               if (!prev.find(t => t.id === resp.data.taxon?.id)) {
@@ -65,7 +65,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
               return prev;
             });
           }
-          
+
           if (resp.data.location) {
             setLocations(prev => {
               if (!prev.find(l => l.id === resp.data.location?.id)) {
@@ -137,10 +137,10 @@ export function OccurrenceForm({ id }: { id?: string }) {
         </div>
         <div className="divide-y divide-muted/10 border-t border-b border-muted/10">
           <div className="flex items-center justify-between gap-4 py-3">
-            <div className="w-1/4 flex items-center">
+            <div className="flex items-center">
               <label className="text-xs font-semibold text-muted-foreground uppercase">Taxón *</label>
             </div>
-            <div className="w-3/4 flex flex-col items-start gap-1 max-w-xl">
+            <div className="w-full flex flex-col items-start gap-1 max-w-xl md:min-w-[74%]">
               <Controller
                 control={control}
                 name="taxon_id"
@@ -155,12 +155,12 @@ export function OccurrenceForm({ id }: { id?: string }) {
                         )}
                       >
                         <span className="truncate">
-                        {field.value
-                          ? (() => {
+                          {field.value
+                            ? (() => {
                               const t = taxa.find((t) => t.id === field.value);
                               return t ? `${t.scientificName} (${t.vernacularName || "-"})` : "Seleccionar Taxón...";
                             })()
-                          : "Seleccionar Taxón..."}
+                            : "Seleccionar Taxón..."}
                         </span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </button>
