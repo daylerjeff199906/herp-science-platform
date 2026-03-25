@@ -46,6 +46,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Multimedia | null>(null);
   const [activeUploadType, setActiveUploadType] = useState<MediaType | null>(null);
   const [activeParentItemId, setActiveParentItemId] = useState<string | null>(null);
@@ -71,9 +72,11 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const supabase = createFonotecaClient();
 
   const loadMultimedia = async () => {
+    setInitialLoading(true);
     const resp = await getMultimediaList({ occurrence_id: occurrenceId, limit: 100 });
     const sorted = (resp.data || []).sort((a, b) => (a.order_index || 0) - (b.order_index || 0));
     setItems(sorted);
+    setInitialLoading(false);
   };
 
   const loadLibrary = async () => {
@@ -369,6 +372,51 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     }
 
     if (!draggedItem || draggedItem.id === targetItem.id) return;
+    
+    // Drag spectrogram to spectrogram (Swap order)
+    if (draggedItem.tag === MEDIA_TAG.SPECTROGRAM && targetItem.tag === MEDIA_TAG.SPECTROGRAM) {
+      if (draggedItem.parent_multimedia_id === targetItem.parent_multimedia_id) {
+        const updated = items.map(it => {
+          if (it.id === draggedItem.id) return { ...it, order_index: targetItem.order_index };
+          if (it.id === targetItem.id) return { ...it, order_index: draggedItem.order_index };
+          return it;
+        });
+        setItems([...updated].sort((a, b) => (a.order_index || 0) - (b.order_index || 0)));
+        await bulkUpdateMultimediaIndexes([
+          { id: draggedItem.id, order_index: targetItem.order_index || 0 },
+          { id: targetItem.id, order_index: draggedItem.order_index || 0 }
+        ]);
+        toast.success(
+          <div className="flex flex-col gap-0.5">
+            <span className="font-bold text-sm">Orden Actualizado</span>
+            <span className="text-xs opacity-90">Se reordenaron los histogramas.</span>
+          </div>
+        );
+      }
+      setDraggedItem(null);
+      return;
+    }
+
+    // Drag spectrogram to Audio (Change parent)
+    if (draggedItem.tag === MEDIA_TAG.SPECTROGRAM && targetItem.type === MEDIA_TYPE.SOUND) {
+      if (draggedItem.parent_multimedia_id !== targetItem.id) {
+        const updated = items.map(it => {
+          if (it.id === draggedItem.id) return { ...it, parent_multimedia_id: targetItem.id };
+          return it;
+        });
+        setItems(updated);
+        await updateMultimedia(draggedItem.id, { ...draggedItem, parent_multimedia_id: targetItem.id });
+        toast.success(
+          <div className="flex flex-col gap-0.5">
+            <span className="font-bold text-sm">Histograma Movido</span>
+            <span className="text-xs opacity-90">El histograma se vinculó al nuevo audio.</span>
+          </div>
+        );
+      }
+      setDraggedItem(null);
+      return;
+    }
+
     if (draggedItem.type !== targetItem.type) return;
 
     const filterType = draggedItem.type;
@@ -472,7 +520,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                       />
                     </div>
                   ) : (
-                    <FileAudio className="h-10 w-10 text-green-500" />
+                    <div className="flex flex-col items-center w-full px-2" onDragStart={e => { e.preventDefault(); e.stopPropagation(); }}>
+                      <audio src={item.identifier} controls className="w-full h-8" controlsList="nodownload noplaybackrate" />
+                    </div>
                   )}
                 </div>
 
@@ -487,7 +537,14 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                           .map((sp) => {
                             const spImg = getDriveThumbnailUrl(sp.identifier) || sp.identifier;
                             return (
-                              <div key={sp.id} className="relative group rounded border overflow-hidden aspect-video bg-muted/20">
+                              <div 
+                                key={sp.id} 
+                                className="relative group rounded border overflow-hidden aspect-video bg-muted/20 cursor-move"
+                                draggable
+                                onDragStart={(e) => { e.stopPropagation(); handleDragStart(sp); }}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => { e.stopPropagation(); handleDrop(e, sp); }}
+                              >
                                 <img src={spImg} className="h-full w-full object-cover" alt="Histograma" />
                                 <button
                                   className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-destructive/80 text-white p-1 rounded-sm hover:bg-destructive transition-opacity"
@@ -538,9 +595,18 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType={MEDIA_TYPE.SOUND} />
-        <div className="border-t border-muted/50 my-2" />
-        <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType={MEDIA_TYPE.STILL} />
+        {initialLoading ? (
+          <div className="flex flex-col items-center justify-center py-10 opacity-60">
+            <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
+            <span className="text-xs">Cargando multimedia...</span>
+          </div>
+        ) : (
+          <>
+            <RenderGrid list={audioItems} typeTitle="Audios & Espectrogramas" uploadType={MEDIA_TYPE.SOUND} />
+            <div className="border-t border-muted/50 my-2" />
+            <RenderGrid list={imageItems} typeTitle="Imágenes de la Especie" uploadType={MEDIA_TYPE.STILL} />
+          </>
+        )}
       </div>
 
       {/* --- Dialog: URL --- */}

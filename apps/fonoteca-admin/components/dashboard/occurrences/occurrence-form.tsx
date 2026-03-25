@@ -150,6 +150,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("basisOfRecord")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.basisOfRecord && <p className="text-xs text-red-500 mt-1 px-2">{errors.basisOfRecord.message}</p>}
             </div>
           </div>
         </div>
@@ -259,6 +260,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input type="date" {...register("eventDate")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.eventDate && <p className="text-xs text-red-500 mt-1 px-2">{errors.eventDate.message}</p>}
             </div>
           </div>
 
@@ -268,6 +270,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("recordedBy")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.recordedBy && <p className="text-xs text-red-500 mt-1 px-2">{errors.recordedBy.message}</p>}
             </div>
           </div>
         </div>
@@ -286,6 +289,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("institutionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.institutionCode && <p className="text-xs text-red-500 mt-1 px-2">{errors.institutionCode.message}</p>}
             </div>
           </div>
 
@@ -295,6 +299,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
             </div>
             <div className="w-3/4">
               <Input {...register("collectionCode")} className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+              {errors.collectionCode && <p className="text-xs text-red-500 mt-1 px-2">{errors.collectionCode.message}</p>}
             </div>
           </div>
         </div>
@@ -308,6 +313,7 @@ export function OccurrenceForm({ id }: { id?: string }) {
           </div>
           <div className="w-3/4">
             <Input {...register("occurrenceRemarks")} placeholder="Detalles extra del avistamiento..." className="bg-transparent border-none shadow-none h-8 font-medium focus-visible:ring-1 focus-visible:ring-primary/20 px-2 max-w-xl" />
+            {errors.occurrenceRemarks && <p className="text-xs text-red-500 mt-1 px-2">{errors.occurrenceRemarks.message}</p>}
           </div>
         </div>
       </div>
