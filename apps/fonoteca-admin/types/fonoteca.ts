@@ -81,11 +81,32 @@ export interface Occurrence {
   location?: Location;
 }
 
+export const MEDIA_TYPE = {
+  SOUND: 'Sound',
+  STILL: 'Still',
+  VIDEO: 'MovingImage',
+  TEXT: 'Text',
+} as const;
+
+export const MEDIA_TAG = {
+  MAIN_AUDIO: 'main_audio',
+  SUPPORTING_AUDIO: 'supporting_audio',
+  SPECTROGRAM: 'spectrogram',
+  VOUCHER_PHOTO: 'voucher_photo',
+  FIELD_PHOTO: 'field_photo',
+  GALLERY: 'gallery',
+  DOCUMENT: 'document',
+} as const;
+
+export type MediaType = (typeof MEDIA_TYPE)[keyof typeof MEDIA_TYPE];
+
+export type MediaTag = (typeof MEDIA_TAG)[keyof typeof MEDIA_TAG];
+
 export interface Multimedia {
   id: string;
   occurrence_id: string;
   identifier: string;
-  type: string;
+  type: MediaType;
   format: string;
   order_index: number;
   title: string | null;
@@ -103,7 +124,7 @@ export interface Multimedia {
   iso: number | null;
   focalLength: string | null;
   created_at: string;
-  tag: string | null;
+  tag: MediaTag | null;
   parent_multimedia_id: string | null;
 
   // Joins (optional)
