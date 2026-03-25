@@ -103,7 +103,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     for (const file of files) {
       try {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${occurrenceId}/${type.toLowerCase()}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const fileName = `${type.toLowerCase()}-${occurrenceId}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
 
         if (file.size > 4 * 1024 * 1024) {
           toast.error(`El archivo ${file.name} supera el límite de 4MB`);
@@ -265,7 +265,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     setUploading(itemId);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${occurrenceId}/spectrogram-${itemId}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const fileName = `spectrogram-${occurrenceId}-${itemId}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
       if (file.size > 2 * 1024 * 1024) {
         toast.error("El espectrograma supera el límite de 2MB");
@@ -488,11 +488,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <DropdownMenuItem className="p-0">
-                          <label className="w-full flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs">
-                            <Upload className="h-3 w-3" /> Subir Imagen
-                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handleSpectrogramUpload(e, item.id)} />
-                          </label>
+                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setSelectedFiles([]); setUploadSheetOpen(true); }}>
+                          <Upload className="h-3 w-3 mr-1" /> Subir Imagen
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setUrlSheetOpen(true); }}>
                           <Link className="h-3 w-3 mr-1" /> Desde URL
@@ -732,7 +729,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           <div className="space-y-4 py-4 border-t mt-4 flex-1 flex flex-col overflow-y-auto max-h-[80vh]">
             
             <div 
-              className={`border-2 border-dashed rounded-xl p-8 flex-1 flex flex-col items-center justify-center cursor-pointer transition-all ${
+              className={`border-2 border-dashed rounded-xl p-8 flex-1 flex flex-col items-center justify-center cursor-pointer transition-all max-h-[250px] ${
                 isDragOver ? "border-primary bg-primary/5" : "border-muted-foreground/20 hover:border-primary/50"
               }`}
               onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
@@ -743,7 +740,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 if (e.dataTransfer.files) {
                   const files = Array.from(e.dataTransfer.files);
                   const validFiles = files.filter(f => 
-                    activeUploadType === MEDIA_TYPE.SOUND ? f.type.startsWith("audio/") : f.type.startsWith("image/")
+                    activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? f.type.startsWith("audio/") : f.type.startsWith("image/")
                   );
                   setSelectedFiles([...selectedFiles, ...validFiles]);
                 }
@@ -757,7 +754,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 id="file-sheet-upload" 
                 type="file" 
                 multiple 
-                accept={activeUploadType === MEDIA_TYPE.SOUND ? "audio/*" : "image/*"} 
+                accept={activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? "audio/*" : "image/*"} 
                 className="hidden" 
                 onChange={(e) => {
                   if (e.target.files) {
@@ -782,11 +779,23 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); }}>Cancelar</Button>
+              <Button variant="outline" size="sm" onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>Cancelar</Button>
               <Button size="sm" disabled={selectedFiles.length === 0 || uploading !== null} onClick={async () => {
-                await handleFileUpload(selectedFiles, activeUploadType!);
+                if (activeParentItemId) {
+                  let count = 0;
+                  for (const file of selectedFiles) {
+                    if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
+                  }
+                  if (count > 0) {
+                    toast.success(`${count} histogramas registrados correctamente`);
+                    loadMultimedia();
+                  }
+                } else {
+                  await handleFileUpload(selectedFiles, activeUploadType!);
+                }
                 setSelectedFiles([]);
                 setUploadSheetOpen(false);
+                setActiveParentItemId(null);
               }}>
                 {uploading ? "Subiendo..." : "Iniciar Carga"}
               </Button>

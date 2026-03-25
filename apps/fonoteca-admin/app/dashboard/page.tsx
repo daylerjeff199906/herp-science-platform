@@ -3,7 +3,7 @@ import { LayoutWrapper } from "@/components/panel-admin/layout-wrapper";
 export default function Page() {
   return (
     <>
-      <LayoutWrapper>
+      <LayoutWrapper sectionTitle="Dashboard">
         <div>
           asdasd
         </div>
