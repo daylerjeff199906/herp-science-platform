@@ -13,6 +13,8 @@ export default async function TaxaPage({
   const kingdom = typeof params.kingdom === "string" ? params.kingdom : undefined;
   const family_id = typeof params.family_id === "string" ? params.family_id : undefined;
   const genus_id = typeof params.genus_id === "string" ? params.genus_id : undefined;
+  const hasScientificName = typeof params.hasScientificName === "string" ? params.hasScientificName : "all";
+  const hasVernacularName = typeof params.hasVernacularName === "string" ? params.hasVernacularName : "all";
 
   const { data, count, error } = await getTaxa({
     page,
@@ -21,6 +23,8 @@ export default async function TaxaPage({
     kingdom,
     family_id,
     genus_id,
+    hasScientificName,
+    hasVernacularName,
   });
 
   if (error) {

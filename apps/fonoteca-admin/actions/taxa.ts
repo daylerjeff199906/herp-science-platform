@@ -13,6 +13,8 @@ export async function getTaxa({
   kingdom = "",
   family_id = "",
   genus_id = "",
+  hasScientificName = "all",
+  hasVernacularName = "all",
 }: {
   page?: number;
   limit?: number;
@@ -20,6 +22,8 @@ export async function getTaxa({
   kingdom?: string;
   family_id?: string;
   genus_id?: string;
+  hasScientificName?: string;
+  hasVernacularName?: string;
 }) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -52,6 +56,18 @@ export async function getTaxa({
 
   if (kingdom) {
     query = query.eq("genus.family.kingdom", kingdom);
+  }
+
+  if (hasScientificName === "no") {
+    query = query.or("scientificName.is.null,scientificName.eq.''");
+  } else if (hasScientificName === "yes") {
+    query = query.not("scientificName", "is", null).neq("scientificName", "");
+  }
+
+  if (hasVernacularName === "no") {
+    query = query.or("vernacularName.is.null,vernacularName.eq.''");
+  } else if (hasVernacularName === "yes") {
+    query = query.not("vernacularName", "is", null).neq("vernacularName", "");
   }
 
   const { data, count, error } = await query

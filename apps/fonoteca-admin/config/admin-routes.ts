@@ -61,5 +61,16 @@ export const getAdminRoutes = (locale?: string): AdminRouteItem[] => {
         },
       ],
     },
+    {
+      title: "Configuración",
+      url: "#",
+      icon: ClipboardList,
+      items: [
+        {
+          title: "Operaciones Masivas",
+          url: `/dashboard/bulk`,
+        },
+      ],
+    },
   ]
 }
