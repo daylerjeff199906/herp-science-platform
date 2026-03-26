@@ -32,13 +32,14 @@ const TABLES = [
     label: "Mediateca (Multimedia)", 
     headers: ["id", "occurrence_id", "identifier", "type", "format", "order_index", "title", "description", "creator", "rightsHolder", "license", "tag", "parent_multimedia_id"] 
   },
-];
+] as const;
 
 export function BulkClient() {
-  const [selectedTable, setSelectedTable] = useState(TABLES[0].id);
+  const [selectedTable, setSelectedTable] = useState<string>(TABLES[0]?.id || "taxa");
   const [loading, setLoading] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [results, setResults] = useState<{ successCount: number; errorCount: number; errors: string[] } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const currentTable = TABLES.find(t => t.id === selectedTable) || TABLES[0];
 
@@ -47,7 +48,8 @@ export function BulkClient() {
     const csvContent = currentTable.headers.join(",") + "\n" +
       currentTable.headers.map(h => "VALOR").join(","); // Example data
     
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    // Add BOM for better Excel compatibility
+    const blob = new Blob(["\uFEFF", csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -57,23 +59,33 @@ export function BulkClient() {
     document.body.removeChild(link);
   };
 
-  const handleFileParse = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const parseFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event) => {
-      const text = event.target?.result as string;
+      let text = event.target?.result as string;
+      
+      // 1. Strip BOM if present
+      if (text.startsWith('\uFEFF') || text.startsWith('\ufeff')) {
+        text = text.substring(1);
+      }
+
       try {
         if (file.type === "application/json" || file.name.endsWith(".json")) {
-           setPreviewData(JSON.parse(text));
+           const data = JSON.parse(text);
+           setPreviewData(Array.isArray(data) ? data : [data]);
         } else {
-          // Robust CSV parsing to handle quoted values and commas
-          const lines = text.split("\n").filter(l => l.trim() !== "");
+          // 2. Robust CSV parsing
+          const lines = text.split(/\r\n|\n|\r/).filter(l => l.trim() !== "");
           if (lines.length === 0) {
             setPreviewData([]);
             return;
           }
+
+          // 3. Detect separator (comma or semicolon)
+          const firstLine = lines[0] ?? "";
+          const commaCount = (firstLine.match(/,/g) || []).length;
+          const semiCount = (firstLine.match(/;/g) || []).length;
+          const separator = semiCount > commaCount ? ';' : ',';
 
           const splitCSVLine = (line: string) => {
             const result = [];
@@ -81,13 +93,12 @@ export function BulkClient() {
             let inQuotes = false;
             for (let i = 0; i < line.length; i++) {
               if (line[i] === '"') inQuotes = !inQuotes;
-              if (line[i] === ',' && !inQuotes) {
+              if (line[i] === separator && !inQuotes) {
                 let cell = line.substring(start, i).trim();
-                // Strip surrounding quotes
                 if (cell.startsWith('"') && cell.endsWith('"')) {
                   cell = cell.substring(1, cell.length - 1);
                 }
-                result.push(cell.replace(/""/g, '"')); // Handle escaped quotes
+                result.push(cell.replace(/""/g, '"'));
                 start = i + 1;
               }
             }
@@ -99,13 +110,13 @@ export function BulkClient() {
             return result;
           };
 
-          const header = splitCSVLine(lines[0]);
+          const headerLine = lines[0] ?? "";
+          const header = splitCSVLine(headerLine).map(h => h.trim());
           const items = lines.slice(1).map(line => {
             const values = splitCSVLine(line);
             const obj: any = {};
             header.forEach((key, index) => {
               const val = values[index];
-              // Convert empty strings or "null" string to actual null
               obj[key] = (val === "" || val === "null" || val === undefined) ? null : val;
             });
             return obj;
@@ -113,11 +124,41 @@ export function BulkClient() {
           setPreviewData(items);
         }
         setResults(null);
+        toast.info(`Archivo "${file.name}" cargado correctamente`);
       } catch (err) {
+        console.error("Parse error:", err);
         toast.error("Error procesando el archivo");
       }
     };
     reader.readAsText(file);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) parseFile(file);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      if (file.name.endsWith('.csv') || file.name.endsWith('.json')) {
+        parseFile(file);
+      } else {
+        toast.error("Formato de archivo no soportado. Usa CSV o JSON.");
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -179,11 +220,30 @@ export function BulkClient() {
             <div className="pt-4 border-t">
               <div className="space-y-2">
                 <label className="text-xs font-semibold uppercase text-muted-foreground">Subir Archivo</label>
-                <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-muted/50">
-                  <Upload className="h-6 w-6 text-muted-foreground mb-2" />
-                  <span className="text-xs font-medium">Click para cargar</span>
-                  <input type="file" onChange={handleFileParse} className="hidden" accept=".csv,.json" />
-                </label>
+                <div 
+                  className={`
+                    border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center text-center cursor-pointer 
+                    transition-all duration-200 group
+                    ${isDragging 
+                      ? "border-primary bg-primary/10 scale-[1.02] shadow-sm" 
+                      : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50"}
+                  `}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                >
+                  <div className={`p-3 rounded-full mb-3 transition-colors ${isDragging ? "bg-primary text-white" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"}`}>
+                    <Upload className="h-6 w-6" />
+                  </div>
+                  <span className="text-sm font-semibold text-foreground">
+                    {isDragging ? "Suelta aquí el archivo" : "Arrastra o selecciona"}
+                  </span>
+                  <p className="text-[10px] text-muted-foreground mt-1 px-4">
+                    Formatos aceptados: .csv, .json
+                  </p>
+                  <input id="file-upload" type="file" onChange={handleFileChange} className="hidden" accept=".csv,.json" />
+                </div>
               </div>
             </div>
           </CardContent>
@@ -199,7 +259,7 @@ export function BulkClient() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    {previewData.length > 0 && Object.keys(previewData[0]).map(k => (
+                    {previewData.length > 0 && previewData[0] && Object.keys(previewData[0]).map(k => (
                       <TableHead key={k} className="text-[10px] uppercase font-bold">{k}</TableHead>
                     ))}
                   </TableRow>
@@ -207,8 +267,10 @@ export function BulkClient() {
                 <TableBody>
                   {previewData.slice(0, 10).map((row, idx) => (
                     <TableRow key={idx}>
-                      {Object.values(row).map((v: any, i) => (
-                        <TableCell key={i} className="text-[10px] truncate max-w-[150px]">{v !== null ? String(v) : "-"}</TableCell>
+                      {previewData[0] && Object.keys(previewData[0]).map((k, i) => (
+                        <TableCell key={i} className="text-[10px] truncate max-w-[150px]">
+                          {(row[k] !== null && row[k] !== undefined) ? String(row[k]) : "-"}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))}

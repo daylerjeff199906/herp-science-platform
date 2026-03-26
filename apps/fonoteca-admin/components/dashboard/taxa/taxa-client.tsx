@@ -74,35 +74,33 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
     router.push(`?${params.toString()}`);
   };
 
-  const getExportData = (items: Taxon[], format: "csv" | "json" | "template" | "excel") => {
+  const getExportData = (items: Taxon[], format: "csv" | "json" | "template" | "excel"): string => {
     if (format === "json") return JSON.stringify(items, null, 2);
 
     // Technical headers (Darwin Core based)
     const bulkHeaders = ["id", "taxonID", "scientificName", "acceptedNameUsage", "specificEpithet", "infraspecificEpithet", "taxonRank", "scientificNameAuthorship", "vernacularName", "nomenclaturalCode", "genus_id"];
 
-    if (format === "csv" || format === "excel" || format === "template") {
-      const csvRows = [bulkHeaders.join(",")];
-      items.forEach(item => {
-        const row = [
-          item.id,
-          item.taxonID || "",
-          item.scientificName || "",
-          item.acceptedNameUsage || "",
-          item.specificEpithet || "",
-          item.infraspecificEpithet || "",
-          item.taxonRank || "",
-          item.scientificNameAuthorship || "",
-          item.vernacularName || "",
-          item.nomenclaturalCode || "",
-          item.genus_id || ""
-        ].map(v => {
-          const val = v === null || v === undefined ? "" : v;
-          return `"${String(val).replace(/"/g, '""')}"`;
-        });
-        csvRows.push(row.join(","));
+    const csvRows = [bulkHeaders.join(",")];
+    items.forEach(item => {
+      const row = [
+        item.id,
+        item.taxonID || "",
+        item.scientificName || "",
+        item.acceptedNameUsage || "",
+        item.specificEpithet || "",
+        item.infraspecificEpithet || "",
+        item.taxonRank || "",
+        item.scientificNameAuthorship || "",
+        item.vernacularName || "",
+        item.nomenclaturalCode || "",
+        item.genus_id || ""
+      ].map(v => {
+        const val = v === null || v === undefined ? "" : v;
+        return `"${String(val).replace(/"/g, '""')}"`;
       });
-      return csvRows.join("\n");
-    }
+      csvRows.push(row.join(","));
+    });
+    return csvRows.join("\n");
   };
 
   const downloadFile = (content: string, filename: string, type: string) => {
