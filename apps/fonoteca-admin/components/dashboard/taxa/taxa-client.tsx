@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Filter, X, Upload, Check, Download, FileJson, FileSpreadsheet, FileText, ChevronDown, LayoutList, Loader2 } from "lucide-react";
+import { Plus, Edit, Filter, X, Upload, Check, Download, ChevronDown, LayoutList } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { TaxonForm } from "./taxon-form";
 import { deleteTaxon, getFamilies, getGenera, getAllTaxaForExport } from "@/actions/taxa";
@@ -117,7 +117,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const handleExport = async (format: "csv" | "json" | "template" | "excel", mode: "single" | "all" | "selected" = "all", singleItem?: Taxon) => {
     try {
       let dataToExport: Taxon[] = [];
-      
+
       if (mode === "single" && singleItem) {
         dataToExport = [singleItem];
       } else if (mode === "selected") {
@@ -130,9 +130,9 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
         const genus_id = searchParams.get("genus_id") || "";
         const hasScientificName = searchParams.get("hasScientificName") || "all";
         const hasVernacularName = searchParams.get("hasVernacularName") || "all";
-        
-        const res = await getAllTaxaForExport({ 
-          search, kingdom, family_id, genus_id, hasScientificName, hasVernacularName 
+
+        const res = await getAllTaxaForExport({
+          search, kingdom, family_id, genus_id, hasScientificName, hasVernacularName
         });
         dataToExport = res.data;
       }
@@ -155,7 +155,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
       } else {
         downloadFile(content, `${name}.csv`, "text/csv");
       }
-      
+
       if (mode !== "single") toast.success("Exportación completada");
     } catch (error) {
       console.error(error);
@@ -182,20 +182,20 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   };
 
   const handleBulkDelete = async () => {
-     if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} taxones?`)) return;
-     
-     toast.loading(`Eliminando ${selectedIds.length} taxones...`);
-     try {
-       const deletePromises = selectedIds.map(id => deleteTaxon(id));
-       await Promise.all(deletePromises);
-       toast.dismiss();
-       toast.success("Eliminados correctamente");
-       setSelectedIds([]);
-       router.refresh();
-     } catch (err) {
-       toast.dismiss();
-       toast.error("Error en la eliminación por lotes");
-     }
+    if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} taxones?`)) return;
+
+    toast.loading(`Eliminando ${selectedIds.length} taxones...`);
+    try {
+      const deletePromises = selectedIds.map(id => deleteTaxon(id));
+      await Promise.all(deletePromises);
+      toast.dismiss();
+      toast.success("Eliminados correctamente");
+      setSelectedIds([]);
+      router.refresh();
+    } catch (err) {
+      toast.dismiss();
+      toast.error("Error en la eliminación por lotes");
+    }
   };
 
   const currentKingdom = searchParams.get("kingdom") || "all";
@@ -276,38 +276,38 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
       {/* BULK ACTION BAR */}
       {selectedIds.length > 0 && (
         <div className="bg-primary/5 border-primary/20 border rounded-lg p-2 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-300">
-           <div className="flex items-center gap-4 ml-2">
-             <span className="text-xs font-semibold text-primary">
-                {selectedIds.length} taxones seleccionados
-             </span>
-             <Button variant="ghost" size="sm" className="h-8 text-xs gap-1.5" onClick={() => setSelectedIds([])}>
-               Cancelar
-             </Button>
-           </div>
-           
-           <div className="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-8 text-xs gap-1.5")}>
-                  <Download className="h-3.5 w-3.5" />
-                  <span>Exportar Selección</span>
-                  <ChevronDown className="h-3 w-3 opacity-50" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                   <DropdownMenuGroup>
-                     <DropdownMenuLabel className="text-xs">Exportar {selectedIds.length} items</DropdownMenuLabel>
-                     <DropdownMenuSeparator />
-                     <DropdownMenuItem onClick={() => handleExport("csv", "selected")} className="text-xs">Exportar CSV</DropdownMenuItem>
-                     <DropdownMenuItem onClick={() => handleExport("excel", "selected")} className="text-xs">Exportar Excel (BOM)</DropdownMenuItem>
-                     <DropdownMenuItem onClick={() => handleExport("json", "selected")} className="text-xs">Exportar JSON</DropdownMenuItem>
-                   </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+          <div className="flex items-center gap-4 ml-2">
+            <span className="text-xs font-semibold text-primary">
+              {selectedIds.length} taxones seleccionados
+            </span>
+            <Button variant="ghost" size="sm" className="h-8 text-xs gap-1.5" onClick={() => setSelectedIds([])}>
+              Cancelar
+            </Button>
+          </div>
 
-              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={handleBulkDelete}>
-                 <Trash2 className="h-3.5 w-3.5" />
-                 Eliminar
-              </Button>
-           </div>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-8 text-xs gap-1.5")}>
+                <Download className="h-3.5 w-3.5" />
+                <span>Exportar Selección</span>
+                <ChevronDown className="h-3 w-3 opacity-50" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel className="text-xs">Exportar {selectedIds.length} items</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleExport("csv", "selected")} className="text-xs">Exportar CSV</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport("excel", "selected")} className="text-xs">Exportar Excel (BOM)</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleExport("json", "selected")} className="text-xs">Exportar JSON</DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={handleBulkDelete}>
+              <Trash2 className="h-3.5 w-3.5" />
+              Eliminar
+            </Button>
+          </div>
         </div>
       )}
 
@@ -513,8 +513,8 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40px] px-4">
-                <Checkbox 
-                  checked={selectedIds.length === data.length && data.length > 0} 
+                <Checkbox
+                  checked={selectedIds.length === data.length && data.length > 0}
                   onCheckedChange={toggleAll}
                   aria-label="Seleccionar todos"
                 />
@@ -532,11 +532,11 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
               data.map((taxon) => (
                 <TableRow key={taxon.id} className={cn(selectedIds.includes(taxon.id) && "bg-primary/5")}>
                   <TableCell className="px-4">
-                     <Checkbox 
-                        checked={selectedIds.includes(taxon.id)} 
-                        onCheckedChange={() => toggleItem(taxon.id)}
-                        aria-label={`Seleccionar ${taxon.scientificName}`}
-                     />
+                    <Checkbox
+                      checked={selectedIds.includes(taxon.id)}
+                      onCheckedChange={() => toggleItem(taxon.id)}
+                      aria-label={`Seleccionar ${taxon.scientificName}`}
+                    />
                   </TableCell>
                   <TableCell className="font-medium italic">{taxon.scientificName}</TableCell>
                   <TableCell>{taxon.genus?.family?.kingdom || "Animalia"}</TableCell>
