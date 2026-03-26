@@ -13,19 +13,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Filter, X, Upload, Check, ChevronsUpDown, Search } from "lucide-react";
+import { Plus, Edit, Filter, X, Upload, Check } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { TaxonForm } from "./taxon-form";
 import { deleteTaxon, getFamilies, getGenera } from "@/actions/taxa";
 import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/panel-admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from "@/components/ui/label"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
@@ -115,9 +113,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <div className="flex-1">
-            <SearchInput placeholder="Buscar por nombre científico..." />
-          </div>
+          <SearchInput placeholder="Buscar por nombre científico..." />
           <Button
             variant="outline"
             size="sm"
