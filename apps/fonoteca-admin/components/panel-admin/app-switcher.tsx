@@ -36,13 +36,15 @@ export function AppSwitcher({ teams }: AppSwitcherProps) {
         <span className="sr-only">Switch Apps</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-64 rounded-xl p-2 dark bg-[#001429] border-[#ffffff]/10 text-white"
+        className="w-64 rounded-xl p-2 border-[#ffffff]/10"
         align="end"
         sideOffset={8}
       >
-        <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Aplicaciones Disponibles
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Aplicaciones Disponibles
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator className="mx-0 my-1" />
         <DropdownMenuGroup className="grid gap-1">
           {teams.map((team) => (
@@ -52,7 +54,7 @@ export function AppSwitcher({ teams }: AppSwitcherProps) {
                 if (team.url && team.url !== '#' && team.url !== '/') {
                   window.open(team.url, "_blank")
                 } else if (team.url === '/') {
-                    window.location.href = '/'
+                  window.location.href = '/'
                 }
               }}
               className="flex items-center gap-3 rounded-lg p-2 transition-colors focus:bg-accent"
