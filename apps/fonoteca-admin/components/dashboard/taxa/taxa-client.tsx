@@ -271,7 +271,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
             <div className="space-y-4 border-t pt-6">
               <div className="space-y-4">
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Nombre Científico</Label>
-                <RadioGroup value={currentHasScientific} onValueChange={(val) => handleFilterChange("hasScientificName", val)} className="flex flex-col gap-2">
+                <RadioGroup value={currentHasScientific} onValueChange={(val: string) => handleFilterChange("hasScientificName", val)} className="flex flex-col gap-2">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="all" id="sc-all" />
                     <Label htmlFor="sc-all" className="font-normal cursor-pointer">Todos</Label>
@@ -289,7 +289,7 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
 
               <div className="space-y-4 pt-4">
                 <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Nombre Común</Label>
-                <RadioGroup value={currentHasVernacular} onValueChange={(val) => handleFilterChange("hasVernacularName", val)} className="flex flex-col gap-2">
+                <RadioGroup value={currentHasVernacular} onValueChange={(val: string) => handleFilterChange("hasVernacularName", val)} className="flex flex-col gap-2">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="all" id="vr-all" />
                     <Label htmlFor="vr-all" className="font-normal cursor-pointer">Todos</Label>
