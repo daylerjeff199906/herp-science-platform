@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Taxon } from "@/types/fonoteca";
-import { Button } from "@repo/ui/components/ui/button";
+import { Button, buttonVariants } from "@repo/ui/components/ui/button";
 import { SearchInput } from "@/components/dashboard/search-input";
 import { PaginationButtons } from "@/components/dashboard/pagination-buttons";
 import {
@@ -19,6 +19,7 @@ import { TaxonForm } from "./taxon-form";
 import { deleteTaxon, getFamilies, getGenera, getAllTaxaForExport } from "@/actions/taxa";
 import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { PageHeader } from "@/components/panel-admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -28,12 +29,15 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui/dropdown-menu";
+import { Checkbox } from "@repo/ui/components/ui/checkbox";
 import { toast } from "react-toastify";
+import { Trash2, Copy } from "lucide-react";
 
 export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const router = useRouter();
@@ -44,6 +48,11 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const [families, setFamilies] = useState<any[]>([]);
   const [genera, setGenera] = useState<any[]>([]);
   const [isExporting, setIsExporting] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSelectedIds([]); // Reset selection on page/filter change
+  }, [data, searchParams]);
 
   useEffect(() => {
     getFamilies().then(res => setFamilies(res.data || []));
@@ -121,12 +130,14 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
     document.body.removeChild(link);
   };
 
-  const handleExport = async (format: "csv" | "json" | "template" | "excel", singleItem?: Taxon) => {
+  const handleExport = async (format: "csv" | "json" | "template" | "excel", mode: "single" | "all" | "selected" = "all", singleItem?: Taxon) => {
     try {
       let dataToExport: Taxon[] = [];
-
-      if (singleItem) {
+      
+      if (mode === "single" && singleItem) {
         dataToExport = [singleItem];
+      } else if (mode === "selected") {
+        dataToExport = data.filter(t => selectedIds.includes(t.id));
       } else {
         setIsExporting(true);
         const search = searchParams.get("search") || "";
@@ -135,9 +146,9 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
         const genus_id = searchParams.get("genus_id") || "";
         const hasScientificName = searchParams.get("hasScientificName") || "all";
         const hasVernacularName = searchParams.get("hasVernacularName") || "all";
-
-        const res = await getAllTaxaForExport({
-          search, kingdom, family_id, genus_id, hasScientificName, hasVernacularName
+        
+        const res = await getAllTaxaForExport({ 
+          search, kingdom, family_id, genus_id, hasScientificName, hasVernacularName 
         });
         dataToExport = res.data;
       }
@@ -154,21 +165,53 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
       if (format === "json") {
         downloadFile(content, `${name}.json`, "application/json");
       } else if (format === "excel") {
-        // Excel trick: Use BOM for UTF-8 CSV
         downloadFile("\uFEFF" + content, `${name}.csv`, "text/csv;charset=utf-8;");
       } else if (format === "template") {
         downloadFile(content, `${name}_plantilla.csv`, "text/csv");
       } else {
         downloadFile(content, `${name}.csv`, "text/csv");
       }
-
-      if (!singleItem) toast.success("Exportación completada");
+      
+      if (mode !== "single") toast.success("Exportación completada");
     } catch (error) {
       console.error(error);
       toast.error("Error al exportar");
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const toggleAll = () => {
+    if (selectedIds.length === data.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(data.map(t => t.id));
+    }
+  };
+
+  const toggleItem = (id: string) => {
+    if (selectedIds.includes(id)) {
+      setSelectedIds(selectedIds.filter(i => i !== id));
+    } else {
+      setSelectedIds([...selectedIds, id]);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+     if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} taxones?`)) return;
+     
+     toast.loading(`Eliminando ${selectedIds.length} taxones...`);
+     try {
+       const deletePromises = selectedIds.map(id => deleteTaxon(id));
+       await Promise.all(deletePromises);
+       toast.dismiss();
+       toast.success("Eliminados correctamente");
+       setSelectedIds([]);
+       router.refresh();
+     } catch (err) {
+       toast.dismiss();
+       toast.error("Error en la eliminación por lotes");
+     }
   };
 
   const currentKingdom = searchParams.get("kingdom") || "all";
@@ -233,47 +276,88 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
       >
         <div className="flex items-center gap-2">
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 text-xs rounded-full gap-1.5"
-                disabled={isExporting}
-              >
-                {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-                <span>Exportar</span>
-                <ChevronDown className="h-3 w-3 opacity-50" />
-              </Button>
+            <DropdownMenuTrigger
+              className={cn(
+                buttonVariants({ variant: "outline", size: "sm" }),
+                "h-8 text-xs rounded-full gap-1.5"
+              )}
+              disabled={isExporting}
+            >
+              {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+              <span>Exportar</span>
+              <ChevronDown className="h-3 w-3 opacity-50" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel className="text-xs">Formato de Exportación</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleExport("template")} className="text-xs gap-2">
-                <FileText className="h-3.5 w-3.5 text-blue-500" /> Formato de Subida (CSV)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("csv")} className="text-xs gap-2">
-                <FileText className="h-3.5 w-3.5" /> Archivo CSV
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("excel")} className="text-xs gap-2">
-                <FileSpreadsheet className="h-3.5 w-3.5 text-green-600" /> Tabla Excel (CSV)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleExport("json")} className="text-xs gap-2">
-                <FileJson className="h-3.5 w-3.5 text-amber-500" /> Formato JSON
-              </DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-xs">Formato de Exportación</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleExport("template")} className="text-xs gap-2">
+                  <FileText className="h-3.5 w-3.5 text-blue-500" /> Formato de Subida (CSV)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport("csv")} className="text-xs gap-2">
+                  <FileText className="h-3.5 w-3.5" /> Archivo CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport("excel")} className="text-xs gap-2">
+                  <FileSpreadsheet className="h-3.5 w-3.5 text-green-600" /> Tabla Excel (CSV)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport("json")} className="text-xs gap-2">
+                  <FileJson className="h-3.5 w-3.5 text-amber-500" /> Formato JSON
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
 
           <Button
+            asChild
             variant="outline"
             size="sm"
             className="h-8 text-xs rounded-full gap-1.5"
-            onClick={() => router.push("/dashboard/bulk")}
           >
-            <Upload className="h-3.5 w-3.5" />
-            <span>Carga Masiva</span>
+            <Link href="/dashboard/bulk" target="_blank" rel="noopener noreferrer">
+              <Upload className="h-3.5 w-3.5" />
+              <span>Carga Masiva</span>
+            </Link>
           </Button>
         </div>
       </PageHeader>
+
+      {/* BULK ACTION BAR */}
+      {selectedIds.length > 0 && (
+        <div className="bg-primary/5 border-primary/20 border rounded-lg p-2 flex items-center justify-between animate-in fade-in slide-in-from-top-2 duration-300">
+           <div className="flex items-center gap-4 ml-2">
+             <span className="text-xs font-semibold text-primary">
+                {selectedIds.length} taxones seleccionados
+             </span>
+             <Button variant="ghost" size="sm" className="h-8 text-xs gap-1.5" onClick={() => setSelectedIds([])}>
+               Cancelar
+             </Button>
+           </div>
+           
+           <div className="flex items-center gap-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger className={cn(buttonVariants({ variant: "outline", size: "sm" }), "h-8 text-xs gap-1.5")}>
+                  <Download className="h-3.5 w-3.5" />
+                  <span>Exportar Selección</span>
+                  <ChevronDown className="h-3 w-3 opacity-50" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                   <DropdownMenuGroup>
+                     <DropdownMenuLabel className="text-xs">Exportar {selectedIds.length} items</DropdownMenuLabel>
+                     <DropdownMenuSeparator />
+                     <DropdownMenuItem onClick={() => handleExport("csv", "selected")} className="text-xs">Exportar CSV</DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => handleExport("excel", "selected")} className="text-xs">Exportar Excel (BOM)</DropdownMenuItem>
+                     <DropdownMenuItem onClick={() => handleExport("json", "selected")} className="text-xs">Exportar JSON</DropdownMenuItem>
+                   </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={handleBulkDelete}>
+                 <Trash2 className="h-3.5 w-3.5" />
+                 Eliminar
+              </Button>
+           </div>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">
@@ -476,6 +560,13 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[40px] px-4">
+                <Checkbox 
+                  checked={selectedIds.length === data.length && data.length > 0} 
+                  onCheckedChange={toggleAll}
+                  aria-label="Seleccionar todos"
+                />
+              </TableHead>
               <TableHead>Nombre Científico</TableHead>
               <TableHead>Reino</TableHead>
               <TableHead>Familia</TableHead>
@@ -487,7 +578,14 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
           <TableBody>
             {data.length > 0 ? (
               data.map((taxon) => (
-                <TableRow key={taxon.id}>
+                <TableRow key={taxon.id} className={cn(selectedIds.includes(taxon.id) && "bg-primary/5")}>
+                  <TableCell className="px-4">
+                     <Checkbox 
+                        checked={selectedIds.includes(taxon.id)} 
+                        onCheckedChange={() => toggleItem(taxon.id)}
+                        aria-label={`Seleccionar ${taxon.scientificName}`}
+                     />
+                  </TableCell>
                   <TableCell className="font-medium italic">{taxon.scientificName}</TableCell>
                   <TableCell>{taxon.genus?.family?.kingdom || "Animalia"}</TableCell>
                   <TableCell>{taxon.genus?.family?.name || "-"}</TableCell>
@@ -501,16 +599,21 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
                       </Button>
 
                       <DropdownMenu>
-                        <DropdownMenuTrigger>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Download className="h-4 w-4 text-muted-foreground" />
-                          </Button>
+                        <DropdownMenuTrigger
+                          className={cn(
+                            buttonVariants({ variant: "ghost", size: "icon" }),
+                            "h-8 w-8"
+                          )}
+                        >
+                          <Download className="h-4 w-4 text-muted-foreground" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuLabel className="text-[11px] py-1">Exportar Registro</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => handleExport("csv", taxon)} className="text-xs py-1.5">CSV</DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleExport("json", taxon)} className="text-xs py-1.5">JSON</DropdownMenuItem>
+                          <DropdownMenuGroup>
+                             <DropdownMenuLabel className="text-[11px] py-1">Exportar Registro</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleExport("csv", "single", taxon)} className="text-xs py-1.5">CSV</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleExport("json", "single", taxon)} className="text-xs py-1.5">JSON</DropdownMenuItem>
+                          </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
 
