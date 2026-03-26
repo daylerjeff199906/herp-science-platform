@@ -51,10 +51,10 @@ export function TeamSwitcher({
               <img src={activeTeam.logo} alt={activeTeam.name} width={32} height={32} />
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{activeTeam.name}</span>
-              <span className="truncate text-xs">{activeTeam.plan}</span>
+              <span className="truncate font-medium text-white">{activeTeam.name}</span>
+              <span className="truncate text-xs text-[#718e9a]">{activeTeam.plan}</span>
             </div>
-            <ChevronsUpDownIcon className="ml-auto" />
+            <ChevronsUpDownIcon className="ml-auto text-[#718e9a] size-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56 rounded-lg"

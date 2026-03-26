@@ -15,6 +15,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils"
 import { ChevronRightIcon, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -37,7 +38,9 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Módulos de Datos</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[#718e9a] font-bold uppercase tracking-wider text-[10px]">
+        Módulos de Datos
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           const isDashboard = item.url === '/dashboard'
@@ -52,10 +55,23 @@ export function NavMain({
                   asChild
                   tooltip={item.title}
                   isActive={isActive}
+                  className={cn(
+                    "transition-colors duration-200 hover:bg-white/5",
+                    isActive ? "text-white" : "text-[#718e9a]"
+                  )}
                 >
                   <Link href={item.url}>
-                    {item.icon && <item.icon className="size-4" />}
-                    <span>{item.title}</span>
+                    {item.icon && (
+                      <item.icon
+                        className={cn(
+                          "size-4 shrink-0 transition-colors duration-200",
+                          isActive
+                            ? item.url === '/dashboard' ? "text-[#a3e635]" : "text-[#0ea5e9]"
+                            : "text-[#718e9a]"
+                        )}
+                      />
+                    )}
+                    <span className="font-semibold">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -71,9 +87,23 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title} isActive={isActive}>
-                    {item.icon && <item.icon className="size-4" />}
-                    <span>{item.title}</span>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={isActive}
+                    className={cn(
+                      "transition-colors duration-200 hover:bg-white/5",
+                      isActive ? "text-white" : "text-[#718e9a]"
+                    )}
+                  >
+                    {item.icon && (
+                      <item.icon
+                        className={cn(
+                          "size-4 shrink-0 transition-colors duration-200",
+                          isActive ? "text-[#0ea5e9]" : "text-[#718e9a]"
+                        )}
+                      />
+                    )}
+                    <span className="font-semibold">{item.title}</span>
                     <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -86,9 +116,13 @@ export function NavMain({
                           <SidebarMenuSubButton
                             asChild
                             isActive={isSubActive}
+                            className={cn(
+                              "transition-colors duration-200 hover:bg-white/5",
+                              isSubActive ? "text-white" : "text-[#718e9a]"
+                            )}
                           >
                             <Link href={subItem.url}>
-                              <span>{subItem.title}</span>
+                              <span className="font-medium">{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
