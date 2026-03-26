@@ -275,38 +275,6 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
         }}
       >
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "h-8 text-xs rounded-full gap-1.5"
-              )}
-              disabled={isExporting}
-            >
-              {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-              <span>Exportar</span>
-              <ChevronDown className="h-3 w-3 opacity-50" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="text-xs">Formato de Exportación</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleExport("template")} className="text-xs gap-2">
-                  <FileText className="h-3.5 w-3.5 text-blue-500" /> Formato de Subida (CSV)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport("csv")} className="text-xs gap-2">
-                  <FileText className="h-3.5 w-3.5" /> Archivo CSV
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport("excel")} className="text-xs gap-2">
-                  <FileSpreadsheet className="h-3.5 w-3.5 text-green-600" /> Tabla Excel (CSV)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleExport("json")} className="text-xs gap-2">
-                  <FileJson className="h-3.5 w-3.5 text-amber-500" /> Formato JSON
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           <Button
             asChild
             variant="outline"
@@ -597,25 +565,6 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(taxon.id)} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Button>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          className={cn(
-                            buttonVariants({ variant: "ghost", size: "icon" }),
-                            "h-8 w-8"
-                          )}
-                        >
-                          <Download className="h-4 w-4 text-muted-foreground" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuGroup>
-                             <DropdownMenuLabel className="text-[11px] py-1">Exportar Registro</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleExport("csv", "single", taxon)} className="text-xs py-1.5">CSV</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleExport("json", "single", taxon)} className="text-xs py-1.5">JSON</DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
 
                       <DeleteButtonWithConfirm
                         id={taxon.id}
