@@ -5,6 +5,8 @@ import { cookies } from 'next/headers'
 import { AppSidebar } from "@/components/app-sidebar"
 import { getAuthorizedTeams } from "@/actions/auth-teams"
 
+import { TeamsProvider } from "@/components/providers/teams-provider"
+
 export default async function AdminLayout({
   children,
 }: {
@@ -52,10 +54,12 @@ export default async function AdminLayout({
   const authorizedTeams = await getAuthorizedTeams()
 
   return (
-    <SidebarProvider>
-      <AppSidebar userData={userData} teams={authorizedTeams} />
-      {children}
-    </SidebarProvider>
+    <TeamsProvider teams={authorizedTeams}>
+      <SidebarProvider>
+        <AppSidebar userData={userData} />
+        {children}
+      </SidebarProvider>
+    </TeamsProvider>
   )
 }
 
