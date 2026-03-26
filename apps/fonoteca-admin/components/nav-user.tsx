@@ -71,10 +71,10 @@ export function NavUser({ user }: NavUserProps) {
               </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{userData.name}</span>
-              <span className="truncate text-xs">{userData.email}</span>
+              <span className="truncate font-medium text-white">{userData.name}</span>
+              <span className="truncate text-xs text-[#718e9a]">{userData.email}</span>
             </div>
-            <ChevronsUpDownIcon className="ml-auto size-4" />
+            <ChevronsUpDownIcon className="ml-auto size-4 text-[#718e9a]" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="min-w-56 rounded-lg"
