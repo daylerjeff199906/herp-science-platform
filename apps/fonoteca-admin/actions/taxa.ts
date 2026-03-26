@@ -55,7 +55,7 @@ export async function getTaxa({
   }
 
   const { data, count, error } = await query
-    .order("created_at", { ascending: false })
+    .order("scientificName", { ascending: true })
     .range(from, to);
 
   if (error) {

@@ -79,6 +79,7 @@ export interface Occurrence {
   // Joins (optional)
   taxon?: Taxon;
   location?: Location;
+  multimedia?: Multimedia[];
 }
 
 export const MEDIA_TYPE = {

@@ -10,10 +10,16 @@ export async function getOccurrences({
   page = 1,
   limit = 10,
   search = "",
+  taxonId = "",
+  hasImage = "all", // "all", "yes", "no"
+  hasAudio = "all", // "all", "yes", "no"
 }: {
   page?: number;
   limit?: number;
   search?: string;
+  taxonId?: string;
+  hasImage?: string;
+  hasAudio?: string;
 }) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -23,10 +29,41 @@ export async function getOccurrences({
 
   let query = supabase
     .from("occurrences")
-    .select("*, taxa(*), locations(*)", { count: "exact" });
+    .select("*, taxa(*), locations(*), multimedia(*)", { count: "exact" });
 
   if (search) {
     query = query.or(`occurrenceID.ilike.%${search}%,recordedBy.ilike.%${search}%,catalogNumber.ilike.%${search}%`);
+  }
+
+  if (taxonId) {
+    query = query.eq("taxon_id", taxonId);
+  }
+
+  // Media filtering
+  if (hasImage === "yes" || hasImage === "no") {
+    const { data: imageIds } = await supabase
+      .from("multimedia")
+      .select("occurrence_id")
+      .eq("type", "Still");
+    const ids = Array.from(new Set(imageIds?.map((m) => m.occurrence_id) || []));
+    if (hasImage === "yes") {
+      query = query.in("id", ids);
+    } else {
+      query = query.not("id", "in", `(${ids.length > 0 ? ids.join(",") : "00000000-0000-0000-0000-000000000000"})`);
+    }
+  }
+
+  if (hasAudio === "yes" || hasAudio === "no") {
+    const { data: audioIds } = await supabase
+      .from("multimedia")
+      .select("occurrence_id")
+      .eq("type", "Sound");
+    const ids = Array.from(new Set(audioIds?.map((m) => m.occurrence_id) || []));
+    if (hasAudio === "yes") {
+      query = query.in("id", ids);
+    } else {
+      query = query.not("id", "in", `(${ids.length > 0 ? ids.join(",") : "00000000-0000-0000-0000-000000000000"})`);
+    }
   }
 
   const { data, count, error } = await query
@@ -43,6 +80,7 @@ export async function getOccurrences({
     ...item,
     taxon: item.taxa,
     location: item.locations,
+    multimedia: item.multimedia,
   })) as Occurrence[];
 
   return {
