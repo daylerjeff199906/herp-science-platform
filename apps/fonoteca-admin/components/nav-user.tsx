@@ -61,12 +61,15 @@ export function NavUser({ user }: NavUserProps) {
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
+              <SidebarMenuButton
+                size="lg"
+                className="transition-colors duration-200 hover:bg-white/5 active:bg-white/10 aria-expanded:bg-white/10"
+              />
             }
           >
-            <Avatar>
+            <Avatar className="size-8 rounded-lg">
               <AvatarImage src={userData.avatar || ''} alt={userData.name} />
-              <AvatarFallback className="bg-primary text-primary-foreground">
+              <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
                 {userData.avatar ? getInitials(userData.name) : <UserIcon className="size-4" />}
               </AvatarFallback>
             </Avatar>
@@ -77,7 +80,7 @@ export function NavUser({ user }: NavUserProps) {
             <ChevronsUpDownIcon className="ml-auto size-4 text-[#718e9a]" />
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="min-w-56 rounded-lg"
+            className="min-w-56 rounded-lg dark bg-[#001429] border-[#ffffff]/10 text-white"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
