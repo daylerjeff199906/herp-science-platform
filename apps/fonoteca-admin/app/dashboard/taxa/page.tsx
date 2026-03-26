@@ -9,6 +9,7 @@ export default async function TaxaPage({
 }) {
   const params = await searchParams;
   const page = Number(params.page) || 1;
+  const limit = Number(params.limit) || 10;
   const search = typeof params.search === "string" ? params.search : "";
   const kingdom = typeof params.kingdom === "string" ? params.kingdom : undefined;
   const family_id = typeof params.family_id === "string" ? params.family_id : undefined;
@@ -18,7 +19,7 @@ export default async function TaxaPage({
 
   const { data, count, error } = await getTaxa({
     page,
-    limit: 10,
+    limit,
     search,
     kingdom,
     family_id,
