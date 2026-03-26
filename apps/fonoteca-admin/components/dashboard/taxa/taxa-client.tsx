@@ -13,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit, Filter, X, Upload, Check } from "lucide-react";
+import { Plus, Edit, Filter, X, Upload, Check, Download, FileJson, FileSpreadsheet, FileText, ChevronDown, LayoutList, Loader2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { TaxonForm } from "./taxon-form";
-import { deleteTaxon, getFamilies, getGenera } from "@/actions/taxa";
+import { deleteTaxon, getFamilies, getGenera, getAllTaxaForExport } from "@/actions/taxa";
 import { DeleteButtonWithConfirm } from "@/components/dashboard/delete-button-with-confirm";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PageHeader } from "@/components/panel-admin/page-header";
@@ -25,6 +25,15 @@ import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from "react-toastify";
 
 export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const router = useRouter();
@@ -34,11 +43,133 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
   const [families, setFamilies] = useState<any[]>([]);
   const [genera, setGenera] = useState<any[]>([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     getFamilies().then(res => setFamilies(res.data || []));
     getGenera().then(res => setGenera(res.data || []));
   }, []);
+
+  const currentLimit = searchParams.get("limit") || "10";
+  const isShowingAll = currentLimit === "1000";
+
+  const toggleShowAll = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (isShowingAll) {
+      params.delete("limit");
+      params.delete("page");
+    } else {
+      params.set("limit", "1000");
+      params.set("page", "1");
+    }
+    router.push(`?${params.toString()}`);
+  };
+
+  const getExportData = (items: Taxon[], format: "csv" | "json" | "template" | "excel") => {
+    if (format === "json") return JSON.stringify(items, null, 2);
+
+    // Headers mapping for "template" (formato de subida)
+    const bulkHeaders = ["id", "taxonID", "scientificName", "acceptedNameUsage", "specificEpithet", "infraspecificEpithet", "taxonRank", "scientificNameAuthorship", "vernacularName", "nomenclaturalCode", "genus_id"];
+
+    if (format === "template") {
+      const csvRows = [bulkHeaders.join(",")];
+      items.forEach(item => {
+        const row = [
+          item.id,
+          item.taxonID || "",
+          item.scientificName || "",
+          item.acceptedNameUsage || "",
+          item.specificEpithet || "",
+          item.infraspecificEpithet || "",
+          item.taxonRank || "",
+          item.scientificNameAuthorship || "",
+          item.vernacularName || "",
+          item.nomenclaturalCode || "",
+          item.genus_id || ""
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`);
+        csvRows.push(row.join(","));
+      });
+      return csvRows.join("\n");
+    }
+
+    // Generic CSV / Excel (headers from displayed data)
+    const headers = ["ID", "Nombre Científico", "Reino", "Familia", "Género", "Rango", "Nombre Común"];
+    const csvRows = [headers.join(",")];
+    items.forEach(item => {
+      const row = [
+        item.id,
+        item.scientificName,
+        item.genus?.family?.kingdom || "Animalia",
+        item.genus?.family?.name || "",
+        item.genus?.name || "",
+        item.taxonRank || "",
+        item.vernacularName || ""
+      ].map(v => `"${String(v).replace(/"/g, '""')}"`);
+      csvRows.push(row.join(","));
+    });
+    return csvRows.join("\n");
+  };
+
+  const downloadFile = (content: string, filename: string, type: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExport = async (format: "csv" | "json" | "template" | "excel", singleItem?: Taxon) => {
+    try {
+      let dataToExport: Taxon[] = [];
+
+      if (singleItem) {
+        dataToExport = [singleItem];
+      } else {
+        setIsExporting(true);
+        const search = searchParams.get("search") || "";
+        const kingdom = searchParams.get("kingdom") || "";
+        const family_id = searchParams.get("family_id") || "";
+        const genus_id = searchParams.get("genus_id") || "";
+        const hasScientificName = searchParams.get("hasScientificName") || "all";
+        const hasVernacularName = searchParams.get("hasVernacularName") || "all";
+
+        const res = await getAllTaxaForExport({
+          search, kingdom, family_id, genus_id, hasScientificName, hasVernacularName
+        });
+        dataToExport = res.data;
+      }
+
+      if (dataToExport.length === 0) {
+        toast.info("No hay datos para exportar");
+        return;
+      }
+
+      const content = getExportData(dataToExport, format);
+      const timestamp = new Date().toISOString().split('T')[0];
+      const name = singleItem ? `taxon_${singleItem.scientificName?.replace(/\s+/g, '_')}` : `taxones_catalogo_${timestamp}`;
+
+      if (format === "json") {
+        downloadFile(content, `${name}.json`, "application/json");
+      } else if (format === "excel") {
+        // Excel trick: Use BOM for UTF-8 CSV
+        downloadFile("\uFEFF" + content, `${name}.csv`, "text/csv;charset=utf-8;");
+      } else if (format === "template") {
+        downloadFile(content, `${name}_plantilla.csv`, "text/csv");
+      } else {
+        downloadFile(content, `${name}.csv`, "text/csv");
+      }
+
+      if (!singleItem) toast.success("Exportación completada");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al exportar");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const currentKingdom = searchParams.get("kingdom") || "all";
   const currentFamily = searchParams.get("family_id") || "all";
@@ -100,15 +231,48 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
           icon: <Plus className="h-4 w-4" />,
         }}
       >
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-xs rounded-full gap-1.5"
-          onClick={() => router.push("/dashboard/bulk")}
-        >
-          <Upload className="h-3.5 w-3.5" />
-          <span>Carga Masiva</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs rounded-full gap-1.5"
+                disabled={isExporting}
+              >
+                {isExporting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                <span>Exportar</span>
+                <ChevronDown className="h-3 w-3 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuLabel className="text-xs">Formato de Exportación</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleExport("template")} className="text-xs gap-2">
+                <FileText className="h-3.5 w-3.5 text-blue-500" /> Formato de Subida (CSV)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("csv")} className="text-xs gap-2">
+                <FileText className="h-3.5 w-3.5" /> Archivo CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("excel")} className="text-xs gap-2">
+                <FileSpreadsheet className="h-3.5 w-3.5 text-green-600" /> Tabla Excel (CSV)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExport("json")} className="text-xs gap-2">
+                <FileJson className="h-3.5 w-3.5 text-amber-500" /> Formato JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-8 text-xs rounded-full gap-1.5"
+            onClick={() => router.push("/dashboard/bulk")}
+          >
+            <Upload className="h-3.5 w-3.5" />
+            <span>Carga Masiva</span>
+          </Button>
+        </div>
       </PageHeader>
 
       <div className="flex flex-col gap-3">
@@ -331,10 +495,25 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
                   <TableCell>{taxon.taxonRank}</TableCell>
                   <TableCell>
 
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(taxon.id)} title="Editar">
+                    <div className="flex items-center gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(taxon.id)} title="Editar">
                         <Edit className="h-4 w-4" />
                       </Button>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Download className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel className="text-[11px] py-1">Exportar Registro</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleExport("csv", taxon)} className="text-xs py-1.5">CSV</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleExport("json", taxon)} className="text-xs py-1.5">JSON</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
                       <DeleteButtonWithConfirm
                         id={taxon.id}
                         onConfirm={deleteTaxon}
@@ -355,7 +534,37 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
         </Table>
       </div>
 
-      <PaginationButtons totalCount={count} pageSize={10} />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {!isShowingAll ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 px-3 gap-2 text-xs"
+              onClick={toggleShowAll}
+            >
+              <LayoutList className="h-4 w-4" />
+              Ver todos
+            </Button>
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-9 px-3 gap-2 text-xs"
+              onClick={toggleShowAll}
+            >
+              <LayoutList className="h-4 w-4" />
+              Paginar vista
+            </Button>
+          )}
+          {isShowingAll && (
+            <span className="text-xs text-muted-foreground italic">
+              Mostrando {data.length} de {count} registros
+            </span>
+          )}
+        </div>
+        {!isShowingAll && <PaginationButtons totalCount={count} pageSize={10} />}
+      </div>
 
       <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
         <SheetContent className="overflow-y-auto md:min-w-[60vw] max-w-5xl">
