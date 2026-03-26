@@ -13,6 +13,8 @@ export async function getTaxa({
   kingdom = "",
   family_id = "",
   genus_id = "",
+  hasScientificName = "all",
+  hasVernacularName = "all",
 }: {
   page?: number;
   limit?: number;
@@ -20,6 +22,8 @@ export async function getTaxa({
   kingdom?: string;
   family_id?: string;
   genus_id?: string;
+  hasScientificName?: string;
+  hasVernacularName?: string;
 }) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -54,6 +58,18 @@ export async function getTaxa({
     query = query.eq("genus.family.kingdom", kingdom);
   }
 
+  if (hasScientificName === "no") {
+    query = query.or("scientificName.is.null,scientificName.eq.''");
+  } else if (hasScientificName === "yes") {
+    query = query.not("scientificName", "is", null).neq("scientificName", "");
+  }
+
+  if (hasVernacularName === "no") {
+    query = query.or("vernacularName.is.null,vernacularName.eq.''");
+  } else if (hasVernacularName === "yes") {
+    query = query.not("vernacularName", "is", null).neq("vernacularName", "");
+  }
+
   const { data, count, error } = await query
     .order("scientificName", { ascending: true })
     .range(from, to);
@@ -66,6 +82,75 @@ export async function getTaxa({
   return {
     data: (data as any) as Taxon[],
     count: count || 0,
+  };
+}
+
+export async function getAllTaxaForExport({
+  search = "",
+  kingdom = "",
+  family_id = "",
+  genus_id = "",
+  hasScientificName = "all",
+  hasVernacularName = "all",
+}: {
+  search?: string;
+  kingdom?: string;
+  family_id?: string;
+  genus_id?: string;
+  hasScientificName?: string;
+  hasVernacularName?: string;
+}) {
+  const cookieStore = await cookies();
+  const supabase = await createFonotecaServer(cookieStore);
+
+  let selectStr = "*, genus:genera(*, family:families(*))";
+
+  if (kingdom || family_id) {
+    selectStr = "*, genus:genera!inner(*, family:families!inner(*))";
+  }
+
+  let query = supabase
+    .from("taxa")
+    .select(selectStr);
+
+  if (search) {
+    query = query.or(`scientificName.ilike.%${search}%,vernacularName.ilike.%${search}%`);
+  }
+
+  if (genus_id) {
+    query = query.eq("genus_id", genus_id);
+  }
+
+  if (family_id) {
+    query = query.eq("genus.family_id", family_id);
+  }
+
+  if (kingdom) {
+    query = query.eq("genus.family.kingdom", kingdom);
+  }
+
+  if (hasScientificName === "no") {
+    query = query.or("scientificName.is.null,scientificName.eq.''");
+  } else if (hasScientificName === "yes") {
+    query = query.not("scientificName", "is", null).neq("scientificName", "");
+  }
+
+  if (hasVernacularName === "no") {
+    query = query.or("vernacularName.is.null,vernacularName.eq.''");
+  } else if (hasVernacularName === "yes") {
+    query = query.not("vernacularName", "is", null).neq("vernacularName", "");
+  }
+
+  const { data, error } = await query
+    .order("scientificName", { ascending: true });
+
+  if (error) {
+    console.error("error fetching taxa for export:", error);
+    return { data: [] as Taxon[] };
+  }
+
+  return {
+    data: (data as any) as Taxon[],
   };
 }
 
