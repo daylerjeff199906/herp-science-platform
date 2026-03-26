@@ -77,10 +77,10 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
   const getExportData = (items: Taxon[], format: "csv" | "json" | "template" | "excel") => {
     if (format === "json") return JSON.stringify(items, null, 2);
 
-    // Headers mapping for "template" (formato de subida)
+    // Technical headers (Darwin Core based)
     const bulkHeaders = ["id", "taxonID", "scientificName", "acceptedNameUsage", "specificEpithet", "infraspecificEpithet", "taxonRank", "scientificNameAuthorship", "vernacularName", "nomenclaturalCode", "genus_id"];
 
-    if (format === "template") {
+    if (format === "csv" || format === "excel" || format === "template") {
       const csvRows = [bulkHeaders.join(",")];
       items.forEach(item => {
         const row = [
@@ -95,28 +95,14 @@ export function TaxaClient({ data, count }: { data: Taxon[]; count: number }) {
           item.vernacularName || "",
           item.nomenclaturalCode || "",
           item.genus_id || ""
-        ].map(v => `"${String(v).replace(/"/g, '""')}"`);
+        ].map(v => {
+          const val = v === null || v === undefined ? "" : v;
+          return `"${String(val).replace(/"/g, '""')}"`;
+        });
         csvRows.push(row.join(","));
       });
       return csvRows.join("\n");
     }
-
-    // Generic CSV / Excel (headers from displayed data)
-    const headers = ["ID", "Nombre Científico", "Reino", "Familia", "Género", "Rango", "Nombre Común"];
-    const csvRows = [headers.join(",")];
-    items.forEach(item => {
-      const row = [
-        item.id,
-        item.scientificName,
-        item.genus?.family?.kingdom || "Animalia",
-        item.genus?.family?.name || "",
-        item.genus?.name || "",
-        item.taxonRank || "",
-        item.vernacularName || ""
-      ].map(v => `"${String(v).replace(/"/g, '""')}"`);
-      csvRows.push(row.join(","));
-    });
-    return csvRows.join("\n");
   };
 
   const downloadFile = (content: string, filename: string, type: string) => {

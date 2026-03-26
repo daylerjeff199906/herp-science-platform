@@ -68,17 +68,49 @@ export function BulkClient() {
         if (file.type === "application/json" || file.name.endsWith(".json")) {
            setPreviewData(JSON.parse(text));
         } else {
-           const lines = text.split("\n").filter(l => l.trim() !== "");
-           const header = lines[0].split(",").map(h => h.trim());
-           const items = lines.slice(1).map(line => {
-             const values = line.split(",").map(v => v.trim());
-             const obj: any = {};
-             header.forEach((key, index) => {
-               obj[key] = values[index] || null;
-             });
-             return obj;
-           });
-           setPreviewData(items);
+          // Robust CSV parsing to handle quoted values and commas
+          const lines = text.split("\n").filter(l => l.trim() !== "");
+          if (lines.length === 0) {
+            setPreviewData([]);
+            return;
+          }
+
+          const splitCSVLine = (line: string) => {
+            const result = [];
+            let start = 0;
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+              if (line[i] === '"') inQuotes = !inQuotes;
+              if (line[i] === ',' && !inQuotes) {
+                let cell = line.substring(start, i).trim();
+                // Strip surrounding quotes
+                if (cell.startsWith('"') && cell.endsWith('"')) {
+                  cell = cell.substring(1, cell.length - 1);
+                }
+                result.push(cell.replace(/""/g, '"')); // Handle escaped quotes
+                start = i + 1;
+              }
+            }
+            let lastCell = line.substring(start).trim();
+            if (lastCell.startsWith('"') && lastCell.endsWith('"')) {
+              lastCell = lastCell.substring(1, lastCell.length - 1);
+            }
+            result.push(lastCell.replace(/""/g, '"'));
+            return result;
+          };
+
+          const header = splitCSVLine(lines[0]);
+          const items = lines.slice(1).map(line => {
+            const values = splitCSVLine(line);
+            const obj: any = {};
+            header.forEach((key, index) => {
+              const val = values[index];
+              // Convert empty strings or "null" string to actual null
+              obj[key] = (val === "" || val === "null" || val === undefined) ? null : val;
+            });
+            return obj;
+          });
+          setPreviewData(items);
         }
         setResults(null);
       } catch (err) {
