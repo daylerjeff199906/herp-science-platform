@@ -5,6 +5,14 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { MultimediaInput, multimediaSchema } from "@/lib/validations/fonoteca";
 import { Multimedia } from "@/types/fonoteca";
+import { 
+  DeleteObjectCommand, 
+  ListObjectsV2Command, 
+  DeleteObjectsCommand, 
+  PutObjectCommand 
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2";
 
 export async function getMultimediaList({
   page = 1,
@@ -131,8 +139,6 @@ export async function updateMultimedia(id: string, input: MultimediaInput) {
   return { success: true, data: (data as any) as Multimedia };
 }
 
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-
 export async function deleteMultimedia(id: string) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -175,6 +181,63 @@ export async function deleteMultimedia(id: string) {
   return { success: true };
 }
 
+/**
+ * Deletes all objects in an R2 bucket under a specific prefix.
+ * Useful for "deleting a folder" in R2.
+ */
+export async function deleteR2Folder(prefix: string) {
+  try {
+    const listCommand = new ListObjectsV2Command({
+      Bucket: R2_BUCKET_NAME,
+      Prefix: prefix.endsWith('/') ? prefix : `${prefix}/`,
+    });
+
+    const listResp = await r2Client.send(listCommand);
+
+    if (listResp.Contents && listResp.Contents.length > 0) {
+      const deleteCommand = new DeleteObjectsCommand({
+        Bucket: R2_BUCKET_NAME,
+        Delete: {
+          Objects: listResp.Contents.map((obj) => ({ Key: obj.Key })),
+          Quiet: true,
+        },
+      });
+
+      await r2Client.send(deleteCommand);
+    }
+    return { success: true };
+  } catch (err: any) {
+    console.error(`Failed to delete R2 folder ${prefix}:`, err);
+    return { error: err.message };
+  }
+}
+
+/**
+ * Generates a presigned URL for direct upload from the client to R2.
+ * This allows monitoring upload progress on the client side.
+ */
+export async function getPresignedUrl(path: string, contentType: string) {
+  try {
+    const command = new PutObjectCommand({
+      Bucket: R2_BUCKET_NAME,
+      Key: path,
+      ContentType: contentType,
+    });
+
+    // Valid for 15 minutes. 
+    // AWS SDK should handle the signing correctly, but let's be explicitly matching
+    const url = await getSignedUrl(r2Client, command, { 
+      expiresIn: 900,
+      signableHeaders: new Set(["content-type"])
+    });
+    
+    return { success: true, url };
+  } catch (err: any) {
+    console.error("Error generating presigned URL:", err);
+    return { error: err.message };
+  }
+}
+
 export async function bulkUpdateMultimediaIndexes(updates: { id: string; order_index: number }[]) {
   const cookieStore = await cookies();
   const supabase = await createFonotecaServer(cookieStore);
@@ -207,13 +270,9 @@ export async function updateMultimediaSpectrogram(id: string, spectrogram_url: s
   return { success: true };
 }
 
-// R2 Standard Upload
-import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { r2Client, R2_BUCKET_NAME, R2_PUBLIC_URL } from "@/lib/r2";
-
 export async function uploadToR2(formData: FormData) {
   const file = formData.get("file") as File;
-  const path = formData.get("path") as string; // occurrenceId/filename.ext
+  const path = formData.get("path") as string; // occurrences/occurrenceId/filename.ext
 
   if (!file) return { error: "No file provided" };
   

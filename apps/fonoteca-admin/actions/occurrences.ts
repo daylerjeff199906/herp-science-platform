@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { OccurrenceInput, occurrenceSchema } from "@/lib/validations/fonoteca";
 import { Occurrence } from "@/types/fonoteca";
+import { deleteR2Folder } from "./multimedia";
 
 export async function getOccurrences({
   page = 1,
@@ -192,6 +193,13 @@ export async function deleteOccurrence(id: string) {
     return { error: error.message };
   }
 
+  // Cascade delete in R2
+  try {
+    await deleteR2Folder(`occurrences/${id}`);
+  } catch (r2Err) {
+    console.error(`Failed to delete R2 folder for occurrence ${id}:`, r2Err);
+  }
+
   revalidatePath("/dashboard/occurrences");
   return { success: true };
 }
@@ -207,6 +215,15 @@ export async function deleteOccurrences(ids: string[]) {
 
   if (error) {
     return { error: error.message };
+  }
+
+  // Cascade delete in R2
+  for (const id of ids) {
+    try {
+      await deleteR2Folder(`occurrences/${id}`);
+    } catch (r2Err) {
+      console.error(`Failed to delete R2 folder for occurrence ${id}:`, r2Err);
+    }
   }
 
   revalidatePath("/dashboard/occurrences");
