@@ -610,36 +610,32 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                       alt={item.title || "Imagen"}
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center p-4">
-                      {/* Play Action Over Center Icon */}
-                      <button
-                        className={`p-6 rounded-2xl transition-all duration-500 transform ${isPlaying ? "bg-red-500 text-white scale-110 shadow-lg" : "bg-red-50 text-red-500 hover:scale-105 hover:bg-red-100"}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (isPlaying) {
-                            currentAudio?.pause();
-                            setPlayingId(null);
-                          } else {
-                            if (currentAudio) currentAudio.pause();
-                            const audio = new Audio(getAudioUrl(item.identifier));
-                            audio.onended = () => { setPlayingId(null); setCurrentAudio(null); };
-                            audio.onerror = (e) => {
-                              console.error("Audio playback error:", e);
-                              toast.error("Error al cargar el audio. El formato podría no ser compatible o el enlace ha expirado.");
-                              setPlayingId(null);
-                            };
-                            setCurrentAudio(audio);
-                            setPlayingId(item.id);
-                            audio.play().catch(err => {
-                              console.error("Play error:", err);
-                              toast.error("No se pudo iniciar la reproducción.");
-                              setPlayingId(null);
-                            });
+                    <div className="flex flex-col items-center justify-center p-4 w-full h-full min-h-[160px]">
+                      <div className={`p-6 rounded-2xl transition-all duration-500 mb-4 ${isPlaying ? "bg-red-500 text-white scale-110 shadow-lg animate-pulse" : "bg-red-50 text-red-500"}`}>
+                        <Music className="h-10 w-10" />
+                      </div>
+                      <audio
+                        src={getAudioUrl(item.identifier)}
+                        controls
+                        className="w-full h-10 scale-95 opacity-80 hover:opacity-100 transition-opacity"
+                        onPlay={(e) => {
+                          if (currentAudio && currentAudio !== e.currentTarget) {
+                            currentAudio.pause();
                           }
+                          setCurrentAudio(e.currentTarget);
+                          setPlayingId(item.id);
                         }}
-                      >
-                        {isPlaying ? <Pause className="h-10 w-10 fill-current" /> : <Music className="h-10 w-10" />}
-                      </button>
+                        onPause={() => {
+                          if (playingId === item.id) setPlayingId(null);
+                        }}
+                        onEnded={() => {
+                          if (playingId === item.id) setPlayingId(null);
+                        }}
+                        onError={(e) => {
+                          console.error("Audio error:", e);
+                          // toast.error("Error al cargar este archivo de audio");
+                        }}
+                      />
                     </div>
                   )}
 
@@ -672,12 +668,15 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                     </div>
 
                     {spectrograms.length > 0 ? (
-                      <div className="grid grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {spectrograms.map((sp) => (
-                          <div key={sp.id} className="relative group/sp aspect-square rounded-sm border bg-white overflow-hidden cursor-pointer" onClick={() => handleEditClick(sp)}>
+                          <div key={sp.id} className="relative group aspect-square rounded-sm border bg-white overflow-hidden cursor-pointer" onClick={() => handleEditClick(sp)}>
                             <img src={sp.identifier} className="h-full w-full object-cover" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Pencil className="h-4 w-4 text-white" />
+                            </div>
                             <button
-                              className="absolute inset-0 bg-destructive/80 text-white flex items-center justify-center opacity-0 group-hover/sp:opacity-100 transition-opacity"
+                              className="absolute top-1 right-1 p-1.5 bg-destructive/90 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive shadow-sm z-10"
                               onClick={(e) => { e.stopPropagation(); setItemToDelete({ id: sp.id, isChild: true }); }}
                             >
                               <Trash2 className="h-3 w-3" />
@@ -1010,7 +1009,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
               }}
               onClick={() => !uploading && document.getElementById("file-sheet-upload")?.click()}
             >
-              <div className="bg-background shadow-xl rounded-2xl p-5 mb-4 group-hover:scale-110 transition-transform duration-300 border border-muted/50">
+              <div className="bg-background rounded-2xl p-5 mb-4 border border-muted/50">
                 <Upload className={`h-8 w-8 ${isDragOver ? "text-primary animate-bounce" : "text-muted-foreground"}`} />
               </div>
               <h3 className="text-sm font-bold text-foreground">Seleccionar archivos para subir</h3>
@@ -1129,7 +1128,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
               <Button variant="ghost" className="flex-1 sm:flex-none text-xs rounded-xl" disabled={!!uploading} onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>
                 Cancelar
               </Button>
-              <Button size="default" className="flex-1 sm:flex-none h-11 px-8 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95" disabled={selectedFiles.length === 0 || !!uploading} onClick={async () => {
+              <Button size="default" className="flex-1 sm:flex-none h-11 px-8 rounded-xl  shadow-primary/20 transition-all hover:scale-105 active:scale-95" disabled={selectedFiles.length === 0 || !!uploading} onClick={async () => {
                 if (activeParentItemId) {
                   let count = 0;
                   for (const file of selectedFiles) {
@@ -1167,20 +1166,15 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       <AlertDialog open={!!itemToDelete} onOpenChange={(open) => !open && setItemToDelete(null)}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
-            <div className="flex items-center gap-4 text-destructive mb-2">
-              <div className="bg-destructive/10 p-3 rounded-full">
-                <Trash2 className="h-6 w-6" />
-              </div>
-              <AlertDialogTitle className="text-xl font-bold">¿Estás seguro?</AlertDialogTitle>
-            </div>
+            <AlertDialogTitle className="text-destructive">¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription className="text-sm font-medium">
               Esta acción no se puede deshacer. El archivo desaparecerá permanentemente del bucket y de la base de datos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4">
-            <AlertDialogCancel className="rounded-xl font-bold">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              className="rounded-xl font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+              className="bg-destructive"
               onClick={async () => {
                 if (itemToDelete) {
                   await handleDelete(itemToDelete.id, itemToDelete.isChild);
