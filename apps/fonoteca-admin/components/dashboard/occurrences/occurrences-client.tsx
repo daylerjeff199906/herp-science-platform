@@ -52,7 +52,7 @@ export function OccurrencesClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isFilterSheetOpen, setIsFilterSheetOpen] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
+  const [, setIsExporting] = useState(false);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
