@@ -64,6 +64,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [activeUploadType, setActiveUploadType] = useState<MediaType | null>(null);
   const [activeParentItemId, setActiveParentItemId] = useState<string | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string, isChild: boolean } | null>(null);
   const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
   // URL States
@@ -508,16 +509,18 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     <div className="space-y-4 mt-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-           <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-           <h3 className="text-sm font-bold text-foreground uppercase tracking-tight">{typeTitle}</h3>
+          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-tight">{typeTitle}</h3>
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
-              <Plus className="h-4 w-4" />
+          <DropdownMenuTrigger>
+            <Button variant="outline" size="sm" className="gap-2 rounded-xl border-primary/10 hover:border-primary/40 text-[11px] font-bold px-3 bg-white/50 shadow-sm backdrop-blur-sm">
+              <Plus className="h-3.5 w-3.5" />
+              <span>{uploadType === "Sound" ? "Subir Audio" : "Subir Imagen"}</span>
             </Button>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setSelectedFiles([]); setUploadSheetOpen(true); }}>
               <Upload className="h-4 w-4 mr-2" /> Subir Archivo
@@ -540,7 +543,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           <p className="text-xs font-medium text-muted-foreground">No hay archivos en esta sección</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {list.map((item) => {
             const isPlaying = playingId === item.id;
             const spectrograms = items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram");
@@ -552,111 +555,131 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 onDragStart={() => handleDragStart(item)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, item)}
-                className="group relative aspect-square rounded-2xl overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+                className="group relative rounded-2xl overflow-hidden border bg-blue-50/20 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 flex flex-col h-full"
               >
-                {/* Image / Audio Layout */}
-                <div className="absolute inset-0 z-0">
+                {/* Header Section (Like the image) */}
+                <div className="flex items-center justify-between p-3 bg-white/40 border-b">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {item.type === "Sound" ? (
+                      <div className="bg-red-500 rounded p-1">
+                        <Music className="h-3 w-3 text-white" />
+                      </div>
+                    ) : (
+                      <div className="bg-blue-500 rounded p-1">
+                        <FileImage className="h-3 w-3 text-white" />
+                      </div>
+                    )}
+                    <span className="text-[11px] font-bold truncate text-foreground/80">{item.title || "Sin título"}</span>
+                  </div>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger >
+                      <button className="text-muted-foreground hover:text-foreground">
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleEditClick(item)}><Pencil className="h-4 w-4 mr-2" /> Editar</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive" onClick={() => setItemToDelete({ id: item.id, isChild: false })}><Trash2 className="h-4 w-4 mr-2" /> Eliminar</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+
+                {/* Body Section (Square Center) */}
+                <div className="relative flex-1 bg-white flex items-center justify-center min-h-[160px] p-4 m-2 rounded-xl">
                   {item.type === "Still" ? (
                     <img
                       src={getDriveThumbnailUrl(item.identifier) || item.identifier}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 rounded-lg shadow-sm"
                       alt={item.title || "Imagen"}
                     />
                   ) : (
-                    <div className="h-full w-full bg-gradient-to-br from-primary/5 to-primary/20 flex flex-col items-center justify-center p-4">
-                      <div className={`p-4 rounded-full transition-all duration-500 ${isPlaying ? "bg-primary text-white scale-110 shadow-lg" : "bg-white text-primary shadow-sm group-hover:scale-105"}`}>
-                        {isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Music className="h-6 w-6" />}
-                      </div>
-                      <div className="mt-4 w-full h-1 bg-primary/10 rounded-full overflow-hidden">
-                         <div className={`h-full bg-primary transition-all duration-1000 ${isPlaying ? "w-full" : "w-0"}`} />
-                      </div>
+                    <div className="flex flex-col items-center justify-center p-4">
+                      {/* Play Action Over Center Icon */}
+                      <button
+                        className={`p-6 rounded-2xl transition-all duration-500 transform ${isPlaying ? "bg-red-500 text-white scale-110 shadow-lg" : "bg-red-50 text-red-500 hover:scale-105 hover:bg-red-100"}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isPlaying) {
+                            currentAudio?.pause();
+                            setPlayingId(null);
+                          } else {
+                            if (currentAudio) currentAudio.pause();
+                            const audio = new Audio(item.identifier);
+                            audio.onended = () => { setPlayingId(null); setCurrentAudio(null); };
+                            setCurrentAudio(audio);
+                            setPlayingId(item.id);
+                            audio.play();
+                          }
+                        }}
+                      >
+                        {isPlaying ? <Pause className="h-10 w-10 fill-current" /> : <Music className="h-10 w-10 shadow-sm" />}
+                      </button>
                     </div>
                   )}
-                  {/* Overlay for actions */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 z-10 p-4">
-                    <div className="flex items-center gap-2">
-                       {item.type === "Sound" && (
-                         <Button
-                            size="icon"
-                            variant="secondary"
-                            className="h-9 w-9 rounded-full shadow-lg"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (isPlaying) {
-                                currentAudio?.pause();
-                                setPlayingId(null);
-                              } else {
-                                if (currentAudio) {
-                                  currentAudio.pause();
-                                }
-                                const audio = new Audio(item.identifier);
-                                audio.onended = () => { setPlayingId(null); setCurrentAudio(null); };
-                                setCurrentAudio(audio);
-                                setPlayingId(item.id);
-                                audio.play();
-                              }
-                            }}
-                         >
-                           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
-                         </Button>
-                       )}
-                       <Button size="icon" variant="secondary" className="h-9 w-9 rounded-full shadow-lg" onClick={(e) => { e.stopPropagation(); handleEditClick(item); }}>
-                         <Pencil className="h-4 w-4" />
-                       </Button>
-                       <Button size="icon" variant="destructive" className="h-9 w-9 rounded-full shadow-lg" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
-                         <Trash2 className="h-4 w-4" />
-                       </Button>
-                    </div>
+
+                  {/* Tag Overlay Bottom Left */}
+                  <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-black/50 text-white backdrop-blur-md border border-white/10 shadow-sm">{item.tag || "N/A"}</span>
                   </div>
                 </div>
 
-                {/* Info Bar */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 pointer-events-none">
-                  <p className="text-[10px] text-white/70 uppercase font-black tracking-widest mb-0.5">{item.tag || "General"}</p>
-                  <p className="text-xs font-semibold text-white truncate drop-shadow-sm">{item.title || "Sin título"}</p>
-                </div>
-
-                {/* Spectrogram Grid Preview (if audio) */}
-                {item.type === "Sound" && spectrograms.length > 0 && (
-                   <div className="absolute top-2 left-2 flex gap-1 z-20">
-                      {spectrograms.slice(0, 2).map((sp) => (
-                        <div key={sp.id} className="h-8 w-8 rounded-lg border border-white/20 overflow-hidden shadow-lg backdrop-blur-sm">
-                           <img src={sp.identifier} className="h-full w-full object-cover" />
-                        </div>
-                      ))}
-                      {spectrograms.length > 2 && (
-                        <div className="h-8 w-8 rounded-lg border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-[10px] text-white font-bold">
-                          +{spectrograms.length - 2}
-                        </div>
-                      )}
-                   </div>
-                )}
-                
-                {/* Drag Handle */}
-                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
-                   <div className="bg-white/90 p-1 rounded-md shadow-sm border border-muted cursor-move">
-                      <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
-                   </div>
-                </div>
-
-                {/* Bottom Action for Spectrograms */}
+                {/* Footer Section (Histogramas Piecera) */}
                 {item.type === "Sound" && (
-                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="h-7 text-[10px] gap-1 px-2 rounded-full shadow-xl"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveParentItemId(item.id);
-                          setActiveUploadType("Still");
-                          setUploadSheetOpen(true);
-                        }}
-                      >
-                        <Plus className="h-3 w-3" /> Espectro
-                      </Button>
-                   </div>
+                  <div className="p-3 border-t bg-white/30 space-y-2 mt-auto">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Espectrogramas</p>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="text-[10px] p-1.5 rounded-full hover:bg-white text-primary flex items-center gap-1 font-bold border border-primary/20">
+                            <Plus className="h-2.5 w-2.5" /> Agregar
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType("Still"); setSelectedFiles([]); setUploadSheetOpen(true); }}>
+                            <Upload className="h-3 w-3 mr-1" /> Subir
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType("Still"); setUrlSheetOpen(true); }}>
+                            <Link className="h-3 w-3 mr-1" /> URL
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    {spectrograms.length > 0 ? (
+                      <div className="grid grid-cols-4 gap-2">
+                        {spectrograms.map((sp) => (
+                          <div key={sp.id} className="relative group/sp aspect-square rounded-lg border bg-white overflow-hidden shadow-sm cursor-pointer" onClick={() => handleEditClick(sp)}>
+                            <img src={sp.identifier} className="h-full w-full object-cover" />
+                            <button
+                              className="absolute inset-0 bg-destructive/80 text-white flex items-center justify-center opacity-0 group-hover/sp:opacity-100 transition-opacity"
+                              onClick={(e) => { e.stopPropagation(); setItemToDelete({ id: sp.id, isChild: true }); }}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] italic text-muted-foreground text-center py-2 bg-white/20 rounded-lg">No hay espectrogramas vinculados.</p>
+                    )}
+                  </div>
                 )}
+
+                {/* Image Info Footer */}
+                {item.type === "Still" && (
+                  <div className="p-3 border-t bg-white/30 text-[10px] text-muted-foreground flex justify-between uppercase font-black tracking-widest">
+                    <span>{item.creator || "Desconocido"}</span>
+                    <span>{item.license ? "CC" : "Copyright"}</span>
+                  </div>
+                )}
+
+                {/* Global Hover Drag Tool */}
+                <div className="absolute top-1/2 left-2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20 pointer-events-none">
+                  <div className="bg-white/90 p-1.5 rounded-full shadow-lg border border-muted cursor-move animate-pulse pointer-events-auto">
+                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                  </div>
+                </div>
               </div>
             );
           })}
@@ -678,9 +701,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <Upload className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold text-foreground">Carga Multimedia de Especie</h3>
+          <h3 className="text-sm font-bold text-foreground">Gestión Multimedia (R2-Bucket)</h3>
         </div>
-        <p className="text-xs text-muted-foreground">Sube audios e imágenes por secciones y arrastra para cambiar el orden.</p>
+        <p className="text-xs text-muted-foreground">Sube Audios, Histogramas y Fotografías. Arrastra para cambiar el orden o vincular histogramas.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
@@ -937,8 +960,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                   <Upload className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                   <h2 className="text-lg font-bold tracking-tight">Centro de Carga</h2>
-                   <p className="text-xs font-medium text-muted-foreground">Sube y organiza tus archivos multimedia</p>
+                  <h2 className="text-lg font-bold tracking-tight">Centro de Carga</h2>
+                  <p className="text-xs font-medium text-muted-foreground">Sube y organiza tus archivos multimedia</p>
                 </div>
               </SheetTitle>
             </SheetHeader>
@@ -947,9 +970,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/5">
             {/* Drop Zone */}
             <div
-              className={`group relative border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center transition-all duration-300 hover:bg-primary/[0.02] ${
-                isDragOver ? "border-primary bg-primary/10 ring-8 ring-primary/5" : "border-muted-foreground/20 hover:border-primary/40"
-              } ${uploading ? "opacity-40 cursor-not-allowed pointer-events-none" : "cursor-pointer"}`}
+              className={`group relative border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center transition-all duration-300 hover:bg-primary/[0.02] ${isDragOver ? "border-primary bg-primary/10 ring-8 ring-primary/5" : "border-muted-foreground/20 hover:border-primary/40"
+                } ${uploading ? "opacity-40 cursor-not-allowed pointer-events-none" : "cursor-pointer"}`}
               onDragOver={(e) => { e.preventDefault(); if (!uploading) setIsDragOver(true); }}
               onDragLeave={() => setIsDragOver(false)}
               onDrop={(e) => {
@@ -968,7 +990,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
               </div>
               <h3 className="text-sm font-bold text-foreground">Seleccionar archivos para subir</h3>
               <p className="text-[11px] text-muted-foreground mt-1 max-w-[200px] text-center">Formato permitido: Audios, Imágenes y Espectrogramas</p>
-              
+
               <Input
                 id="file-sheet-upload"
                 type="file"
@@ -987,10 +1009,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             {selectedFiles.length > 0 && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                   <span className="text-[11px] font-black uppercase text-muted-foreground tracking-widest">Cola de carga ({selectedFiles.length})</span>
-                   {uploading && <div className="flex items-center gap-2 text-primary font-bold text-[11px] animate-pulse"><Loader2 className="h-3 w-3 animate-spin" /> Procesando...</div>}
+                  <span className="text-[11px] font-black uppercase text-muted-foreground tracking-widest">Cola de carga ({selectedFiles.length})</span>
+                  {uploading && <div className="flex items-center gap-2 text-primary font-bold text-[11px] animate-pulse"><Loader2 className="h-3 w-3 animate-spin" /> Procesando...</div>}
                 </div>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {selectedFiles.map((f, i) => {
                     const progress = uploadProgress[f.name];
@@ -1006,13 +1028,13 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         onDragStart={(e) => { e.dataTransfer.setData("sourceIndex", i.toString()); }}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={(e) => {
-                           e.preventDefault();
-                           const sourceIdx = parseInt(e.dataTransfer.getData("sourceIndex"));
-                           if (isNaN(sourceIdx) || sourceIdx === i) return;
-                           const newFiles = [...selectedFiles];
-                           const [moved] = newFiles.splice(sourceIdx, 1);
-                           newFiles.splice(i, 0, moved);
-                           setSelectedFiles(newFiles);
+                          e.preventDefault();
+                          const sourceIdx = parseInt(e.dataTransfer.getData("sourceIndex"));
+                          if (isNaN(sourceIdx) || sourceIdx === i) return;
+                          const newFiles = [...selectedFiles];
+                          const [moved] = newFiles.splice(sourceIdx, 1);
+                          newFiles.splice(i, 0, moved);
+                          setSelectedFiles(newFiles);
                         }}
                         className={`group relative aspect-square rounded-2xl border bg-card overflow-hidden transition-all duration-300 ${isUploading ? "ring-2 ring-primary ring-offset-2" : "hover:border-primary/50"}`}
                       >
@@ -1020,27 +1042,27 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                           <img src={thumbUrl!} className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                         ) : (
                           <div className="h-full w-full flex flex-col items-center justify-center bg-muted/20">
-                             <div className="bg-white p-3 rounded-full shadow-sm text-primary mb-2">
-                                <FileAudio className="h-6 w-6" />
-                             </div>
-                             <span className="text-[10px] uppercase font-bold text-muted-foreground">{f.name.split('.').pop()}</span>
+                            <div className="bg-white p-3 rounded-full shadow-sm text-primary mb-2">
+                              <FileAudio className="h-6 w-6" />
+                            </div>
+                            <span className="text-[10px] uppercase font-bold text-muted-foreground">{f.name.split('.').pop()}</span>
                           </div>
                         )}
 
                         {/* Progress Overlay */}
                         {(isUploading || isDone || uploading) && (
-                           <div className="absolute inset-x-2 bottom-2 z-10 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-sm border border-muted/50">
-                              <div className="flex items-center justify-between mb-1.5 px-0.5">
-                                 <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">{isDone ? "Completado" : "Subiendo"}</span>
-                                 <span className="text-[9px] font-black text-primary">{progress || 0}%</span>
-                              </div>
-                              <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
-                                <div
-                                  className={`h-full transition-all duration-300 ${isDone ? "bg-green-500" : "bg-primary"}`}
-                                  style={{ width: `${progress || 0}%` }}
-                                />
-                              </div>
-                           </div>
+                          <div className="absolute inset-x-2 bottom-2 z-10 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-sm border border-muted/50">
+                            <div className="flex items-center justify-between mb-1.5 px-0.5">
+                              <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">{isDone ? "Completado" : "Subiendo"}</span>
+                              <span className="text-[9px] font-black text-primary">{progress || 0}%</span>
+                            </div>
+                            <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
+                              <div
+                                className={`h-full transition-all duration-300 ${isDone ? "bg-green-500" : "bg-primary"}`}
+                                style={{ width: `${progress || 0}%` }}
+                              />
+                            </div>
+                          </div>
                         )}
 
                         {/* Delete Button */}
@@ -1052,16 +1074,16 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         )}
-                        
+
                         {!uploading && (
-                           <div className="absolute top-2 left-2 p-1 bg-white/80 rounded-md border border-muted shadow-sm cursor-move opacity-0 group-hover:opacity-100">
-                             <GripVertical className="h-3 w-3 text-muted-foreground" />
-                           </div>
+                          <div className="absolute top-2 left-2 p-1 bg-white/80 rounded-md border border-muted shadow-sm cursor-move opacity-0 group-hover:opacity-100">
+                            <GripVertical className="h-3 w-3 text-muted-foreground" />
+                          </div>
                         )}
 
                         {/* File Name Tip */}
                         <div className="absolute inset-x-0 top-0 p-2 bg-gradient-to-b from-black/20 to-transparent pointer-events-none">
-                           <span className="text-[10px] font-medium text-white truncate drop-shadow-sm">{f.name}</span>
+                          <span className="text-[10px] font-medium text-white truncate drop-shadow-sm">{f.name}</span>
                         </div>
                       </div>
                     );
@@ -1072,48 +1094,75 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           </div>
 
           <div className="p-6 border-t bg-background flex items-center justify-between gap-4 shadow-inner">
-             <div className="hidden sm:block">
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total preparado:</p>
-                <p className="text-sm font-black">{(selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1)} MB</p>
-             </div>
-             <div className="flex gap-2 w-full sm:w-auto">
-                <Button variant="ghost" className="flex-1 sm:flex-none text-xs rounded-xl" disabled={!!uploading} onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>
-                  Cancelar
-                </Button>
-                <Button size="default" className="flex-1 sm:flex-none h-11 px-8 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95" disabled={selectedFiles.length === 0 || !!uploading} onClick={async () => {
-                  if (activeParentItemId) {
-                    let count = 0;
-                    for (const file of selectedFiles) {
-                      if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
-                    }
-                    if (count > 0) {
-                      toast.success(`${count} histogramas registrados`);
-                      loadMultimedia();
-                    }
-                  } else {
-                    await handleFileUpload(selectedFiles, activeUploadType!);
+            <div className="hidden sm:block">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total preparado:</p>
+              <p className="text-sm font-black">{(selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1)} MB</p>
+            </div>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <Button variant="ghost" className="flex-1 sm:flex-none text-xs rounded-xl" disabled={!!uploading} onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>
+                Cancelar
+              </Button>
+              <Button size="default" className="flex-1 sm:flex-none h-11 px-8 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95" disabled={selectedFiles.length === 0 || !!uploading} onClick={async () => {
+                if (activeParentItemId) {
+                  let count = 0;
+                  for (const file of selectedFiles) {
+                    if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
                   }
-                  setSelectedFiles([]);
-                  setUploadSheetOpen(false);
-                  setActiveParentItemId(null);
-                }}>
-                  {uploading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Procesando...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Upload className="h-4 w-4" />
-                      <span>Iniciar Carga</span>
-                    </div>
-                  )}
-                </Button>
-             </div>
+                  if (count > 0) {
+                    toast.success(`${count} histogramas registrados`);
+                    loadMultimedia();
+                  }
+                } else {
+                  await handleFileUpload(selectedFiles, activeUploadType!);
+                }
+                setSelectedFiles([]);
+                setUploadSheetOpen(false);
+                setActiveParentItemId(null);
+              }}>
+                {uploading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Procesando...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    <span>Iniciar Carga</span>
+                  </div>
+                )}
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
 
+      {/* --- Confirm Delete Dialog (Sheet Overlay) --- */}
+      {itemToDelete && (
+        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-background max-w-sm w-full rounded-2xl shadow-2xl p-6 border border-muted animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-4 text-destructive mb-4">
+              <div className="bg-destructive/10 p-3 rounded-full">
+                <Trash2 className="h-6 w-6" />
+              </div>
+              <h2 className="text-lg font-bold tracking-tight">¿Estás seguro?</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Esta acción no se puede deshacer. El archivo desaparecerá permanentemente del bucket y la base de datos.
+            </p>
+            <div className="flex gap-3">
+              <Button variant="ghost" className="flex-1 rounded-xl" onClick={() => setItemToDelete(null)}>
+                Cancelar
+              </Button>
+              <Button variant="destructive" className="flex-1 rounded-xl shadow-lg shadow-destructive/20" onClick={async () => {
+                await handleDelete(itemToDelete.id, itemToDelete.isChild);
+                setItemToDelete(null);
+              }}>
+                Eliminar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
