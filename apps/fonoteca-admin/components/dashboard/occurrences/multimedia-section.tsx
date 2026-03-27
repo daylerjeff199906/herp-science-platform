@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
-import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, Loader2, Link, FolderOpen, Pencil } from "lucide-react";
+import { Plus, Upload, Trash2, GripVertical, FileAudio, FileImage, Loader2, Link, FolderOpen, Pencil, Play, Pause, Music, Eye, MoreVertical, X } from "lucide-react";
 import { createFonotecaClient } from "@/utils/supabase/fonoteca/client";
-import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia, uploadToR2 } from "@/actions/multimedia";
-import { Multimedia, MEDIA_TYPE, MEDIA_TAG, MediaType, MediaTag } from "@/types/fonoteca";
+import { bulkUpdateMultimediaIndexes, createMultimedia, deleteMultimedia, getMultimediaList, updateMultimedia, getPresignedUrl } from "@/actions/multimedia";
+import { Multimedia, MEDIA_TYPE, MEDIA_TAG, MediaType } from "@/types/fonoteca";
 import { toast } from "react-toastify";
+import axios from "axios";
+import { R2_PUBLIC_URL } from "@/lib/r2";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +36,16 @@ const getDriveThumbnailUrl = (url: string) => {
   return null;
 };
 
+const sanitizeFilename = (name: string) => {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove accents
+    .replace(/[^a-z0-9.]/g, "_")    // Keep alphanumeric and dot
+    .replace(/_{2,}/g, "_")         // Dedup underscores
+    .replace(/^_|_$/g, "");         // Trim underscores
+};
+
 export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [items, setItems] = useState<Multimedia[]>([]);
   const [uploading, setUploading] = useState<string | null>(null);
@@ -46,10 +58,13 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const [uploadSheetOpen, setUploadSheetOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   const [initialLoading, setInitialLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<Multimedia | null>(null);
   const [activeUploadType, setActiveUploadType] = useState<MediaType | null>(null);
   const [activeParentItemId, setActiveParentItemId] = useState<string | null>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
 
   // URL States
   const [urlInput, setUrlInput] = useState("");
@@ -103,29 +118,42 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     setUploading(type);
     let successCount = 0;
 
+    // Reset progress for new batch
+    setUploadProgress({});
+
     for (const file of files) {
+      const fileId = file.name; // Use filename as key in progress for simplicity in UI matching
       try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${type.toLowerCase()}-${occurrenceId}-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const fileExt = file.name.split('.').pop() || "";
+        const cleanName = sanitizeFilename(file.name.replace(`.${fileExt}`, ""));
+        const fileName = `${type.toLowerCase()}_${cleanName}_${Date.now()}.${fileExt}`;
+        const uploadPath = `occurrences/${occurrenceId}/${fileName}`;
 
-        const sizeLimit = type === MEDIA_TYPE.SOUND ? 50 * 1024 * 1024 : 4 * 1024 * 1024;
+        const sizeLimit = type === MEDIA_TYPE.SOUND ? 40 * 1024 * 1024 : 10 * 1024 * 1024; // Increased image limit to 10MB too
         if (file.size > sizeLimit) {
-          toast.error(`El archivo ${file.name} supera el límite de ${type === MEDIA_TYPE.SOUND ? '50MB' : '4MB'}`);
+          toast.error(`El archivo ${file.name} supera el límite de ${type === MEDIA_TYPE.SOUND ? '40MB' : '10MB'}`);
           continue;
         }
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("path", fileName);
+        setUploadProgress(prev => ({ ...prev, [fileId]: 0 }));
 
-        const uploadResp = await uploadToR2(formData);
-
-        if (uploadResp.error || !uploadResp.url) {
-          toast.error(`Error al subir ${file.name}: ${uploadResp.error}`);
+        const signResp = await getPresignedUrl(uploadPath, file.type || "application/octet-stream");
+        if (signResp.error || !signResp.url) {
+          toast.error(`Error al preparar subida de ${file.name}`);
           continue;
         }
 
-        const publicUrl = uploadResp.url;
+        await axios.put(signResp.url, file, {
+          headers: { "Content-Type": file.type || "application/octet-stream" },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+              setUploadProgress(prev => ({ ...prev, [fileId]: percent }));
+            }
+          }
+        });
+
+        const publicUrl = `${R2_PUBLIC_URL}/${uploadPath}`;
 
         const createResp = await createMultimedia({
           occurrence_id: occurrenceId,
@@ -141,27 +169,35 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         });
 
         if (createResp.error) {
-          toast.error(`Error al registrar ${file.name} en BD: ` + JSON.stringify(createResp.error));
+          toast.error(`Error al registrar ${file.name} en BD`);
           continue;
         }
 
         successCount++;
-      } catch (err) {
-        console.error(`File processing error for ${file.name}:`, err);
-        toast.error(`Error procesando ${file.name}: ` + (err instanceof Error ? err.message : String(err)));
+        setUploadProgress(prev => ({ ...prev, [fileId]: 100 }));
+      } catch (err: any) {
+        console.error(`Upload error for ${file.name}:`, err);
+        let detail = "";
+        if (err.response) {
+          detail = ` (Status ${err.response.status}: ${err.response.statusText})`;
+        } else if (err.request) {
+          detail = " - Posible problema de CORS o conexión.";
+        } else {
+          detail = ` - ${err.message}`;
+        }
+        toast.error(`Error subiendo ${file.name}${detail}`);
       }
     }
 
-    setUploading(null);
-    if (successCount > 0) {
-      toast.success(
-        <div className="flex flex-col gap-0.5">
-          <span className="font-bold text-sm">Archivos subidos</span>
-          <span className="text-xs opacity-90">{successCount} archivo(s) se han procesado correctamente.</span>
-        </div>
-      );
-      loadMultimedia();
-    }
+    // Small delay to let user see 100%
+    setTimeout(() => {
+      setUploading(null);
+      setUploadProgress({});
+      if (successCount > 0) {
+        toast.success(`${successCount} archivo(s) procesado(s) correctamente.`);
+        loadMultimedia();
+      }
+    }, 500);
   };
 
   const handleAddFromUrl = async () => {
@@ -276,28 +312,38 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   };
 
   const uploadSpectrogramFile = async (file: File, itemId: string) => {
+    const fileId = `spectro-${itemId}-${Date.now()}`;
     setUploading(itemId);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `spectrogram-${occurrenceId}-${itemId}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const fileExt = file.name.split('.').pop() || "";
+      const cleanName = sanitizeFilename(file.name.replace(`.${fileExt}`, ""));
+      const fileName = `spectrogram_${cleanName}_${Date.now()}.${fileExt}`;
+      const uploadPath = `occurrences/${occurrenceId}/${fileName}`;
 
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error("El espectrograma supera el límite de 2MB");
+      if (file.size > 10 * 1024 * 1024) { // Increase to 10MB for better quality spectros if needed
+        toast.error("El espectrograma supera el límite de 10MB");
         return false;
       }
 
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("path", fileName);
-
-      const uploadResp = await uploadToR2(formData);
-
-      if (uploadResp.error || !uploadResp.url) {
-        toast.error("Error al subir imagen: " + uploadResp.error);
+      // 1. Get Presigned URL
+      const signResp = await getPresignedUrl(uploadPath, file.type || "application/octet-stream");
+      if (signResp.error || !signResp.url) {
+        toast.error(`Error al preparar subida de ${file.name}`);
         return false;
       }
 
-      const publicUrl = uploadResp.url;
+      // 2. Upload with Progress
+      await axios.put(signResp.url, file, {
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            setUploadProgress(prev => ({ ...prev, [fileId]: percent }));
+          }
+        }
+      });
+
+      const publicUrl = `${R2_PUBLIC_URL}/${uploadPath}`;
 
       const createResp = await createMultimedia({
         occurrence_id: occurrenceId,
@@ -314,14 +360,19 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
       });
 
       if (createResp.error) {
-        toast.error("Error al registrar espectrograma en BD: " + JSON.stringify(createResp.error));
+        toast.error("Error al registrar espectrograma en BD");
         return false;
       }
 
+      setUploadProgress(prev => {
+        const newState = { ...prev };
+        delete newState[fileId];
+        return newState;
+      });
       return true;
     } catch (err) {
       console.error("Spectrogram upload error:", err);
-      toast.error("Error registrando imagen: " + (err instanceof Error ? err.message : String(err)));
+      toast.error("Error subiendo espectrograma");
       return false;
     } finally {
       setUploading(null);
@@ -372,7 +423,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
     }
 
     if (!draggedItem || draggedItem.id === targetItem.id) return;
-    
+
     // Drag spectrogram to spectrogram (Swap order)
     if (draggedItem.tag === MEDIA_TAG.SPECTROGRAM && targetItem.tag === MEDIA_TAG.SPECTROGRAM) {
       if (draggedItem.parent_multimedia_id === targetItem.parent_multimedia_id) {
@@ -454,36 +505,45 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   const imageItems = items.filter(it => it.type === MEDIA_TYPE.STILL && it.tag !== MEDIA_TAG.SPECTROGRAM);
 
   const RenderGrid = ({ list, typeTitle, uploadType }: { list: Multimedia[], typeTitle: string, uploadType: MediaType }) => (
-    <div className="space-y-3 mt-2">
-      <div className="flex items-center justify-between border-b pb-2">
-        <h3 className="text-sm font-semibold text-foreground/85">{typeTitle}</h3>
+    <div className="space-y-4 mt-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+           <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+           <h3 className="text-sm font-bold text-foreground uppercase tracking-tight">{typeTitle}</h3>
+        </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button size="sm" variant="outline" className="gap-1 text-xs">
-              <Plus className="h-3.5 w-3.5" /> Agregar
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-muted">
+              <Plus className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setSelectedFiles([]); setUploadSheetOpen(true); }}>
-              <Upload className="h-3.5 w-3.5 mr-2" /> Subir Archivo
+              <Upload className="h-4 w-4 mr-2" /> Subir Archivo
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setUrlSheetOpen(true); }}>
-              <Link className="h-3.5 w-3.5 mr-2" /> Desde URL
+              <Link className="h-4 w-4 mr-2" /> Desde URL
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => { setActiveUploadType(uploadType); setLibSheetOpen(true); }}>
-              <FolderOpen className="h-3.5 w-3.5 mr-2" /> Biblioteca
+              <FolderOpen className="h-4 w-4 mr-2" /> Biblioteca
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
       {list.length === 0 ? (
-        <div className="text-center py-4 text-xs text-muted-foreground">No hay archivos cargados.</div>
+        <div className="border border-dashed rounded-xl py-12 flex flex-col items-center justify-center bg-muted/5">
+          <div className="bg-muted/30 p-4 rounded-full mb-2">
+            {uploadType === "Sound" ? <Music className="h-6 w-6 text-muted-foreground/50" /> : <FileImage className="h-6 w-6 text-muted-foreground/50" />}
+          </div>
+          <p className="text-xs font-medium text-muted-foreground">No hay archivos en esta sección</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {list.map((item) => {
-            // spectrograms rendered dynamically inside card
+            const isPlaying = playingId === item.id;
+            const spectrograms = items.filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram");
 
             return (
               <div
@@ -492,89 +552,110 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 onDragStart={() => handleDragStart(item)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, item)}
-                className="relative border rounded-lg p-3 bg-muted/20 flex flex-col items-center justify-center text-center cursor-move hover:bg-muted/50 transition-all duration-150"
+                className="group relative aspect-square rounded-2xl overflow-hidden border bg-card shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
               >
-                <div className="absolute top-1.5 left-1.5 text-muted-foreground"><GripVertical className="h-3 w-3" /></div>
-                <div className="absolute top-1.5 right-1.5 flex items-center gap-1 z-10">
-                  <button className="text-blue-500 hover:bg-blue-50 p-1 rounded-md" onClick={(e) => { e.stopPropagation(); handleEditClick(item); }} title="Editar">
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button className="text-destructive hover:bg-red-50 p-1 rounded-md" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} title="Eliminar">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-
-                <div className="py-2 w-full flex items-center justify-center">
-                  {item.type === MEDIA_TYPE.STILL ? (
-                    <div className="aspect-video w-full max-h-24 rounded border overflow-hidden bg-muted/20">
-                      <img
-                        src={getDriveThumbnailUrl(item.identifier) || item.identifier}
-                        className="h-full w-full object-cover"
-                        alt={item.title || "Imagen"}
-                        onError={(e) => {
-                          const parent = (e.target as any).parentNode;
-                          if (parent) {
-                            parent.innerHTML = '<div class="flex items-center justify-center h-full"><svg class="h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>';
-                          }
-                        }}
-                      />
-                    </div>
+                {/* Image / Audio Layout */}
+                <div className="absolute inset-0 z-0">
+                  {item.type === "Still" ? (
+                    <img
+                      src={getDriveThumbnailUrl(item.identifier) || item.identifier}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      alt={item.title || "Imagen"}
+                    />
                   ) : (
-                    <div className="flex flex-col items-center w-full px-2" onDragStart={e => { e.preventDefault(); e.stopPropagation(); }}>
-                      <audio src={item.identifier} controls className="w-full h-8" controlsList="nodownload noplaybackrate" />
+                    <div className="h-full w-full bg-gradient-to-br from-primary/5 to-primary/20 flex flex-col items-center justify-center p-4">
+                      <div className={`p-4 rounded-full transition-all duration-500 ${isPlaying ? "bg-primary text-white scale-110 shadow-lg" : "bg-white text-primary shadow-sm group-hover:scale-105"}`}>
+                        {isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Music className="h-6 w-6" />}
+                      </div>
+                      <div className="mt-4 w-full h-1 bg-primary/10 rounded-full overflow-hidden">
+                         <div className={`h-full bg-primary transition-all duration-1000 ${isPlaying ? "w-full" : "w-0"}`} />
+                      </div>
                     </div>
                   )}
+                  {/* Overlay for actions */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 z-10 p-4">
+                    <div className="flex items-center gap-2">
+                       {item.type === "Sound" && (
+                         <Button
+                            size="icon"
+                            variant="secondary"
+                            className="h-9 w-9 rounded-full shadow-lg"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (isPlaying) {
+                                currentAudio?.pause();
+                                setPlayingId(null);
+                              } else {
+                                if (currentAudio) {
+                                  currentAudio.pause();
+                                }
+                                const audio = new Audio(item.identifier);
+                                audio.onended = () => { setPlayingId(null); setCurrentAudio(null); };
+                                setCurrentAudio(audio);
+                                setPlayingId(item.id);
+                                audio.play();
+                              }
+                            }}
+                         >
+                           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
+                         </Button>
+                       )}
+                       <Button size="icon" variant="secondary" className="h-9 w-9 rounded-full shadow-lg" onClick={(e) => { e.stopPropagation(); handleEditClick(item); }}>
+                         <Pencil className="h-4 w-4" />
+                       </Button>
+                       <Button size="icon" variant="destructive" className="h-9 w-9 rounded-full shadow-lg" onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}>
+                         <Trash2 className="h-4 w-4" />
+                       </Button>
+                    </div>
+                  </div>
                 </div>
 
-                <span className="text-xs font-medium truncate w-full" title={item.title || "Archivo"}>{item.title || "Archivo"}</span>
+                {/* Info Bar */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 pointer-events-none">
+                  <p className="text-[10px] text-white/70 uppercase font-black tracking-widest mb-0.5">{item.tag || "General"}</p>
+                  <p className="text-xs font-semibold text-white truncate drop-shadow-sm">{item.title || "Sin título"}</p>
+                </div>
 
-                {item.type === MEDIA_TYPE.SOUND && (
-                  <div className="mt-2 w-full border-t pt-2 space-y-2">
-                    {items.filter(it => it.parent_multimedia_id === item.id && it.tag === MEDIA_TAG.SPECTROGRAM).length > 0 && (
-                      <div className="grid grid-cols-2 gap-1 w-full">
-                        {items
-                          .filter(it => it.parent_multimedia_id === item.id && it.tag === "spectrogram")
-                          .map((sp) => {
-                            const spImg = getDriveThumbnailUrl(sp.identifier) || sp.identifier;
-                            return (
-                              <div 
-                                key={sp.id} 
-                                className="relative group rounded border overflow-hidden aspect-video bg-muted/20 cursor-move"
-                                draggable
-                                onDragStart={(e) => { e.stopPropagation(); handleDragStart(sp); }}
-                                onDragOver={handleDragOver}
-                                onDrop={(e) => { e.stopPropagation(); handleDrop(e, sp); }}
-                              >
-                                <img src={spImg} className="h-full w-full object-cover" alt="Histograma" />
-                                <button
-                                  className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 bg-destructive/80 text-white p-1 rounded-sm hover:bg-destructive transition-opacity"
-                                  onClick={(e) => { e.stopPropagation(); handleDelete(sp.id, true); }}
-                                  title="Eliminar Histograma"
-                                >
-                                  <Trash2 className="h-2.5 w-2.5" />
-                                </button>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    )}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <button className="flex items-center justify-center w-full text-[10px] gap-1 text-blue-600 hover:underline cursor-pointer border border-dashed rounded py-1 bg-blue-50/10" onClick={e => e.stopPropagation()}>
-                          {uploading === item.id ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Plus className="h-2.5 w-2.5" />}
-                          Agregar Histograma
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setSelectedFiles([]); setUploadSheetOpen(true); }}>
-                          <Upload className="h-3 w-3 mr-1" /> Subir Imagen
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs" onClick={() => { setActiveParentItemId(item.id); setActiveUploadType(MEDIA_TYPE.STILL); setUrlSheetOpen(true); }}>
-                          <Link className="h-3 w-3 mr-1" /> Desde URL
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                {/* Spectrogram Grid Preview (if audio) */}
+                {item.type === "Sound" && spectrograms.length > 0 && (
+                   <div className="absolute top-2 left-2 flex gap-1 z-20">
+                      {spectrograms.slice(0, 2).map((sp) => (
+                        <div key={sp.id} className="h-8 w-8 rounded-lg border border-white/20 overflow-hidden shadow-lg backdrop-blur-sm">
+                           <img src={sp.identifier} className="h-full w-full object-cover" />
+                        </div>
+                      ))}
+                      {spectrograms.length > 2 && (
+                        <div className="h-8 w-8 rounded-lg border border-white/20 bg-black/40 backdrop-blur-sm flex items-center justify-center text-[10px] text-white font-bold">
+                          +{spectrograms.length - 2}
+                        </div>
+                      )}
+                   </div>
+                )}
+                
+                {/* Drag Handle */}
+                <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                   <div className="bg-white/90 p-1 rounded-md shadow-sm border border-muted cursor-move">
+                      <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                   </div>
+                </div>
+
+                {/* Bottom Action for Spectrograms */}
+                {item.type === "Sound" && (
+                   <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-30">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-7 text-[10px] gap-1 px-2 rounded-full shadow-xl"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveParentItemId(item.id);
+                          setActiveUploadType("Still");
+                          setUploadSheetOpen(true);
+                        }}
+                      >
+                        <Plus className="h-3 w-3" /> Espectro
+                      </Button>
+                   </div>
                 )}
               </div>
             );
@@ -585,7 +666,15 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
   );
 
   return (
-    <div className="space-y-6 mt-6">
+    <div
+      className="relative space-y-6 mt-6"
+      onDragOver={(e) => {
+        if (!uploadSheetOpen) {
+          e.preventDefault();
+          setIsDragOver(true);
+        }
+      }}
+    >
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <Upload className="h-4 w-4 text-primary" />
@@ -608,6 +697,38 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           </>
         )}
       </div>
+
+      {/* Global Drag Overlay */}
+      {isDragOver && !uploadSheetOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-primary/10 backdrop-blur-sm border-4 border-dashed border-primary m-4 rounded-2xl flex flex-col items-center justify-center animate-in fade-in zoom-in duration-200"
+          onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              const files = Array.from(e.dataTransfer.files);
+              const firstFile = files[0];
+              if (firstFile) {
+                if (firstFile.type.startsWith("audio/")) {
+                  setActiveUploadType(MEDIA_TYPE.SOUND);
+                } else {
+                  setActiveUploadType(MEDIA_TYPE.STILL);
+                }
+              }
+              setSelectedFiles(files);
+              setUploadSheetOpen(true);
+            }
+          }}
+        >
+          <div className="bg-background/90 p-8 rounded-full shadow-2xl mb-4">
+            <Upload className="h-12 w-12 text-primary animate-bounce" />
+          </div>
+          <h2 className="text-2xl font-bold text-primary">Soltar para subida rápida</h2>
+          <p className="text-muted-foreground mt-2">Los archivos se clasificarán automáticamente</p>
+        </div>
+      )}
 
       {/* --- Dialog: URL --- */}
       <Sheet open={urlSheetOpen} onOpenChange={(open) => { setUrlSheetOpen(open); if (!open) setActiveParentItemId(null); }}>
@@ -807,89 +928,192 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         </SheetContent>
       </Sheet>
       {/* --- Dialog: Local Upload --- */}
-      <Sheet open={uploadSheetOpen} onOpenChange={(open) => { setUploadSheetOpen(open); if (!open) setSelectedFiles([]); }}>
-        <SheetContent className="sm:max-w-xl p-2 md:p-4 flex flex-col h-full">
-          <SheetHeader>
-            <SheetTitle>Subir Archivos</SheetTitle>
-            <SheetDescription>Arrastra y suelta tus archivos aquí o haz clic para seleccionar.</SheetDescription>
-          </SheetHeader>
-          <div className="space-y-4 py-4 border-t mt-4 flex-1 flex flex-col overflow-y-auto max-h-[80vh]">
-            
-            <div 
-              className={`border-2 border-dashed rounded-xl p-8 flex-1 flex flex-col items-center justify-center cursor-pointer transition-all max-h-[250px] ${
-                isDragOver ? "border-primary bg-primary/5" : "border-muted-foreground/20 hover:border-primary/50"
-              }`}
-              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+      <Sheet open={uploadSheetOpen} onOpenChange={(open) => { if (!uploading) { setUploadSheetOpen(open); if (!open) setSelectedFiles([]); } }}>
+        <SheetContent className="sm:max-w-2xl p-0 flex flex-col h-full overflow-hidden">
+          <div className="p-6 border-b bg-gradient-to-r from-primary/5 via-background to-background">
+            <SheetHeader>
+              <SheetTitle className="flex items-center gap-3">
+                <div className="bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/20">
+                  <Upload className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                   <h2 className="text-lg font-bold tracking-tight">Centro de Carga</h2>
+                   <p className="text-xs font-medium text-muted-foreground">Sube y organiza tus archivos multimedia</p>
+                </div>
+              </SheetTitle>
+            </SheetHeader>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-muted/5">
+            {/* Drop Zone */}
+            <div
+              className={`group relative border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center transition-all duration-300 hover:bg-primary/[0.02] ${
+                isDragOver ? "border-primary bg-primary/10 ring-8 ring-primary/5" : "border-muted-foreground/20 hover:border-primary/40"
+              } ${uploading ? "opacity-40 cursor-not-allowed pointer-events-none" : "cursor-pointer"}`}
+              onDragOver={(e) => { e.preventDefault(); if (!uploading) setIsDragOver(true); }}
               onDragLeave={() => setIsDragOver(false)}
               onDrop={(e) => {
                 e.preventDefault();
                 setIsDragOver(false);
+                if (uploading) return;
                 if (e.dataTransfer.files) {
                   const files = Array.from(e.dataTransfer.files);
-                  const validFiles = files.filter(f => 
-                    activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? f.type.startsWith("audio/") : f.type.startsWith("image/")
-                  );
-                  setSelectedFiles([...selectedFiles, ...validFiles]);
+                  setSelectedFiles(prev => [...prev, ...files]);
                 }
               }}
-              onClick={() => document.getElementById("file-sheet-upload")?.click()}
+              onClick={() => !uploading && document.getElementById("file-sheet-upload")?.click()}
             >
-              <Upload className="h-10 w-10 text-muted-foreground mb-4" />
-              <p className="text-sm font-medium">Arrastra tus archivos aquí</p>
-              <p className="text-xs text-muted-foreground mt-1">O haz clic para explorar</p>
-              <input 
-                id="file-sheet-upload" 
-                type="file" 
-                multiple 
-                accept={activeUploadType === MEDIA_TYPE.SOUND && !activeParentItemId ? "audio/*" : "image/*"} 
-                className="hidden" 
+              <div className="bg-background shadow-xl rounded-2xl p-5 mb-4 group-hover:scale-110 transition-transform duration-300 border border-muted/50">
+                <Upload className={`h-8 w-8 ${isDragOver ? "text-primary animate-bounce" : "text-muted-foreground"}`} />
+              </div>
+              <h3 className="text-sm font-bold text-foreground">Seleccionar archivos para subir</h3>
+              <p className="text-[11px] text-muted-foreground mt-1 max-w-[200px] text-center">Formato permitido: Audios, Imágenes y Espectrogramas</p>
+              
+              <Input
+                id="file-sheet-upload"
+                type="file"
+                multiple
+                className="hidden"
                 onChange={(e) => {
                   if (e.target.files) {
                     const files = Array.from(e.target.files);
-                    setSelectedFiles([...selectedFiles, ...files]);
+                    setSelectedFiles(prev => [...prev, ...files]);
                   }
-                }} 
+                }}
               />
             </div>
 
+            {/* Selected Files Grid */}
             {selectedFiles.length > 0 && (
-              <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-2 bg-muted/20">
-                {selectedFiles.map((f, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs p-1.5 border-b last:border-0">
-                    <span className="truncate max-w-[80%] font-medium">{f.name}</span>
-                    <Button variant="ghost" size="icon" className="h-5 w-5 text-destructive" onClick={(e) => { e.stopPropagation(); setSelectedFiles(selectedFiles.filter((_, idx) => idx !== i)) }}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                ))}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                   <span className="text-[11px] font-black uppercase text-muted-foreground tracking-widest">Cola de carga ({selectedFiles.length})</span>
+                   {uploading && <div className="flex items-center gap-2 text-primary font-bold text-[11px] animate-pulse"><Loader2 className="h-3 w-3 animate-spin" /> Procesando...</div>}
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  {selectedFiles.map((f, i) => {
+                    const progress = uploadProgress[f.name];
+                    const isUploading = progress !== undefined && progress < 100;
+                    const isDone = progress === 100;
+                    const isImage = f.type.startsWith("image/");
+                    const thumbUrl = isImage ? URL.createObjectURL(f) : null;
+
+                    return (
+                      <div
+                        key={i}
+                        draggable={!uploading}
+                        onDragStart={(e) => { e.dataTransfer.setData("sourceIndex", i.toString()); }}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                           e.preventDefault();
+                           const sourceIdx = parseInt(e.dataTransfer.getData("sourceIndex"));
+                           if (isNaN(sourceIdx) || sourceIdx === i) return;
+                           const newFiles = [...selectedFiles];
+                           const [moved] = newFiles.splice(sourceIdx, 1);
+                           newFiles.splice(i, 0, moved);
+                           setSelectedFiles(newFiles);
+                        }}
+                        className={`group relative aspect-square rounded-2xl border bg-card overflow-hidden transition-all duration-300 ${isUploading ? "ring-2 ring-primary ring-offset-2" : "hover:border-primary/50"}`}
+                      >
+                        {isImage ? (
+                          <img src={thumbUrl!} className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                        ) : (
+                          <div className="h-full w-full flex flex-col items-center justify-center bg-muted/20">
+                             <div className="bg-white p-3 rounded-full shadow-sm text-primary mb-2">
+                                <FileAudio className="h-6 w-6" />
+                             </div>
+                             <span className="text-[10px] uppercase font-bold text-muted-foreground">{f.name.split('.').pop()}</span>
+                          </div>
+                        )}
+
+                        {/* Progress Overlay */}
+                        {(isUploading || isDone || uploading) && (
+                           <div className="absolute inset-x-2 bottom-2 z-10 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-sm border border-muted/50">
+                              <div className="flex items-center justify-between mb-1.5 px-0.5">
+                                 <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">{isDone ? "Completado" : "Subiendo"}</span>
+                                 <span className="text-[9px] font-black text-primary">{progress || 0}%</span>
+                              </div>
+                              <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
+                                <div
+                                  className={`h-full transition-all duration-300 ${isDone ? "bg-green-500" : "bg-primary"}`}
+                                  style={{ width: `${progress || 0}%` }}
+                                />
+                              </div>
+                           </div>
+                        )}
+
+                        {/* Delete Button */}
+                        {!uploading && (
+                          <button
+                            className="absolute top-2 right-2 p-1.5 bg-background/80 hover:bg-destructive hover:text-white text-muted-foreground rounded-lg shadow-sm border border-muted/50 opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110"
+                            onClick={(e) => { e.stopPropagation(); setSelectedFiles(selectedFiles.filter((_, idx) => idx !== i)) }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                        
+                        {!uploading && (
+                           <div className="absolute top-2 left-2 p-1 bg-white/80 rounded-md border border-muted shadow-sm cursor-move opacity-0 group-hover:opacity-100">
+                             <GripVertical className="h-3 w-3 text-muted-foreground" />
+                           </div>
+                        )}
+
+                        {/* File Name Tip */}
+                        <div className="absolute inset-x-0 top-0 p-2 bg-gradient-to-b from-black/20 to-transparent pointer-events-none">
+                           <span className="text-[10px] font-medium text-white truncate drop-shadow-sm">{f.name}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
+          </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>Cancelar</Button>
-              <Button size="sm" disabled={selectedFiles.length === 0 || uploading !== null} onClick={async () => {
-                if (activeParentItemId) {
-                  let count = 0;
-                  for (const file of selectedFiles) {
-                    if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
+          <div className="p-6 border-t bg-background flex items-center justify-between gap-4 shadow-inner">
+             <div className="hidden sm:block">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total preparado:</p>
+                <p className="text-sm font-black">{(selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1)} MB</p>
+             </div>
+             <div className="flex gap-2 w-full sm:w-auto">
+                <Button variant="ghost" className="flex-1 sm:flex-none text-xs rounded-xl" disabled={!!uploading} onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>
+                  Cancelar
+                </Button>
+                <Button size="default" className="flex-1 sm:flex-none h-11 px-8 rounded-xl shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95" disabled={selectedFiles.length === 0 || !!uploading} onClick={async () => {
+                  if (activeParentItemId) {
+                    let count = 0;
+                    for (const file of selectedFiles) {
+                      if (await uploadSpectrogramFile(file, activeParentItemId)) count++;
+                    }
+                    if (count > 0) {
+                      toast.success(`${count} histogramas registrados`);
+                      loadMultimedia();
+                    }
+                  } else {
+                    await handleFileUpload(selectedFiles, activeUploadType!);
                   }
-                  if (count > 0) {
-                    toast.success(`${count} histogramas registrados correctamente`);
-                    loadMultimedia();
-                  }
-                } else {
-                  await handleFileUpload(selectedFiles, activeUploadType!);
-                }
-                setSelectedFiles([]);
-                setUploadSheetOpen(false);
-                setActiveParentItemId(null);
-              }}>
-                {uploading ? "Subiendo..." : "Iniciar Carga"}
-              </Button>
-            </div>
+                  setSelectedFiles([]);
+                  setUploadSheetOpen(false);
+                  setActiveParentItemId(null);
+                }}>
+                  {uploading ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Procesando...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      <span>Iniciar Carga</span>
+                    </div>
+                  )}
+                </Button>
+             </div>
           </div>
         </SheetContent>
       </Sheet>
+
     </div>
   );
 }
