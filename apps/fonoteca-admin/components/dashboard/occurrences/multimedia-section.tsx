@@ -17,6 +17,26 @@ import {
 } from "@repo/ui/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@repo/ui/components/ui/sheet";
 import { Input } from "@repo/ui/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
+const getAudioUrl = (url: string) => {
+  if (!url) return "";
+  // Check if it's a Google Drive URL
+  const match = url.match(/(?:drive\.google\.com\/(?:file\/d\/|open\?id=|open\?id%3D)|docs\.google\.com\/.*?srcid=)([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://drive.google.com/uc?id=${match[1]}&export=download`;
+  }
+  return url;
+};
 
 const getDriveEmbedUrl = (url: string) => {
   if (!url) return null;
@@ -514,11 +534,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Button variant="outline" size="sm" className="gap-2 rounded-xl border-primary/10 hover:border-primary/40 text-[11px] font-bold px-3 bg-white/50 shadow-sm backdrop-blur-sm">
-              <Plus className="h-3.5 w-3.5" />
-              <span>{uploadType === "Sound" ? "Subir Audio" : "Subir Imagen"}</span>
-            </Button>
+          <DropdownMenuTrigger className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/10 hover:border-primary/40 text-[11px] font-bold px-3 h-9 bg-white/50 backdrop-blur-sm text-foreground transition-colors hover:bg-white/80">
+            <Plus className="h-3.5 w-3.5" />
+            <span>{uploadType === "Sound" ? "Subir Audio" : "Subir Imagen"}</span>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-48">
@@ -555,7 +573,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 onDragStart={() => handleDragStart(item)}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, item)}
-                className="group relative rounded-2xl overflow-hidden border bg-blue-50/20 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 flex flex-col h-full"
+                className="group relative rounded-2xl overflow-hidden border bg-blue-50/20 backdrop-blur-sm transition-all duration-300 transform hover:-translate-y-0.5 flex flex-col h-full"
               >
                 {/* Header Section (Like the image) */}
                 <div className="flex items-center justify-between p-3 bg-white/40 border-b">
@@ -573,10 +591,8 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                   </div>
 
                   <DropdownMenu>
-                    <DropdownMenuTrigger >
-                      <button className="text-muted-foreground hover:text-foreground">
-                        <MoreVertical className="h-4 w-4" />
-                      </button>
+                    <DropdownMenuTrigger className="text-muted-foreground hover:text-foreground p-1">
+                      <MoreVertical className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => handleEditClick(item)}><Pencil className="h-4 w-4 mr-2" /> Editar</DropdownMenuItem>
@@ -586,11 +602,11 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 </div>
 
                 {/* Body Section (Square Center) */}
-                <div className="relative flex-1 bg-white flex items-center justify-center min-h-[160px] p-4 m-2 rounded-xl">
+                <div className="relative flex-1 bg-white flex items-center justify-center min-h-[160px] p-4 m-2 rounded-sm">
                   {item.type === "Still" ? (
                     <img
                       src={getDriveThumbnailUrl(item.identifier) || item.identifier}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 rounded-lg shadow-sm"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       alt={item.title || "Imagen"}
                     />
                   ) : (
@@ -605,22 +621,31 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                             setPlayingId(null);
                           } else {
                             if (currentAudio) currentAudio.pause();
-                            const audio = new Audio(item.identifier);
+                            const audio = new Audio(getAudioUrl(item.identifier));
                             audio.onended = () => { setPlayingId(null); setCurrentAudio(null); };
+                            audio.onerror = (e) => {
+                              console.error("Audio playback error:", e);
+                              toast.error("Error al cargar el audio. El formato podría no ser compatible o el enlace ha expirado.");
+                              setPlayingId(null);
+                            };
                             setCurrentAudio(audio);
                             setPlayingId(item.id);
-                            audio.play();
+                            audio.play().catch(err => {
+                              console.error("Play error:", err);
+                              toast.error("No se pudo iniciar la reproducción.");
+                              setPlayingId(null);
+                            });
                           }
                         }}
                       >
-                        {isPlaying ? <Pause className="h-10 w-10 fill-current" /> : <Music className="h-10 w-10 shadow-sm" />}
+                        {isPlaying ? <Pause className="h-10 w-10 fill-current" /> : <Music className="h-10 w-10" />}
                       </button>
                     </div>
                   )}
 
                   {/* Tag Overlay Bottom Left */}
                   <div className="absolute bottom-2 left-2 z-10 pointer-events-none">
-                    <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-black/50 text-white backdrop-blur-md border border-white/10 shadow-sm">{item.tag || "N/A"}</span>
+                    <span className="px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest bg-black/50 text-white backdrop-blur-md border border-white/10">{item.tag || "N/A"}</span>
                   </div>
                 </div>
 
@@ -628,9 +653,9 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 {item.type === "Sound" && (
                   <div className="p-3 border-t bg-white/30 space-y-2 mt-auto">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Espectrogramas</p>
+                      <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Espectrogramas</p>
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        <DropdownMenuTrigger>
                           <button className="text-[10px] p-1.5 rounded-full hover:bg-white text-primary flex items-center gap-1 font-bold border border-primary/20">
                             <Plus className="h-2.5 w-2.5" /> Agregar
                           </button>
@@ -649,7 +674,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                     {spectrograms.length > 0 ? (
                       <div className="grid grid-cols-4 gap-2">
                         {spectrograms.map((sp) => (
-                          <div key={sp.id} className="relative group/sp aspect-square rounded-lg border bg-white overflow-hidden shadow-sm cursor-pointer" onClick={() => handleEditClick(sp)}>
+                          <div key={sp.id} className="relative group/sp aspect-square rounded-sm border bg-white overflow-hidden cursor-pointer" onClick={() => handleEditClick(sp)}>
                             <img src={sp.identifier} className="h-full w-full object-cover" />
                             <button
                               className="absolute inset-0 bg-destructive/80 text-white flex items-center justify-center opacity-0 group-hover/sp:opacity-100 transition-opacity"
@@ -668,7 +693,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
                 {/* Image Info Footer */}
                 {item.type === "Still" && (
-                  <div className="p-3 border-t bg-white/30 text-[10px] text-muted-foreground flex justify-between uppercase font-black tracking-widest">
+                  <div className="p-3 border-t bg-white/30 text-[10px] text-muted-foreground flex justify-between uppercase font-bold tracking-widest">
                     <span>{item.creator || "Desconocido"}</span>
                     <span>{item.license ? "CC" : "Copyright"}</span>
                   </div>
@@ -764,13 +789,13 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
             {/* Visualizer */}
             {urlInput && (
-              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
+              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4">
                 {getDriveEmbedUrl(urlInput) ? (
                   <iframe src={getDriveEmbedUrl(urlInput)!} className="absolute inset-0 w-full h-full" frameBorder="0" allowFullScreen />
                 ) : activeUploadType === MEDIA_TYPE.STILL ? (
-                  <img src={urlInput} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
+                  <img src={getAudioUrl(urlInput)} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
                 ) : (
-                  <audio src={urlInput} controls className="w-[90%] mt-auto mb-4" />
+                  <audio src={getAudioUrl(urlInput)} controls className="w-[90%] mt-auto mb-4" />
                 )}
               </div>
             )}
@@ -849,7 +874,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                 {libItems.filter(i => i.type === activeUploadType).map((item) => (
                   <div
                     key={item.id}
-                    className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center transition-all bg-muted/10 hover:shadow-sm"
+                    className="border rounded-lg p-3 hover:bg-muted/30 cursor-pointer flex flex-col items-center justify-center text-center transition-all bg-muted/10 hover"
                     onClick={() => handleLinkFromLibrary(item)}
                   >
                     {item.type === MEDIA_TYPE.STILL && <FileImage className="h-10 w-10 text-blue-500 mb-1" />}
@@ -874,13 +899,13 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
             {/* Visualizer */}
             {editUrl && (
-              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4 shadow-sm">
+              <div className="aspect-video relative rounded-lg border bg-muted flex flex-col items-center justify-center overflow-hidden mb-4">
                 {getDriveEmbedUrl(editUrl) ? (
                   <iframe src={getDriveEmbedUrl(editUrl)!} className="absolute inset-0 w-full h-full" frameBorder="0" allowFullScreen />
                 ) : editingItem?.type === MEDIA_TYPE.STILL ? (
-                  <img src={editUrl} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
+                  <img src={getAudioUrl(editUrl)} className="object-cover h-full w-full" alt="Preview Image" onError={(e) => { (e.target as any).src = "https://placehold.co/600x400?text=Error+Loading+Image" }} />
                 ) : (
-                  <audio src={editUrl} controls className="w-[90%] mt-auto mb-4" />
+                  <audio src={getAudioUrl(editUrl)} controls className="w-[90%] mt-auto mb-4" />
                 )}
               </div>
             )}
@@ -1009,7 +1034,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
             {selectedFiles.length > 0 && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                  <span className="text-[11px] font-black uppercase text-muted-foreground tracking-widest">Cola de carga ({selectedFiles.length})</span>
+                  <span className="text-[11px] font-bold uppercase text-muted-foreground tracking-widest">Cola de carga ({selectedFiles.length})</span>
                   {uploading && <div className="flex items-center gap-2 text-primary font-bold text-[11px] animate-pulse"><Loader2 className="h-3 w-3 animate-spin" /> Procesando...</div>}
                 </div>
 
@@ -1033,8 +1058,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                           if (isNaN(sourceIdx) || sourceIdx === i) return;
                           const newFiles = [...selectedFiles];
                           const [moved] = newFiles.splice(sourceIdx, 1);
-                          newFiles.splice(i, 0, moved);
-                          setSelectedFiles(newFiles);
+                          if (moved) {
+                            newFiles.splice(i, 0, moved);
+                            setSelectedFiles(newFiles);
+                          }
                         }}
                         className={`group relative aspect-square rounded-2xl border bg-card overflow-hidden transition-all duration-300 ${isUploading ? "ring-2 ring-primary ring-offset-2" : "hover:border-primary/50"}`}
                       >
@@ -1042,7 +1069,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                           <img src={thumbUrl!} className="h-full w-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                         ) : (
                           <div className="h-full w-full flex flex-col items-center justify-center bg-muted/20">
-                            <div className="bg-white p-3 rounded-full shadow-sm text-primary mb-2">
+                            <div className="bg-white p-3 rounded-full text-primary mb-2">
                               <FileAudio className="h-6 w-6" />
                             </div>
                             <span className="text-[10px] uppercase font-bold text-muted-foreground">{f.name.split('.').pop()}</span>
@@ -1051,10 +1078,10 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
 
                         {/* Progress Overlay */}
                         {(isUploading || isDone || uploading) && (
-                          <div className="absolute inset-x-2 bottom-2 z-10 bg-white/95 backdrop-blur-sm p-2 rounded-xl shadow-sm border border-muted/50">
+                          <div className="absolute inset-x-2 bottom-2 z-10 bg-white/95 backdrop-blur-sm p-2 rounded-xl border border-muted/50">
                             <div className="flex items-center justify-between mb-1.5 px-0.5">
-                              <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">{isDone ? "Completado" : "Subiendo"}</span>
-                              <span className="text-[9px] font-black text-primary">{progress || 0}%</span>
+                              <span className="text-[9px] font-bold tracking-widest uppercase text-muted-foreground">{isDone ? "Completado" : "Subiendo"}</span>
+                              <span className="text-[9px] font-bold text-primary">{progress || 0}%</span>
                             </div>
                             <div className="w-full bg-muted rounded-full h-1 overflow-hidden">
                               <div
@@ -1068,7 +1095,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         {/* Delete Button */}
                         {!uploading && (
                           <button
-                            className="absolute top-2 right-2 p-1.5 bg-background/80 hover:bg-destructive hover:text-white text-muted-foreground rounded-lg shadow-sm border border-muted/50 opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110"
+                            className="absolute top-2 right-2 p-1.5 bg-background/80 hover:bg-destructive hover:text-white text-muted-foreground rounded-lg border border-muted/50 opacity-0 group-hover:opacity-100 transition-all transform hover:scale-110"
                             onClick={(e) => { e.stopPropagation(); setSelectedFiles(selectedFiles.filter((_, idx) => idx !== i)) }}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -1076,14 +1103,14 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
                         )}
 
                         {!uploading && (
-                          <div className="absolute top-2 left-2 p-1 bg-white/80 rounded-md border border-muted shadow-sm cursor-move opacity-0 group-hover:opacity-100">
+                          <div className="absolute top-2 left-2 p-1 bg-white/80 rounded-md border border-muted cursor-move opacity-0 group-hover:opacity-100">
                             <GripVertical className="h-3 w-3 text-muted-foreground" />
                           </div>
                         )}
 
                         {/* File Name Tip */}
                         <div className="absolute inset-x-0 top-0 p-2 bg-gradient-to-b from-black/20 to-transparent pointer-events-none">
-                          <span className="text-[10px] font-medium text-white truncate drop-shadow-sm">{f.name}</span>
+                          <span className="text-[10px] font-medium text-white truncate drop">{f.name}</span>
                         </div>
                       </div>
                     );
@@ -1096,7 +1123,7 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
           <div className="p-6 border-t bg-background flex items-center justify-between gap-4 shadow-inner">
             <div className="hidden sm:block">
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total preparado:</p>
-              <p className="text-sm font-black">{(selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1)} MB</p>
+              <p className="text-sm font-bold">{(selectedFiles.reduce((acc, f) => acc + f.size, 0) / (1024 * 1024)).toFixed(1)} MB</p>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
               <Button variant="ghost" className="flex-1 sm:flex-none text-xs rounded-xl" disabled={!!uploading} onClick={() => { setUploadSheetOpen(false); setSelectedFiles([]); setActiveParentItemId(null); }}>
@@ -1136,33 +1163,36 @@ export function MultimediaSection({ occurrenceId }: { occurrenceId: string }) {
         </SheetContent>
       </Sheet>
 
-      {/* --- Confirm Delete Dialog (Sheet Overlay) --- */}
-      {itemToDelete && (
-        <div className="fixed inset-0 z-[150] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-background max-w-sm w-full rounded-2xl shadow-2xl p-6 border border-muted animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-4 text-destructive mb-4">
+      {/* --- Confirm Delete Dialog (AlertDialog) --- */}
+      <AlertDialog open={!!itemToDelete} onOpenChange={(open) => !open && setItemToDelete(null)}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="flex items-center gap-4 text-destructive mb-2">
               <div className="bg-destructive/10 p-3 rounded-full">
                 <Trash2 className="h-6 w-6" />
               </div>
-              <h2 className="text-lg font-bold tracking-tight">¿Estás seguro?</h2>
+              <AlertDialogTitle className="text-xl font-bold">¿Estás seguro?</AlertDialogTitle>
             </div>
-            <p className="text-sm text-muted-foreground mb-6">
-              Esta acción no se puede deshacer. El archivo desaparecerá permanentemente del bucket y la base de datos.
-            </p>
-            <div className="flex gap-3">
-              <Button variant="ghost" className="flex-1 rounded-xl" onClick={() => setItemToDelete(null)}>
-                Cancelar
-              </Button>
-              <Button variant="destructive" className="flex-1 rounded-xl shadow-lg shadow-destructive/20" onClick={async () => {
-                await handleDelete(itemToDelete.id, itemToDelete.isChild);
-                setItemToDelete(null);
-              }}>
-                Eliminar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+            <AlertDialogDescription className="text-sm font-medium">
+              Esta acción no se puede deshacer. El archivo desaparecerá permanentemente del bucket y de la base de datos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel className="rounded-xl font-bold">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="rounded-xl font-bold bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+              onClick={async () => {
+                if (itemToDelete) {
+                  await handleDelete(itemToDelete.id, itemToDelete.isChild);
+                  setItemToDelete(null);
+                }
+              }}
+            >
+              Eliminar Permanentemente
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
