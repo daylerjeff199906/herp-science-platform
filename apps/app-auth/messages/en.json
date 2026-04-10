@@ -38,7 +38,8 @@
     "rememberMe": "Remember me",
     "welcome": "Welcome",
     "onboarding": "Complete Profile",
-    "completeProfile": "Complete Profile"
+    "completeProfile": "Complete Profile",
+    "signOut": "Sign Out"
   },
   "Home": {
     "instituteName": "Research Institute of the Peruvian Amazon"
