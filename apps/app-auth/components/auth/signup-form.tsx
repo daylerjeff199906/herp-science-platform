@@ -89,8 +89,8 @@ export default function SignupForm() {
                 // Handle field-specific errors
                 Object.keys(result.errors).forEach((key) => {
                     const messages = result.errors![key as keyof typeof result.errors];
-                    if (messages && messages.length > 0) {
-                        form.setError(key as any, { message: messages[0] });
+                    if (messages && messages) {
+                        form.setError(key as any, { message: messages });
                     }
                 });
             }
@@ -135,32 +135,30 @@ export default function SignupForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 w-full">
-                <div className="grid grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input placeholder={t('firstNamePlaceholder')} {...field} disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormControl>
-                                    <Input placeholder={t('lastNamePlaceholder')} {...field} disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input placeholder={t('firstNamePlaceholder')} {...field} disabled={isPending} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <Input placeholder={t('lastNamePlaceholder')} {...field} disabled={isPending} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
 
                 <FormField
                     control={form.control}
