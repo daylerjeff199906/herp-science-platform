@@ -3,9 +3,11 @@ import { cookies, headers } from 'next/headers'
 import { getUserModules } from '@/utils/supabase/queries'
 import { redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
+import * as LucideIcons from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import Link from 'next/link'
-import * as LucideIcons from 'lucide-react'
+import { UserNav } from '@/components/user-nav'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 export default async function LauncherPage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
@@ -38,20 +40,22 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
             </div>
 
-            <header className="relative z-10 p-8 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5">
-                <Logo size="md" />
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">{user.email}</span>
-                    <form action="/auth/signout" method="post">
-                        <button className="text-xs uppercase tracking-widest text-white/50 hover:text-white transition-colors">
-                            {t('signOut') || 'Salir'}
-                        </button>
-                    </form>
+            <header className="relative z-10 border-b border-white/5 bg-black/20">
+                <div className="container mx-auto px-6 h-16 flex justify-between items-center">
+                    <Logo size="sm" />
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <UserNav 
+                            email={user.email} 
+                            locale={locale} 
+                            signOutLabel={t('signOut') || 'Salir'} 
+                        />
+                    </div>
                 </div>
             </header>
 
-            <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 md:p-12">
-                <div className="max-w-6xl w-full space-y-12">
+            <main className="relative z-10 flex-1 py-12 md:py-24">
+                <div className="container mx-auto px-6 space-y-16">
                     <div className="text-center space-y-4">
                         <h1 className="text-4xl md:text-6xl font-extrabold tracking-tighter bg-gradient-to-r from-white via-white/80 to-white/40 bg-clip-text text-transparent">
                             {t('welcome') || 'Bienvenido'}
@@ -99,8 +103,10 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                 </div>
             </main>
 
-            <footer className="relative z-10 p-8 text-center text-muted-foreground text-xs font-light tracking-wide border-t border-white/5 bg-black/40">
-                &copy; {new Date().getFullYear()} IIAP - Plataforma de Inteligencia Amazónica
+            <footer className="relative z-10 border-t border-white/5 bg-black/20">
+                <div className="container mx-auto px-6 h-16 flex items-center justify-center text-muted-foreground text-[10px] uppercase tracking-widest">
+                    &copy; {new Date().getFullYear()} IIAP • Plataforma de Inteligencia Amazónica
+                </div>
             </footer>
         </div>
     )
