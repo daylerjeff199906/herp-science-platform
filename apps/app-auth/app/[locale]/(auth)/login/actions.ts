@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { cookies, headers } from 'next/headers'
+import { getUserModules } from '@/utils/supabase/queries'
 
 type LoginResponse = {
     error?: string
@@ -39,10 +40,24 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
     }
 
     if (data.user) {
-        // En un escenario real aquí podrías verificar roles/perfiles como en bio-intranet
-        // Por ahora redirigimos al dashboard o al redirectTo proporcionado
         revalidatePath('/', 'layout')
-        const finalRedirect = resolveRedirect(redirectTo, `/${locale}/dashboard`, locale)
+
+        // Check for modules assignment
+        const modules = await getUserModules(supabase, data.user.id);
+
+        let targetUrl = `/${locale}/launcher`;
+
+        if (modules.length === 0) {
+            // Default redirection to Intranet if no modules are assigned
+            targetUrl = process.env.NODE_ENV === 'development'
+                ? 'http://localhost:3000'
+                : 'https://intranet.iiap.gob.pe/';
+        } else if (modules.length === 1) {
+            // Direct redirection to the unique module
+            targetUrl = modules[0].url;
+        }
+
+        const finalRedirect = resolveRedirect(redirectTo, targetUrl, locale)
         return { redirectUrl: finalRedirect }
     }
 

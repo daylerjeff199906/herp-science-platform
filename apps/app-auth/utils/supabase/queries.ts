@@ -10,8 +10,11 @@ export async function getUserModules(supabase: SupabaseClient, userId: string) {
 
     if (!profile) return [];
 
-    // 2. Fetch modules through user_roles -> roles -> role_permissions -> permissions -> modules
-    // Join logic: user_roles (role_id) -> roles -> role_permissions (permission_id) -> permissions (module_name) -> modules (code)
+    // 2. Fetch modules through user_roles -> role_permissions -> permissions -> modules
+    // Join logic with updated schema: 
+    // modules (id) <- permissions (module_id)
+    // permissions (id) <- role_permissions (permission_id)
+    // role_permissions (role_id) <- user_roles (role_id)
     
     const { data: modules, error } = await supabase
         .from('modules')
@@ -33,8 +36,8 @@ export async function getUserModules(supabase: SupabaseClient, userId: string) {
         return [];
     }
 
-    // Deduplicate modules by code
-    const uniqueModules = Array.from(new Map(modules.map(m => [m.code, m])).values());
+    // Deduplicate modules by id
+    const uniqueModules = Array.from(new Map(modules.map(m => [m.id, m])).values());
     
     return uniqueModules;
 }
