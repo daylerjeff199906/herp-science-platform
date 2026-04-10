@@ -1,3 +1,7 @@
+import { createClient } from "@/utils/supabase/server"
+import { cookies, headers } from "next/headers"
+import { getUserModules } from "@/utils/supabase/queries"
+import { redirect } from "next/navigation"
 import { Logo } from "@/components/ui/logo"
 import { getTranslations } from "next-intl/server"
 
@@ -13,6 +17,27 @@ const AUTH_CONFIG = {
 
 export default async function AuthLayout({ children, params }: AuthLayoutProps) {
     const { locale } = await params;
+    
+    // Check session
+    const cookieStore = await cookies()
+    const headerList = await headers()
+    const host = headerList.get('host') || ''
+    const supabase = createClient(cookieStore, host)
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+        // Si ya tiene sesión, verificar módulos para saber a dónde mandarlo
+        const modules = await getUserModules(supabase, user.id);
+
+        if (modules.length === 0) {
+            redirect(process.env.NODE_ENV === 'development' 
+                ? `http://localhost:3004/${locale}/dashboard` 
+                : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
+        }
+
+        redirect(`/${locale}/launcher`);
+    }
+
     const t = await getTranslations({ locale, namespace: 'Auth' });
     const tHome = await getTranslations({ locale, namespace: 'Home' });
 

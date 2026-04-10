@@ -48,13 +48,10 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         let targetUrl = `/${locale}/launcher`;
 
         if (modules.length === 0) {
-            // Default redirection to Intranet if no modules are assigned
+            // Default redirection to Intranet dashboard if no modules are assigned
             targetUrl = process.env.NODE_ENV === 'development'
-                ? 'http://localhost:3000'
-                : 'https://intranet.iiap.gob.pe/';
-        } else if (modules.length === 1) {
-            // Direct redirection to the unique module
-            targetUrl = modules[0].url;
+                ? `http://localhost:3004/${locale}/dashboard`
+                : `https://intranet.iiap.gob.pe/${locale}/dashboard`;
         }
 
         const finalRedirect = resolveRedirect(redirectTo, targetUrl, locale)

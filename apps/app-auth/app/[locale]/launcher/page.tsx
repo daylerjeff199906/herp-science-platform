@@ -23,14 +23,11 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
 
     const modules = await getUserModules(supabase, user.id)
 
-    // Si solo hay un módulo, redirigir directamente (fallback por si el login action no lo hizo)
-    if (modules.length === 1) {
-        redirect(modules[0].url)
-    }
-
-    // Si no hay módulos, ir a noticias
+    // Si no hay módulos, ir al dashboard de la intranet
     if (modules.length === 0) {
-        redirect(process.env.NODE_ENV === 'development' ? 'http://localhost:3004' : 'http://noticias.iiap.gob.pe/')
+        redirect(process.env.NODE_ENV === 'development' 
+            ? `http://localhost:3004/${locale}/dashboard` 
+            : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
     }
 
     return (
@@ -73,6 +70,8 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                                 <Link
                                     key={module.id}
                                     href={module.url}
+                                    target={module.url.startsWith('http') ? '_blank' : undefined}
+                                    rel={module.url.startsWith('http') ? 'noopener noreferrer' : undefined}
                                     className="group relative block"
                                 >
                                     <div className={`absolute -inset-0.5 rounded-2xl bg-gradient-to-r ${module.color_class || 'from-primary to-cyan-500'} opacity-0 group-hover:opacity-100 transition duration-500 blur`}></div>

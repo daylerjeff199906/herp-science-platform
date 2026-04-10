@@ -46,7 +46,7 @@ export async function updateSession(request: NextRequest) {
                        pathname.includes('/forgot-password') || 
                        pathname.includes('/reset-password');
 
-    if (!user && !isAuthPage && pathname !== '/') {
+    if (!user && !isAuthPage) {
         const url = request.nextUrl.clone()
         url.pathname = '/es/login' // Fallback to Spanish login
         return NextResponse.redirect(url)
