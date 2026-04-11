@@ -69,20 +69,32 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                         {modules.map((module) => {
                             // Dinamicamente encontrar el icono
                             const IconComponent = (LucideIcons as any)[module.icon_name] || LucideIcons.AppWindow;
-
+                            
+                            // Construir la URL según el entorno
+                            const baseUrl = process.env.NODE_ENV === 'development' 
+                                ? (module.url_local || module.url_prod) 
+                                : module.url_prod;
+                                
+                            // Limpiar slashes para evitar dobles //
+                            const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+                            const cleanPath = module.path.startsWith('/') ? module.path : `/${module.path}`;
+                            
+                            // La URL final incluye el locale y el path del módulo
+                            const moduleUrl = `${cleanBaseUrl}/${locale}${cleanPath}`;
+                            
                             return (
                                 <Link
                                     key={module.id}
-                                    href={module.url}
-                                    target={module.url.startsWith('http') ? '_blank' : undefined}
-                                    rel={module.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                                    href={moduleUrl}
+                                    target={moduleUrl.startsWith('http') ? '_blank' : undefined}
+                                    rel={moduleUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
                                     className="group relative block"
                                 >
                                     <div className="relative bg-card/50 hover:bg-card border border-border p-5 rounded-lg h-full flex flex-col gap-4 transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-sm">
                                         <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${module.color_class || 'from-primary to-cyan-500'} flex items-center justify-center shadow-sm`}>
                                             <IconComponent className="w-5 h-5 text-white" />
                                         </div>
-
+                                        
                                         <div className="space-y-1.5">
                                             <h3 className="text-base font-semibold tracking-tight">{module.name}</h3>
                                             <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
