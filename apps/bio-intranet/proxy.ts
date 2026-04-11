@@ -2,7 +2,7 @@ import createMiddleware from 'next-intl/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-export default async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const handleI18n = createMiddleware({
     locales: ['en', 'es'],
     defaultLocale: 'es',
@@ -20,11 +20,18 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
+          const host = request.headers.get('host') || ''
+          const isProd = host.includes('iiap.gob.pe')
+
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
           })
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options)
+            const cookieOptions = { ...options }
+            if (isProd) {
+              cookieOptions.domain = '.iiap.gob.pe'
+            }
+            response.cookies.set(name, value, cookieOptions)
           })
         },
       },
@@ -52,6 +59,11 @@ export default async function proxy(request: NextRequest) {
   // Onboarding path
   const onboardingPathRegex = /^\/(en|es)?\/?onboarding.*$/
 
+  const host = request.headers.get('host') || ''
+  const isDev = host.includes('localhost') || host.includes('127.0.0.1')
+  const authUrl = isDev ? 'http://localhost:3003' : 'https://auth.iiap.gob.pe'
+  const loginUrl = `${authUrl}/login`
+
   // If user is NOT logged in
   if (!user) {
     // Allow access to public paths and home
@@ -62,11 +74,8 @@ export default async function proxy(request: NextRequest) {
     ) {
       return response
     }
-    // Redirect to login preserving the original destination as ?next=
-    const fullPath = pathname + request.nextUrl.search
-    const loginUrl = new URL(`/${locale}/login`, request.url)
-    loginUrl.searchParams.set('next', fullPath)
-    return NextResponse.redirect(loginUrl)
+    // Redirect to EXTERNAL login
+    return NextResponse.redirect(new URL(loginUrl))
   }
 
   // User IS logged in
@@ -78,8 +87,13 @@ export default async function proxy(request: NextRequest) {
       id,
       onboarding_completed,
       user_roles (
+        role_id,
+        module_id,
         roles (
           name
+        ),
+        modules (
+          code
         )
       )
     `)
@@ -92,6 +106,13 @@ export default async function proxy(request: NextRequest) {
   const userRoles = profile?.user_roles as any[] | undefined
   const rolesList = userRoles?.flatMap((ur: any) => ur.roles ? [ur.roles.name] : []) || []
   const isAdmin = rolesList.some(r => r.toLowerCase() === 'admin')
+  const hasIntranetAccess = userRoles?.some((ur: any) => ur.modules?.code === 'intranet')
+
+  // Verificación de permiso para el módulo Intranet
+  if (!isAdmin && !hasIntranetAccess) {
+    // Si no es admin y no tiene el módulo intranet, mandarlo al launcher de la plataforma central
+    return NextResponse.redirect(new URL(`${authUrl}/launcher?error=unauthorized`))
+  }
 
   if (isAdmin) {
     // Redirect admin to external platform (distinguis between dev/prod ports)
@@ -149,6 +170,8 @@ export default async function proxy(request: NextRequest) {
 
   return response
 }
+
+export default proxy
 
 export const config = {
   matcher: ['/((?!_next|api|_vercel|.*\\..*).*)'],

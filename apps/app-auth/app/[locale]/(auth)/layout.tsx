@@ -31,8 +31,8 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
 
         if (modules.length === 0) {
             redirect(process.env.NODE_ENV === 'development' 
-                ? `http://localhost:3004/${locale}/dashboard` 
-                : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
+                ? `http://localhost:3004/dashboard` 
+                : `https://intranet.iiap.gob.pe/dashboard`)
         }
 
         redirect(`/${locale}/launcher`);

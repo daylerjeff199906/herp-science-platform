@@ -22,6 +22,8 @@ export async function proxy(request: NextRequest) {
     return intlMiddleware(request);
 }
 
+export default proxy
+
 export const config = {
     // Matcher including localized routes and root
     matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],

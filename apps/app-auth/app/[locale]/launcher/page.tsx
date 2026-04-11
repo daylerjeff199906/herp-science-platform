@@ -23,13 +23,29 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
         redirect(`/${locale}/login`)
     }
 
-    const modules = await getUserModules(supabase, user.id)
+    const fetchedModules = await getUserModules(supabase, user.id)
 
-    // Si no hay módulos, ir al dashboard de la intranet
+    // Modulo por defecto: Intranet
+    const intranetModule = {
+        id: 'default-intranet',
+        name: 'Intranet IIAP',
+        description: 'Portal central de servicios, gestión administrativa y recursos para investigadores del IIAP.',
+        url_prod: 'https://auth.iiap.gob.pe/',
+        url_local: 'http://localhost:3004',
+        path: '/dashboard',
+        icon_name: 'Home',
+        color_class: 'from-slate-800 to-slate-950',
+        is_active: true
+    };
+
+    // Combinar módulos asegurando que Intranet siempre esté presente al inicio
+    const modules = [intranetModule, ...fetchedModules.filter(m => m.id !== 'default-intranet')];
+
+    // Si por alguna razón crítica no hay nada (no debería pasar con el default)
     if (modules.length === 0) {
         redirect(process.env.NODE_ENV === 'development'
-            ? `http://localhost:3004/${locale}/dashboard`
-            : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
+            ? `http://localhost:3004/dashboard`
+            : `https://intranet.iiap.gob.pe/dashboard`)
     }
 
     return (
@@ -79,8 +95,8 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                             const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
                             const cleanPath = module.path.startsWith('/') ? module.path : `/${module.path}`;
                             
-                            // La URL final incluye el locale y el path del módulo
-                            const moduleUrl = `${cleanBaseUrl}/${locale}${cleanPath}`;
+                            // La URL final NO incluye el locale, ya que la app destino lo maneja automáticamente
+                            const moduleUrl = `${cleanBaseUrl}${cleanPath}`;
                             
                             return (
                                 <Link
