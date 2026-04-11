@@ -44,8 +44,18 @@ export async function proxy(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname
 
-  // Determine locale from path
-  const localeMatch = pathname.match(/^\/(en|es)/)
+  // Determine locale from path or redirect to default if missing
+  const localeMatch = pathname.match(/^\/(en|es)(\/|$)/)
+  
+  // Public files and internal next paths should not be redirected
+  const isInternal = pathname.startsWith('/_next') || 
+                     pathname.startsWith('/api') || 
+                     pathname.includes('.')
+  
+  if (!localeMatch && !isInternal) {
+    return NextResponse.redirect(new URL(`/es${pathname}${request.nextUrl.search}`, request.url))
+  }
+
   const locale = localeMatch ? localeMatch[1] : 'es'
 
   // Paths that do not require authentication
@@ -79,49 +89,17 @@ export async function proxy(request: NextRequest) {
   }
 
   // User IS logged in
-
-  // Check if user has completed onboarding and their role
+  // Any authenticated user can enter bio-intranet. 
+  // We'll further check if they need onboarding or can go to dashboard.
+  
   const { data: profile } = await supabase
     .from('profiles')
-    .select(`
-      id,
-      onboarding_completed,
-      user_roles (
-        role_id,
-        module_id,
-        roles (
-          name
-        ),
-        modules (
-          code
-        )
-      )
-    `)
+    .select('id, onboarding_completed')
     .eq('auth_id', user.id)
     .single()
 
   const hasCompletedOnboarding = profile?.onboarding_completed === true
 
-  // Get user role, default to 'cliente' if not found
-  const userRoles = profile?.user_roles as any[] | undefined
-  const rolesList = userRoles?.flatMap((ur: any) => ur.roles ? [ur.roles.name] : []) || []
-  const isAdmin = rolesList.some(r => r.toLowerCase() === 'admin')
-  const hasIntranetAccess = userRoles?.some((ur: any) => ur.modules?.code === 'intranet')
-
-  // Verificación de permiso para el módulo Intranet
-  if (!isAdmin && !hasIntranetAccess) {
-    // Si no es admin y no tiene el módulo intranet, mandarlo al launcher de la plataforma central
-    return NextResponse.redirect(new URL(`${authUrl}/launcher?error=unauthorized`))
-  }
-
-  if (isAdmin) {
-    // Redirect admin to external platform (distinguis between dev/prod ports)
-    const isDev = process.env.NODE_ENV === 'development'
-    const adminUrl = isDev
-      ? `http://localhost:3000/${locale}/admin`
-      : `https://coniap.iiap.gob.pe/${locale}/admin`
-    return NextResponse.redirect(new URL(adminUrl))
-  }
 
   const rootPathRegex = /^\/(en|es)?\/?$/
   const isInRoot = pathname === '/' || pathname.match(rootPathRegex)
