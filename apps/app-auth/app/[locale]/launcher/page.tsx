@@ -27,8 +27,8 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
 
     // Si no hay módulos, ir al dashboard de la intranet
     if (modules.length === 0) {
-        redirect(process.env.NODE_ENV === 'development' 
-            ? `http://localhost:3004/${locale}/dashboard` 
+        redirect(process.env.NODE_ENV === 'development'
+            ? `http://localhost:3004/${locale}/dashboard`
             : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
     }
 
@@ -42,13 +42,13 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
 
             <header className="relative z-10 border-b border-white/5 bg-black/20">
                 <div className="container mx-auto px-6 h-16 flex justify-between items-center">
-                    <Logo size="sm" />
+                    <Logo size="sm" imageClassName="bg-primary/5" />
                     <div className="flex items-center gap-2">
                         <ThemeToggle />
-                        <UserNav 
-                            email={user.email} 
-                            locale={locale} 
-                            signOutLabel={t('signOut') || 'Salir'} 
+                        <UserNav
+                            email={user.email}
+                            locale={locale}
+                            signOutLabel={t('signOut') || 'Salir'}
                         />
                     </div>
                 </div>
@@ -69,7 +69,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                         {modules.map((module) => {
                             // Dinamicamente encontrar el icono
                             const IconComponent = (LucideIcons as any)[module.icon_name] || LucideIcons.AppWindow;
-                            
+
                             return (
                                 <Link
                                     key={module.id}
@@ -82,7 +82,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                                         <div className={`w-10 h-10 rounded-md bg-gradient-to-br ${module.color_class || 'from-primary to-cyan-500'} flex items-center justify-center shadow-sm`}>
                                             <IconComponent className="w-5 h-5 text-white" />
                                         </div>
-                                        
+
                                         <div className="space-y-1.5">
                                             <h3 className="text-base font-semibold tracking-tight">{module.name}</h3>
                                             <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">

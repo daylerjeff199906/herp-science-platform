@@ -31,9 +31,9 @@ export function Logo({
     const sizeConfig = {
         sm: {
             gap: "gap-2",
-            iconSize: "w-6 h-6",
-            textSize: "text-sm",
-            descSize: "text-[10px]"
+            iconSize: "w-12 h-12",
+            textSize: "text-lg",
+            descSize: "text-xs"
         },
         md: {
             gap: "gap-3",

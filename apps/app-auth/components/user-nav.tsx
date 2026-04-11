@@ -27,11 +27,12 @@ export function UserNav({ email, locale, signOutLabel }: UserNavProps) {
 
     const handleSignOut = async () => {
         try {
-            const response = await fetch('/auth/signout', { method: 'POST' })
-            if (response.ok) {
-                router.refresh()
-                router.push(`/${locale}/login`)
-            }
+            const { createClient } = await import('@/utils/supabase/client')
+            const supabase = createClient()
+            await supabase.auth.signOut()
+            
+            router.refresh()
+            router.push(`/${locale}/login`)
         } catch (error) {
             console.error('Sign out error:', error)
         }
