@@ -1,0 +1,47 @@
+{
+  "Auth": {
+    "tagline": "Intelligent management for scientific research. Organize, collaborate and discover with the most advanced biological management platform.",
+    "login": "Login",
+    "loginDescription": "Enter your email below to login to your account",
+    "errorTitle": "Error",
+    "signupDescription": "Enter your information to create an account",
+    "Errors": {
+      "Invalid login credentials": "Invalid credentials or email has not been confirmed.",
+      "Email not confirmed": "Please confirm your email before logging in.",
+      "An unexpected error occurred": "An unexpected error occurred. Please try again."
+    },
+    "signup": "Sign Up",
+    "forgotPassword": "Forgot my password",
+    "resetPassword": "Reset password",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "firstNamePlaceholder": "First Name",
+    "lastNamePlaceholder": "Last Name",
+    "accountCreated": "Account Created!",
+    "checkEmailConfirm": "Please check your email to confirm your account",
+    "emailSentNote": "We have sent you a confirmation link. Please check your inbox or spam.",
+    "submit": "Submit",
+    "createAccount": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "signIn": "Sign In",
+    "sendResetLink": "Send reset link",
+    "updatePassword": "Update password",
+    "rememberPassword": "Remembered your password?",
+    "logIn": "Log In",
+    "loginWithGoogle": "Continue with Google",
+    "or": "Or",
+    "rememberMe": "Remember me",
+    "welcome": "Welcome",
+    "onboarding": "Complete Profile",
+    "completeProfile": "Complete Profile",
+    "signOut": "Sign Out"
+  },
+  "Home": {
+    "instituteName": "Research Institute of the Peruvian Amazon"
+  }
+}
