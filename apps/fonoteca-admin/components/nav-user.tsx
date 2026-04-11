@@ -21,7 +21,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon, UserIcon } from "lucide-react"
-import { signout } from "@/app/login/actions"
+import { signout } from "@/actions/auth"
 
 interface NavUserProps {
   user?: {
