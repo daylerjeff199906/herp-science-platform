@@ -22,7 +22,7 @@ export default async function Page({ params }: { params: Promise<{ locale: strin
     if (modules.length === 0) {
         redirect(process.env.NODE_ENV === 'development' 
             ? `http://localhost:3004/${locale}/dashboard` 
-            : `https://intranet.iiap.gob.pe/${locale}/dashboard`)
+            : `https://explora.iiap.gob.pe/dashboard`)
     }
 
     redirect(`/${locale}/launcher`);

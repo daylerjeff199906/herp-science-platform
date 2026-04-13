@@ -30,7 +30,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
         id: 'default-intranet',
         name: 'Intranet IIAP',
         description: 'Portal central de servicios, gestión administrativa y recursos para investigadores del IIAP.',
-        url_prod: 'https://auth.iiap.gob.pe/',
+        url_prod: 'https://explora.iiap.gob.pe/',
         url_local: 'http://localhost:3004',
         path: '/dashboard',
         icon_name: 'Home',
@@ -45,7 +45,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
     if (modules.length === 0) {
         redirect(process.env.NODE_ENV === 'development'
             ? `http://localhost:3004/dashboard`
-            : `https://intranet.iiap.gob.pe/dashboard`)
+            : `https://explora.iiap.gob.pe/dashboard`)
     }
 
     return (
