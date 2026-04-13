@@ -51,7 +51,7 @@ export default function Page() {
                 <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] translate-y-1/2" />
             </div>
 
-            <main className="flex-1 relative z-10 pt-24 pb-12">
+            <main className="flex-1 relative z-10 pt-14 pb-12">
                 <div className="container mx-auto px-4 max-w-7xl">
                     <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-6">
                         
@@ -60,8 +60,8 @@ export default function Page() {
                             {user ? (
                                 <LeftAside userData={user} />
                             ) : (
-                                <div className="flex flex-col gap-4 sticky top-24">
-                                    <Card className="border-none shadow-sm bg-gradient-to-br from-primary to-primary/80 text-white overflow-hidden">
+                                <div className="flex flex-col gap-4 sticky top-20">
+                                    <Card className="border-none bg-gradient-to-br from-primary to-primary/80 text-white overflow-hidden">
                                         <CardContent className="pt-8 pb-8 px-6 text-center space-y-6 relative">
                                             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
                                             <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto backdrop-blur-md border border-white/30">
@@ -72,7 +72,7 @@ export default function Page() {
                                                 <p className="text-sm text-white/80 font-medium">Únete a la mayor red de científicos de la Amazonía.</p>
                                             </div>
                                             <Link href={`/${locale}/signup`} className="block">
-                                                <Button className="w-full rounded-full bg-white text-primary hover:bg-white/90 font-black shadow-lg shadow-black/10">
+                                                <Button className="w-full rounded-full bg-white text-primary hover:bg-white/90 font-bold">
                                                     Crear cuenta gratis
                                                     <ArrowRight className="ml-2 h-4 w-4" />
                                                 </Button>
@@ -80,9 +80,9 @@ export default function Page() {
                                         </CardContent>
                                     </Card>
 
-                                    <Card className="border-none shadow-sm bg-card/50 backdrop-blur-sm">
+                                    <Card className="border-none bg-card/50 backdrop-blur-sm">
                                         <CardContent className="p-6 space-y-4">
-                                            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Misión IIAP</h4>
+                                            <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Misión IIAP</h4>
                                             <p className="text-sm font-medium leading-relaxed">Promovemos el conocimiento científico para el desarrollo sostenible de la región amazónica.</p>
                                             <div className="pt-2">
                                                 <Link href="#" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
@@ -100,7 +100,7 @@ export default function Page() {
                             {/* Mobile Welcome Card (only when no user and mobile) */}
                             {!user && (
                                 <div className="md:hidden">
-                                     <Card className="border-none shadow-sm bg-primary text-white mb-4">
+                                             <Card className="border-none bg-primary text-white mb-4">
                                         <CardContent className="p-6 flex items-center justify-between">
                                             <div className="space-y-1">
                                                 <p className="font-bold text-lg leading-tight uppercase tracking-tight">Comunidad IIAP</p>
