@@ -91,8 +91,8 @@ export function MainFeed({ posts }: MainFeedProps) {
                             </p>
                         </div>
                         
-                        {/* Image Placeholder or real image if it looks like one */}
-                        {post.img_url && !post.img_url.includes('campa%C3%B1as') && (
+                        {/* Improved Image Rendering Logic */}
+                        {post.img_url && (post.img_url.match(/\.(jpeg|jpg|gif|png|webp|avif)$/) !== null) ? (
                              <div className="relative aspect-[16/9] rounded-xl overflow-hidden border bg-muted/20">
                                 <img 
                                     src={post.img_url} 
@@ -100,17 +100,19 @@ export function MainFeed({ posts }: MainFeedProps) {
                                     className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
                                 />
                              </div>
-                        )}
-
-                        {/* If it's the scraped campaign, maybe we don't have a direct image but we show a decoration */}
-                        {(post.img_url && post.img_url.includes('campa%C3%B1as')) && (
-                            <div className="relative h-48 rounded-xl overflow-hidden border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent flex items-center justify-center p-8 group-hover:from-primary/20 transition-all duration-500">
+                        ) : (
+                            /* Placeholder for campaigns without direct image URLs */
+                            <div className="relative h-56 rounded-xl overflow-hidden border bg-gradient-to-br from-primary/20 via-primary/5 to-transparent flex items-center justify-center p-8 group-hover:from-primary/30 transition-all duration-500">
                                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
-                                <div className="text-center space-y-3 z-10">
-                                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50"></div>
+                                <div className="text-center space-y-4 z-10">
+                                    <div className="w-14 h-14 rounded-full bg-background/50 backdrop-blur-md flex items-center justify-center mx-auto shadow-sm border border-white/20">
                                         <ExternalLink className="h-6 w-6 text-primary" />
                                     </div>
-                                    <span className="text-xs font-bold uppercase tracking-widest text-primary/80">Campaña Institucional</span>
+                                    <div className="space-y-1">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/80">Campaña Institucional</span>
+                                        <p className="text-xs text-muted-foreground font-medium max-w-[200px] mx-auto">Esta publicación redirige al portal oficial del Estado Peruano.</p>
+                                    </div>
                                 </div>
                             </div>
                         )}

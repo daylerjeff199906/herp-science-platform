@@ -58,13 +58,11 @@ export async function proxy(request: NextRequest) {
 
   const locale = localeMatch ? localeMatch[1] : 'es'
 
-  // Paths that do not require authentication
-  const publicPathRegex =
-    /^\/(en|es)?\/?(login|signup|auth|forgot-password|reset-password|icon\.png|.*\.svg).*$/
-
+  // Paths that MUST be protected
+  const protectedPathRegex = /^\/(en|es)?\/?(dashboard|onboarding).*$/
+  
   // Auth pages (login, signup, etc)
-  const authPathRegex =
-    /^\/(en|es)?\/?(login|signup|forgot-password|reset-password).*$/
+  const authPathRegex = /^\/(en|es)?\/?(login|signup|forgot-password|reset-password).*$/
 
   // Onboarding path
   const onboardingPathRegex = /^\/(en|es)?\/?onboarding.*$/
@@ -74,24 +72,17 @@ export async function proxy(request: NextRequest) {
   const authUrl = isDev ? 'http://localhost:3003' : 'https://auth.iiap.gob.pe'
   const loginUrl = `${authUrl}/login`
 
-  // If user is NOT logged in
+  // 1. IF NOT LOGGED IN
   if (!user) {
-    // Allow access to public paths and home
-    if (
-      pathname.match(publicPathRegex) ||
-      pathname === '/' ||
-      pathname.match(/^\/(en|es)$/)
-    ) {
-      return response
+    // If trying to access a protected path, redirect to login
+    if (pathname.match(protectedPathRegex)) {
+      return NextResponse.redirect(new URL(loginUrl))
     }
-    // Redirect to EXTERNAL login
-    return NextResponse.redirect(new URL(loginUrl))
+    // Otherwise allow access (Public Landing, Facilities, etc)
+    return response
   }
 
-  // User IS logged in
-  // Any authenticated user can enter bio-intranet. 
-  // We'll further check if they need onboarding or can go to dashboard.
-  
+  // 2. IF LOGGED IN
   const { data: profile } = await supabase
     .from('profiles')
     .select('id, onboarding_completed')
@@ -100,46 +91,20 @@ export async function proxy(request: NextRequest) {
 
   const hasCompletedOnboarding = profile?.onboarding_completed === true
 
-
-  const rootPathRegex = /^\/(en|es)?\/?$/
-  const isInRoot = pathname === '/' || pathname.match(rootPathRegex)
-
-  // If trying to access auth pages or root while logged in as Cliente
-  if (pathname.match(authPathRegex) || isInRoot) {
-    // Honor ?next= param if present, otherwise go to dashboard/onboarding
-    const nextParam = request.nextUrl.searchParams.get('next')
-    if (nextParam) {
-      let targetPath = nextParam
-      if (!nextParam.startsWith('http') && !nextParam.startsWith('https')) {
-        let cleanPath = nextParam
-        if (!cleanPath.startsWith('/')) {
-          cleanPath = `/${cleanPath}`
-        }
-        const hasLocale = cleanPath.match(/^\/(en|es)($|\/)/)
-        if (!hasLocale) {
-          targetPath = `/${locale}${cleanPath}`
-        } else {
-          targetPath = cleanPath
-        }
-      }
-      const nextUrl = new URL(targetPath, request.url)
-      return NextResponse.redirect(nextUrl)
-    }
+  // If user is on an auth page, send them to their appropriate start page
+  if (pathname.match(authPathRegex)) {
     const redirectPath = hasCompletedOnboarding ? 'dashboard' : 'onboarding'
-    const redirectUrl = new URL(`/${locale}/${redirectPath}`, request.url)
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(new URL(`/${locale}/${redirectPath}`, request.url))
   }
 
-  // If user hasn't completed onboarding and is NOT on onboarding page
-  if (!hasCompletedOnboarding && !pathname.match(onboardingPathRegex)) {
-    const onboardingUrl = new URL(`/${locale}/onboarding`, request.url)
-    return NextResponse.redirect(onboardingUrl)
+  // If user hasn't completed onboarding and is trying to access dashboard
+  if (!hasCompletedOnboarding && pathname.includes('/dashboard')) {
+    return NextResponse.redirect(new URL(`/${locale}/onboarding`, request.url))
   }
 
   // If user HAS completed onboarding and tries to access onboarding page
   if (hasCompletedOnboarding && pathname.match(onboardingPathRegex)) {
-    const dashboardUrl = new URL(`/${locale}/dashboard`, request.url)
-    return NextResponse.redirect(dashboardUrl)
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url))
   }
 
   // Forward the current path as headers so Server Components can read it
