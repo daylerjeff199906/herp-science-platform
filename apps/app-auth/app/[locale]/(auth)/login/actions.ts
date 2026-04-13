@@ -51,7 +51,7 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
             // Default redirection to Intranet dashboard if no modules are assigned
             targetUrl = process.env.NODE_ENV === 'development'
                 ? `http://localhost:3004/${locale}/dashboard`
-                : `https://intranet.iiap.gob.pe/${locale}/dashboard`;
+                : `https://explora.iiap.gob.pe/dashboard`;
         }
 
         const finalRedirect = resolveRedirect(redirectTo, targetUrl, locale)
