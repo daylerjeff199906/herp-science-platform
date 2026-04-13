@@ -1,264 +1,151 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { createClient } from "@/utils/supabase/client";
+import { MainFeed } from "./dashboard/_components/main-feed";
+import { LeftAside } from "./dashboard/_components/left-aside";
+import { RightAside } from "./dashboard/_components/right-aside";
+import { LandingNavbar } from "@/components/landing-navbar";
+import { SCRAPED_POSTS } from "@/lib/constants/scraped-data";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/logo";
-import { ArrowRight } from 'lucide-react';
-import { useLocale } from 'next-intl';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export default function Page() {
     const locale = useLocale();
-    const [videoLoaded, setVideoLoaded] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const t = useTranslations();
+    const [user, setUser] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
 
-    // Effect to handle video playback once loaded
     useEffect(() => {
-        if (videoLoaded && videoRef.current) {
-            videoRef.current.play().catch((error) => {
-                console.log("Autoplay prevented:", error);
-            });
-        }
-    }, [videoLoaded]);
+        const fetchUser = async () => {
+            const supabase = createClient();
+            const { data: { user: authUser } } = await supabase.auth.getUser();
+            if (authUser) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('first_name, last_name, avatar_url')
+                    .eq('auth_id', authUser.id)
+                    .maybeSingle();
 
-    // Effect to handle scroll for navbar
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
+                setUser({
+                    name: `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || authUser.email?.split('@')[0],
+                    email: authUser.email,
+                    avatar: profile?.avatar_url || null
+                });
+            }
+            setLoading(false);
         };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        fetchUser();
     }, []);
 
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground overflow-x-hidden">
-            {/* Header - Transparent initially, dark on scroll */}
-            <header className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled
-                ? 'bg-background/95 backdrop-blur-md border-b border-border'
-                : 'bg-transparent'
-                }`}>
-                <div className="container flex h-20 items-center justify-between px-6 md:px-12">
-                    {/* Left Navigation with Dropdowns */}
-                    <nav className="hidden md:flex items-center gap-8">
-                        <Link
-                            href="#"
-                            className={`text-sm font-medium uppercase tracking-wider transition-colors flex items-center gap-1 text-white`}
-                        >
-                            About
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </Link>
-                        <Link
-                            href="#"
-                            className={`text-sm font-medium uppercase tracking-wider transition-colors flex items-center gap-1 text-white`}
-                        >
-                            Services
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </Link>
-                    </nav>
+            <LandingNavbar />
 
-                    {/* Centered Logo */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <Link href={`/${locale}`} className="flex items-center justify-center">
-                            <div className={`px-4 py-1.5 border-2 transition-colors border-white flex flex-col items-center`}>
-                                <span className={`text-xl uppercase font-extrabold tracking-wider text-white`}>
-                                    IIAP
-                                </span>
-                                <span className="text-[9px] uppercase font-light tracking-wide text-white/90 text-center max-w-[180px] leading-tight">
-                                    Instituto de Investigaciones de la Amazonía Peruana
-                                </span>
-                            </div>
-                        </Link>
-                    </div>
+            {/* Aesthetic Background Decoration */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-20 dark:opacity-[0.05]">
+                <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/30 rounded-full blur-[120px] -translate-y-1/2" />
+                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] translate-y-1/2" />
+            </div>
 
-                    {/* Right Actions - Login and Register */}
-                    <div className="hidden md:flex items-center gap-6">
-                        <Link
-                            href={`/${locale}/login`}
-                            className={`text-sm font-medium uppercase tracking-wider transition-colors text-white`}
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            href={`/${locale}/signup`}
-                            className={`text-sm font-medium uppercase tracking-wider transition-colors text-white`}
-                        >
-                            Register
-                        </Link>
-                    </div>
-
-                    {/* Mobile Menu Button with Sheet */}
-                    <div className="md:hidden">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <button className="p-2">
-                                    <svg className={`w-6 h-6 ${scrolled ? 'text-foreground' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                    </svg>
-                                </button>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="bg-[#111111]/90 backdrop-blur-md border-white/10 text-white">
-                                <div className="flex flex-col gap-8 mt-12">
-                                    {/* Navigation Links */}
-                                    <nav className="flex flex-col gap-6">
-                                        <SheetClose asChild>
-                                            <Link
-                                                href="#"
-                                                className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
-                                            >
-                                                About
-                                                <ArrowRight className="w-5 h-5 text-white/50" />
+            <main className="flex-1 relative z-10 pt-24 pb-12">
+                <div className="container mx-auto px-4 max-w-7xl">
+                    <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-6">
+                        
+                        {/* Left Column */}
+                        <div className="hidden md:block md:col-span-4 lg:col-span-3">
+                            {user ? (
+                                <LeftAside userData={user} />
+                            ) : (
+                                <div className="flex flex-col gap-4 sticky top-24">
+                                    <Card className="border-none shadow-sm bg-gradient-to-br from-primary to-primary/80 text-white overflow-hidden">
+                                        <CardContent className="pt-8 pb-8 px-6 text-center space-y-6 relative">
+                                            <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                                            <div className="bg-white/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto backdrop-blur-md border border-white/30">
+                                                <Sparkles className="h-8 w-8 text-white" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h3 className="text-xl font-black leading-tight uppercase tracking-tight">Potencia tu Investigación</h3>
+                                                <p className="text-sm text-white/80 font-medium">Únete a la mayor red de científicos de la Amazonía.</p>
+                                            </div>
+                                            <Link href={`/${locale}/signup`} className="block">
+                                                <Button className="w-full rounded-full bg-white text-primary hover:bg-white/90 font-black shadow-lg shadow-black/10">
+                                                    Crear cuenta gratis
+                                                    <ArrowRight className="ml-2 h-4 w-4" />
+                                                </Button>
                                             </Link>
-                                        </SheetClose>
-                                        <SheetClose asChild>
-                                            <Link
-                                                href="#"
-                                                className="text-lg font-medium uppercase tracking-wider text-white hover:text-primary transition-colors flex items-center justify-between"
-                                            >
-                                                Services
-                                                <ArrowRight className="w-5 h-5 text-white/50" />
-                                            </Link>
-                                        </SheetClose>
-                                    </nav>
+                                        </CardContent>
+                                    </Card>
 
-                                    {/* Divider */}
-                                    <div className="h-px w-full bg-white/10"></div>
-
-                                    {/* Auth Links */}
-                                    <div className="flex flex-col gap-4">
-                                        <SheetClose asChild>
-                                            <Button asChild variant="ghost" className="justify-start text-white hover:text-white hover:bg-white/10 text-base uppercase tracking-wider">
-                                                <Link href={`/${locale}/login`}>
-                                                    Login
+                                    <Card className="border-none shadow-sm bg-card/50 backdrop-blur-sm">
+                                        <CardContent className="p-6 space-y-4">
+                                            <h4 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Misión IIAP</h4>
+                                            <p className="text-sm font-medium leading-relaxed">Promovemos el conocimiento científico para el desarrollo sostenible de la región amazónica.</p>
+                                            <div className="pt-2">
+                                                <Link href="#" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                                                    Saber más sobre nosotros <ArrowRight className="h-3 w-3" />
                                                 </Link>
-                                            </Button>
-                                        </SheetClose>
-                                        <SheetClose asChild>
-                                            <Button asChild className="text-base uppercase tracking-wider">
-                                                <Link href={`/${locale}/signup`}>
-                                                    Register
-                                                </Link>
-                                            </Button>
-                                        </SheetClose>
-                                    </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
                                 </div>
-                            </SheetContent>
-                        </Sheet>
+                            )}
+                        </div>
+
+                        {/* Center Column - Feed */}
+                        <main className="col-span-1 md:col-span-8 lg:col-span-6 space-y-6">
+                            {/* Mobile Welcome Card (only when no user and mobile) */}
+                            {!user && (
+                                <div className="md:hidden">
+                                     <Card className="border-none shadow-sm bg-primary text-white mb-4">
+                                        <CardContent className="p-6 flex items-center justify-between">
+                                            <div className="space-y-1">
+                                                <p className="font-bold text-lg leading-tight uppercase tracking-tight">Comunidad IIAP</p>
+                                                <p className="text-xs text-white/80">Regístrate para ver más contenido.</p>
+                                            </div>
+                                            <Link href={`/${locale}/signup`}>
+                                                <Button size="sm" className="bg-white text-primary hover:bg-white/90 rounded-full font-bold">Unirse</Button>
+                                            </Link>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            )}
+
+                            <MainFeed posts={SCRAPED_POSTS} />
+                        </main>
+
+                        {/* Right Column - Widgets */}
+                        <div className="hidden lg:block lg:col-span-3">
+                            <RightAside />
+                        </div>
+
                     </div>
                 </div>
-            </header>
-
-            <main className="flex-1">
-                {/* Hero Section - Matching Reference Image */}
-                <section className="relative h-screen w-full overflow-hidden">
-                    {/* Background Video/Image Container */}
-                    <div className="absolute inset-0 z-0">
-                        {/* Fallback Background Image - Shows while video loads or if video fails */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-primary/10">
-                            {/* You can replace this gradient with an actual image: */}
-                            <img src="/images/hero-fallback.webp" alt="Hero background" className="absolute inset-0 h-full w-full object-cover" />
-                        </div>
-
-                        {/* Video Layer - Fades in when loaded */}
-                        <div className={`transition-opacity duration-1000 absolute inset-0 ${videoLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                            <video
-                                ref={videoRef}
-                                className="absolute inset-0 h-full w-full object-cover"
-                                playsInline
-                                muted
-                                loop
-                                onCanPlayThrough={() => setVideoLoaded(true)}
-                                poster="/hero-poster.jpg"
-                            >
-                                <source src="https://videos.pexels.com/video-files/855018/855018-hd_1920_1080_30fps.mp4" type="video/mp4" />
-                            </video>
-                        </div>
-
-                        {/* Dark overlay for text contrast */}
-                        <div className="absolute inset-0 bg-black/50 z-10"></div>
-                    </div>
-
-                    {/* Hero Content - Left aligned with bottom controls */}
-                    <div className="relative z-30 container h-full flex flex-col justify-between px-6 md:px-12 py-12 md:py-16">
-                        {/* Main Title - Large, bold, left-aligned */}
-                        <div className="flex-1 flex items-center">
-                            <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold tracking-tight text-white leading-[0.9] max-w-4xl">
-                                Descubre
-                                <br />
-                                la Ciencia
-                                <br />
-                                Amazónica
-                            </h1>
-                        </div>
-
-                        {/* Bottom Row: Tagline (left) and Explore Button (right) */}
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 md:gap-8">
-                            {/* Tagline with dot indicator */}
-                            <div className="flex items-center gap-3 max-w-md">
-                                <div className="w-3 h-3 bg-primary rounded-full flex-shrink-0"></div>
-                                <p className="text-white text-sm md:text-base font-medium uppercase tracking-wide">
-                                    Plataforma de investigación biológica
-                                </p>
-                            </div>
-
-                            {/* Explore Button */}
-                            <Button
-                                variant="ghost"
-                                className="group text-white hover:text-white hover:bg-white/10 flex items-center gap-3 text-sm md:text-base font-semibold uppercase tracking-widest"
-                            >
-                                Explore
-                                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                            </Button>
-                        </div>
-                    </div>
-                </section>
             </main>
 
             {/* Footer */}
-            <footer className="border-t bg-background py-16">
-                <div className="container px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 text-sm">
-                    <div className="space-y-4">
-                        <Logo size="md" />
-                        <p className="text-muted-foreground leading-relaxed max-w-xs">
-                            Impulsando la investigación científica y la conservación en la Amazonía Peruana a través de la tecnología y la colaboración abierta.
-                        </p>
+            <footer className="border-t bg-card/30 py-12 backdrop-blur-md">
+                <div className="container mx-auto px-6 max-w-7xl">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex flex-col items-center md:items-start gap-4">
+                            <span className="text-2xl font-black tracking-tighter text-primary">IIAP</span>
+                            <p className="text-sm text-muted-foreground text-center md:text-left max-w-xs">
+                                Plataforma de inteligencia amazónica para la gestión del conocimiento científico.
+                            </p>
+                        </div>
+                        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                            <Link href="#" className="hover:text-primary transition-colors">Nosotros</Link>
+                            <Link href="#" className="hover:text-primary transition-colors">Transparencia</Link>
+                            <Link href="#" className="hover:text-primary transition-colors">Datos Abiertos</Link>
+                            <Link href="#" className="hover:text-primary transition-colors">Contacto</Link>
+                        </div>
                     </div>
-
-                    <div className="space-y-4">
-                        <h4 className="font-bold text-foreground text-base">Plataforma</h4>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li><Link href="#" className="hover:text-primary transition-colors">Proyectos</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Datos Abiertos</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Colecciones Biológicas</Link></li>
-                        </ul>
+                    <div className="mt-12 pt-8 border-t border-muted/20 text-center text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em]">
+                        &copy; {new Date().getFullYear()} IIAP • Amazonía Peruana • Todos los derechos reservados
                     </div>
-
-                    <div className="space-y-4">
-                        <h4 className="font-bold text-foreground text-base">Recursos</h4>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li><Link href="#" className="hover:text-primary transition-colors">Documentación</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">API para Desarrolladores</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Centro de Ayuda</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="space-y-4">
-                        <h4 className="font-bold text-foreground text-base">Legal</h4>
-                        <ul className="space-y-3 text-muted-foreground">
-                            <li><Link href="#" className="hover:text-primary transition-colors">Política de Privacidad</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Términos de Servicio</Link></li>
-                            <li><Link href="#" className="hover:text-primary transition-colors">Cookies</Link></li>
-                        </ul>
-                    </div>
-                </div>
-                <div className="container mt-16 pt-8 border-t text-center text-muted-foreground px-4">
-                    <p>&copy; {new Date().getFullYear()} IIAP. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>
