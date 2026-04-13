@@ -150,7 +150,7 @@ export function FacebookGallery({ images = [] }: FacebookGalleryProps) {
                             {/* Sidebar View */}
                             <div className="w-full md:w-[400px] bg-background md:border-l border-white/10 p-8 space-y-8 overflow-y-auto">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-10 w-10 flex items-center justify-center grayscale brightness-0 invert dark:invert-0">
+                                    <div className="h-10 w-10 flex items-center justify-center border rounded-full overflow-hidden">
                                         <img
                                             src="/brands/logo-iiap.webp"
                                             alt="IIAP Logo"
@@ -163,9 +163,9 @@ export function FacebookGallery({ images = [] }: FacebookGalleryProps) {
                                     </div>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <h3 className="text-base font-bold tracking-tighter leading-tight text-foreground uppercase">Galería de Infraestructura</h3>
-                                    <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+                                <div className="space-y-2">
+                                    <h3 className="text-sm font-bold tracking-tighter leading-tight text-foreground uppercase">Galería de Infraestructura</h3>
+                                    <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                                         Explora a detalle nuestras instalaciones. Cada imagen captura la esencia de nuestro compromiso científico.
                                     </p>
                                 </div>
