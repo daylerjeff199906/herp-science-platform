@@ -9,10 +9,9 @@ export default async function LoginPage(props: { params: Promise<{ locale: strin
     // Configuración de URLs
     const isProd = process.env.NODE_ENV === 'production';
     const authUrl = isProd ? 'https://auth.iiap.gob.pe' : 'http://localhost:3003';
-    const siteUrl = isProd ? 'https://intranet.iiap.gob.pe' : 'http://localhost:3004';
+    const siteUrl = isProd ? 'https://vertebrados.iiap.gob.pe' : 'http://localhost:3005';
     
     // Construir la URL de retorno
-    // Si ya viene un redirect, lo pasamos tal cual, si no, usamos el dashboard local
     const finalRedirect = redirectTo || `${siteUrl}/${locale}/dashboard`;
     
     const loginUrl = `${authUrl}/${locale}/login?redirect=${encodeURIComponent(finalRedirect)}`;
