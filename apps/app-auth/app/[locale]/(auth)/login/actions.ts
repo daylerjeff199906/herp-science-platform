@@ -11,6 +11,40 @@ type LoginResponse = {
     redirectUrl?: string
 }
 
+const isDev = process.env.NODE_ENV === 'development';
+
+/**
+ * Normaliza URLs de producción a local durante el desarrollo.
+ */
+function normalizeUrl(url: string | null | undefined): string {
+    if (!url) return '';
+    if (!isDev) return url;
+
+    // Mapeo de dominios de producción a puertos locales
+    const domainMapping: Record<string, string> = {
+        'auth.iiap.gob.pe': 'localhost:3003',
+        'intranet.iiap.gob.pe': 'localhost:3004',
+        'vertebrados.iiap.gob.pe': 'localhost:3005',
+        'fonoteca.iiap.gob.pe': 'localhost:3006',
+        'panel.iiap.gob.pe': 'localhost:3007',
+        'noticias.iiap.gob.pe': 'localhost:3000',
+    };
+
+    try {
+        const u = new URL(url);
+        const host = u.host;
+        
+        if (domainMapping[host]) {
+            u.host = domainMapping[host];
+            u.protocol = 'http:';
+            return u.toString();
+        }
+    } catch (e) {
+        // Ignorar si no es una URL absoluta válida
+    }
+    return url;
+}
+
 function resolveRedirect(path: string | null | undefined, fallback: string, locale: string): string {
     if (!path) return fallback
     if (path.startsWith('http')) return path
@@ -42,21 +76,20 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
     if (data.user) {
         revalidatePath('/', 'layout')
 
-        // Check for modules assignment
+        // Consultar módulos/roles asignados en la base de datos
         const modules = await getUserModules(supabase, data.user.id);
 
         let targetUrl = `/${locale}/launcher`;
 
         if (modules.length === 0) {
-            // Default redirection to Intranet if no modules are assigned
-            targetUrl = process.env.NODE_ENV === 'development'
-                ? 'http://localhost:3000'
-                : 'https://intranet.iiap.gob.pe/';
+            // Redirección por defecto si no hay módulos (usando normalización para local/prod)
+            targetUrl = normalizeUrl(isDev ? 'http://localhost:3004' : 'https://intranet.iiap.gob.pe/');
         } else if (modules.length === 1) {
-            // Direct redirection to the unique module
-            targetUrl = modules[0].url;
+            // Si solo tiene uno, vamos directo (normalizando la URL del DB si es necesario)
+            targetUrl = normalizeUrl(modules[0].url);
         }
 
+        // Priorizar el parámetro de redirección (p. ej. si vino de una app específica)
         const finalRedirect = resolveRedirect(redirectTo, targetUrl, locale)
         return { redirectUrl: finalRedirect }
     }

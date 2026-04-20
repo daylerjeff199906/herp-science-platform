@@ -23,14 +23,44 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
 
     const modules = await getUserModules(supabase, user.id)
 
-    // Si solo hay un módulo, redirigir directamente (fallback por si el login action no lo hizo)
+    const isDev = process.env.NODE_ENV === 'development';
+
+    /**
+     * Normaliza URLs de producción a local durante el desarrollo.
+     */
+    function normalizeUrl(url: string | null | undefined): string {
+        if (!url) return '';
+        if (!isDev) return url;
+
+        const domainMapping: Record<string, string> = {
+            'auth.iiap.gob.pe': 'localhost:3003',
+            'intranet.iiap.gob.pe': 'localhost:3004',
+            'vertebrados.iiap.gob.pe': 'localhost:3005',
+            'fonoteca.iiap.gob.pe': 'localhost:3006',
+            'panel.iiap.gob.pe': 'localhost:3007',
+            'noticias.iiap.gob.pe': 'localhost:3000',
+        };
+
+        try {
+            const u = new URL(url);
+            const host = u.host;
+            if (domainMapping[host]) {
+                u.host = domainMapping[host];
+                u.protocol = 'http:';
+                return u.toString();
+            }
+        } catch (e) {}
+        return url;
+    }
+
+    // Si solo hay un módulo, redirigir directamente
     if (modules.length === 1) {
-        redirect(modules[0].url)
+        redirect(normalizeUrl(modules[0].url))
     }
 
     // Si no hay módulos, ir a noticias
     if (modules.length === 0) {
-        redirect(process.env.NODE_ENV === 'development' ? 'http://localhost:3004' : 'http://noticias.iiap.gob.pe/')
+        redirect(normalizeUrl(isDev ? 'http://localhost:3004' : 'http://noticias.iiap.gob.pe/'))
     }
 
     return (
@@ -68,11 +98,12 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                         {modules.map((module) => {
                             // Dinamicamente encontrar el icono
                             const IconComponent = (LucideIcons as any)[module.icon_name] || LucideIcons.AppWindow;
+                            const normalizedUrl = normalizeUrl(module.url);
                             
                             return (
                                 <Link
                                     key={module.id}
-                                    href={module.url}
+                                    href={normalizedUrl}
                                     className="group relative block"
                                 >
                                     <div className={`absolute -inset-0.5 rounded-2xl bg-gradient-to-r ${module.color_class || 'from-primary to-cyan-500'} opacity-0 group-hover:opacity-100 transition duration-500 blur`}></div>
