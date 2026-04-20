@@ -63,7 +63,11 @@ export default function LoginPage() {
             if (result?.error) {
                 setError(result.error)
             } else if (result?.redirectUrl) {
-                router.push(result.redirectUrl)
+                if (result.redirectUrl.startsWith('http')) {
+                    window.location.href = result.redirectUrl
+                } else {
+                    router.push(result.redirectUrl)
+                }
             }
         } catch (err) {
             console.error(err)
