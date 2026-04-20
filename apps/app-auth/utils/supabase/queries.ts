@@ -1,43 +1,68 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
-export async function getUserModules(supabase: SupabaseClient, userId: string) {
-    // 1. Get the profile id for this auth user
+/**
+ * Obtiene todos los módulos a los que un usuario tiene acceso
+ * basándose en sus roles y los permisos asignados a esos roles.
+ */
+export async function getUserModules(supabase: SupabaseClient, authUserId: string) {
+    // 1. Obtener el perfil del usuario usando su ID de autenticación
     const { data: profile } = await supabase
         .from('profiles')
         .select('id')
-        .eq('auth_id', userId)
+        .eq('auth_id', authUserId)
         .single();
 
     if (!profile) return [];
 
-    // 2. Fetch modules through user_roles -> role_permissions -> permissions -> modules
-    // Join logic with updated schema: 
-    // modules (id) <- permissions (module_id)
-    // permissions (id) <- role_permissions (permission_id)
-    // role_permissions (role_id) <- user_roles (role_id)
+    // 2. Obtener los roles y posibles módulos directos asociados al usuario
+    const { data: userRolesData } = await supabase
+        .from('user_roles')
+        .select('role_id, module_id')
+        .eq('profile_id', profile.id);
+
+    const roleIds = userRolesData?.map(ur => ur.role_id) || [];
+    const directModuleIds = userRolesData?.map(ur => ur.module_id).filter(Boolean) as string[] || [];
     
-    const { data: modules, error } = await supabase
-        .from('modules')
-        .select(`
-            *,
-            permissions!inner (
-                role_permissions!inner (
-                    user_roles!inner (
-                        profile_id
+    if (roleIds.length === 0 && directModuleIds.length === 0) return [];
+
+    // 3. Obtener módulos por roles (vía permisos)
+    let modulesByRole: any[] = [];
+    if (roleIds.length > 0) {
+        const { data: roleModules } = await supabase
+            .from('modules')
+            .select(`
+                *,
+                permissions!inner (
+                    role_permissions!inner (
+                        role_id
                     )
                 )
-            )
-        `)
-        .eq('permissions.role_permissions.user_roles.profile_id', profile.id)
-        .eq('is_active', true);
-
-    if (error) {
-        console.error('Error fetching user modules:', error);
-        return [];
+            `)
+            .in('permissions.role_permissions.role_id', roleIds)
+            .eq('is_active', true);
+        
+        modulesByRole = roleModules || [];
     }
 
-    // Deduplicate modules by id
-    const uniqueModules = Array.from(new Map(modules.map(m => [m.id, m])).values());
+    // 4. Obtener módulos por asignación directa
+    let modulesByDirect: any[] = [];
+    if (directModuleIds.length > 0) {
+        const { data: directModules } = await supabase
+            .from('modules')
+            .select('*')
+            .in('id', directModuleIds)
+            .eq('is_active', true);
+        
+        modulesByDirect = directModules || [];
+    }
+
+    // 5. Combinar y eliminar duplicados
+    const uniqueModulesMap = new Map();
+    [...modulesByRole, ...modulesByDirect].forEach(m => {
+        // Eliminar la propiedad virtual de la unión si existe para limpiar el objeto
+        const { permissions, ...moduleData } = m;
+        uniqueModulesMap.set(m.id, moduleData);
+    });
     
-    return uniqueModules;
+    return Array.from(uniqueModulesMap.values());
 }

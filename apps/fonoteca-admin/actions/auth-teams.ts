@@ -47,7 +47,12 @@ export async function getAuthorizedTeams() {
     // 2. Get roles
     const { data: userRoles } = await supabase
         .from('user_roles')
-        .select('role_id, roles(name)')
+        .select(`
+            role_id, 
+            roles (name),
+            module_id,
+            modules (name, code, url_prod, url_local)
+        `)
         .eq('profile_id', profile.id);
 
     const roles = userRoles?.map((r: any) => r.roles?.name?.toLowerCase()) || [];
@@ -55,12 +60,19 @@ export async function getAuthorizedTeams() {
     if (roleIds.length === 0) return [];
 
     // 3. Get permissions with module info
+    const isDev = host.includes('localhost') || host.includes('127.0.0.1');
+
     const { data: permissions, error } = await supabase
         .from('role_permissions')
         .select(`
             permissions (
-                module_name,
-                url
+                action,
+                modules (
+                    name,
+                    code,
+                    url_prod,
+                    url_local
+                )
             )
         `)
         .in('role_id', roleIds);
@@ -72,7 +84,7 @@ export async function getAuthorizedTeams() {
 
     const modules = new Map<string, TeamModule>();
 
-    // Standard modules mapping if not in DB
+    // Standard modules helper
     const addModule = (rawName: string, dbUrl?: string) => {
         const asset = MODULE_ASSETS[rawName] || {
             logo: '/brands/logo-iiap.webp',
@@ -92,10 +104,20 @@ export async function getAuthorizedTeams() {
         Object.keys(MODULE_ASSETS).forEach(m => addModule(m));
     }
 
+    // 4. Add modules assigned directly in user_roles
+    userRoles?.forEach((ur: any) => {
+        if (ur.modules) {
+            const url = isDev ? ur.modules.url_local : ur.modules.url_prod;
+            addModule(ur.modules.code.toLowerCase(), url);
+        }
+    });
+
+    // 5. Add modules from permissions/roles
     permissions?.forEach((p: any) => {
-        const mod = p.permissions;
-        if (!mod || !mod.module_name) return;
-        addModule(mod.module_name.toLowerCase(), mod.url);
+        const mod = p.permissions?.modules;
+        if (!mod || !mod.code) return;
+        const url = isDev ? mod.url_local : mod.url_prod;
+        addModule(mod.code.toLowerCase(), url);
     });
 
     return Array.from(modules.values());

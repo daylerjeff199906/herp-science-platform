@@ -33,7 +33,7 @@ function normalizeUrl(url: string | null | undefined): string {
     try {
         const u = new URL(url);
         const host = u.host;
-        
+
         if (domainMapping[host]) {
             u.host = domainMapping[host];
             u.protocol = 'http:';

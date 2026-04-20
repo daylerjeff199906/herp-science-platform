@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const { pathname, searchParams, origin } = new URL(request.url)
     const code = searchParams.get('code')
     let next = searchParams.get('redirect') || searchParams.get('next') || '/launcher'
-    if (next === '/') next = '/launcher'
+    if (next === '/' || next === '/dashboard') next = '/launcher'
 
     const locale = pathname.split('/')[1] || 'es'
 

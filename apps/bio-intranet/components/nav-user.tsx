@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { signout } from '@/app/[locale]/(auth)/login/actions'
+import { signout } from '@/actions/auth'
 
 interface NavUserProps {
   user?: {

@@ -4,19 +4,27 @@ import { type NextRequest } from 'next/server';
 
 const intlMiddleware = createMiddleware({
     locales: ['en', 'es'],
-    defaultLocale: 'es'
+    defaultLocale: 'es',
+    localePrefix: 'as-needed'
 });
 
 export async function proxy(request: NextRequest) {
-    // 1. Run next-intl middleware for locale handling
-    const response = await intlMiddleware(request);
+    // 1. Run supabase middleware for session handling and route protection
+    const supabaseResponse = await updateSession(request);
 
-    // 2. Run supabase middleware for session handling
-    // We pass the response from intlMiddleware so both can modify headers/cookies
-    return await updateSession(request);
+    // If updateSession returned a redirect (e.g., to /login), return it immediately
+    if (supabaseResponse.headers.get('location')) {
+        return supabaseResponse;
+    }
+
+    // 2. Run next-intl middleware for locale handling
+    // We pass the potentially modified response/headers
+    return intlMiddleware(request);
 }
 
+export default proxy
+
 export const config = {
-    // Matcher including localized routes
-    matcher: ['/', '/(de|en|es|pt)/:path*', '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+    // Matcher including localized routes and root
+    matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 };

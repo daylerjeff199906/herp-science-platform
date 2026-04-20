@@ -38,7 +38,8 @@
     "rememberMe": "Recordarme",
     "welcome": "Bienvenido",
     "onboarding": "Completar Perfil",
-    "completeProfile": "Completar Perfil"
+    "completeProfile": "Completar Perfil",
+    "signOut": "Cerrar sesión"
   },
   "Home": {
     "instituteName": "Instituto de Investigaciones de la Amazonía Peruana"
