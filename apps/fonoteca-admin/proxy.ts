@@ -36,12 +36,34 @@ export async function proxy(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
+    // Consultar configuración de módulos para redirección dinámica desde la tabla public.modules
+    const [{ data: moduleData }, { data: authModule }] = await Promise.all([
+        supabase.from('modules').select('url_prod, url_local, path').eq('code', 'fonoteca').maybeSingle(),
+        supabase.from('modules').select('url_prod, url_local').eq('code', 'auth').maybeSingle()
+    ])
+
     const isDev = request.nextUrl.hostname === 'localhost' || request.nextUrl.hostname === '127.0.0.1'
-    const loginUrl = isDev ? 'http://localhost:3003/login' : 'https://auth.iiap.gob.pe/'
+    
+    // Determinar la URL base según el entorno
+    const baseUrl = isDev 
+        ? (moduleData?.url_local || 'http://localhost:3006') 
+        : (moduleData?.url_prod || 'https://fonoteca.iiap.gob.pe')
+    
+    const authBaseUrl = isDev
+        ? (authModule?.url_local || 'http://localhost:3003')
+        : (authModule?.url_prod || 'https://auth.iiap.gob.pe')
+
+    const modulePath = moduleData?.path || '/dashboard'
+    const fullRedirectUrl = `${baseUrl}${modulePath}`
+    const loginUrl = `${authBaseUrl}/es/login?redirect=${encodeURIComponent(fullRedirectUrl)}`
 
     // If not logged in and not on public paths
-    if (!user && !request.nextUrl.pathname.startsWith('/auth')) {
-        return NextResponse.redirect(loginUrl)
+    if (!user && 
+        !request.nextUrl.pathname.startsWith('/login') && 
+        !request.nextUrl.pathname.startsWith('/auth') &&
+        !request.nextUrl.pathname.startsWith('/api/auth')
+    ) {
+        return NextResponse.next().headers.set('x-login-url', loginUrl), NextResponse.redirect(loginUrl)
     }
 
     if (user) {
