@@ -47,7 +47,8 @@ function normalizeUrl(url: string | null | undefined): string {
 
 function resolveRedirect(path: string | null | undefined, fallback: string, locale: string): string {
     if (!path) return fallback
-    if (path.startsWith('http')) return path
+    // Si es una URL absoluta, la normalizamos (útil en desarrollo para redirigir a puertos locales)
+    if (path.startsWith('http')) return normalizeUrl(path)
     const knownLocales = ['es', 'en', 'pt']
     const segments = path.split('/').filter(Boolean)
     const firstSegment = segments[0] ?? ''
@@ -82,11 +83,22 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
         let targetUrl = `/${locale}/launcher`;
 
         if (modules.length === 0) {
-            // Redirección por defecto si no hay módulos (usando normalización para local/prod)
-            targetUrl = normalizeUrl(isDev ? 'http://localhost:3004' : 'https://intranet.iiap.gob.pe/');
+            // Redirección por defecto si no hay módulos
+            targetUrl = isDev ? 'http://localhost:3004' : 'https://intranet.iiap.gob.pe/';
         } else if (modules.length === 1) {
-            // Si solo tiene uno, vamos directo (normalizando la URL del DB si es necesario)
-            targetUrl = normalizeUrl(modules[0].url);
+            // Si solo tiene uno, vamos directo usando las nuevas columnas url_local/url_prod y path
+            const mod = modules[0]
+            const baseUrl = isDev ? (mod.url_local || mod.url_prod) : mod.url_prod
+            const modulePath = mod.path || '/'
+            
+            // Si la URL base ya es absoluta, la usamos construyendo con el path
+            if (baseUrl && baseUrl.startsWith('http')) {
+                const url = new URL(baseUrl)
+                url.pathname = modulePath.startsWith('/') ? modulePath : `/${modulePath}`
+                targetUrl = url.toString()
+            } else {
+                targetUrl = modulePath
+            }
         }
 
         // Priorizar el parámetro de redirección (p. ej. si vino de una app específica)
