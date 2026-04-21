@@ -13,6 +13,8 @@ export async function signout(redirectTo?: string, locale: string = 'es') {
 
     await supabase.auth.signOut()
 
+    const isDev = host.includes('localhost') || host.includes('127.0.0.1')
+
     // Consultar configuración de módulos para redirección dinámica
     const [{ data: moduleData }, { data: authModule }] = await Promise.all([
         supabase.from('modules').select('url_prod, url_local, path').eq('code', 'intranet').maybeSingle(),
