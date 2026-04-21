@@ -84,13 +84,13 @@ export async function login(formData: FormData, locale: string = 'es', redirectT
 
         if (modules.length === 0) {
             // Redirección por defecto si no hay módulos
-            targetUrl = isDev ? 'http://localhost:3004' : 'https://intranet.iiap.gob.pe/';
+            targetUrl = isDev ? 'http://localhost:3004' : 'https://explora.iiap.gob.pe/';
         } else if (modules.length === 1) {
             // Si solo tiene uno, vamos directo usando las nuevas columnas url_local/url_prod y path
             const mod = modules[0]
             const baseUrl = isDev ? (mod.url_local || mod.url_prod) : mod.url_prod
             const modulePath = mod.path || '/'
-            
+
             // Si la URL base ya es absoluta, la usamos construyendo con el path
             if (baseUrl && baseUrl.startsWith('http')) {
                 const url = new URL(baseUrl)

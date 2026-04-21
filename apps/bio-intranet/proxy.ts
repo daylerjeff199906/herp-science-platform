@@ -46,12 +46,12 @@ export async function proxy(request: NextRequest) {
 
   // Determine locale from path or redirect to default if missing
   const localeMatch = pathname.match(/^\/(en|es)(\/|$)/)
-  
+
   // Public files and internal next paths should not be redirected
-  const isInternal = pathname.startsWith('/_next') || 
-                     pathname.startsWith('/api') || 
-                     pathname.includes('.')
-  
+  const isInternal = pathname.startsWith('/_next') ||
+    pathname.startsWith('/api') ||
+    pathname.includes('.')
+
   if (!localeMatch && !isInternal) {
     return NextResponse.redirect(new URL(`/es${pathname}${request.nextUrl.search}`, request.url))
   }
@@ -60,7 +60,7 @@ export async function proxy(request: NextRequest) {
 
   // Paths that MUST be protected
   const protectedPathRegex = /^\/(en|es)?\/?(dashboard|onboarding).*$/
-  
+
   // Auth pages (login, signup, etc)
   const authPathRegex = /^\/(en|es)?\/?(login|signup|forgot-password|reset-password).*$/
 
@@ -69,8 +69,26 @@ export async function proxy(request: NextRequest) {
 
   const host = request.headers.get('host') || ''
   const isDev = host.includes('localhost') || host.includes('127.0.0.1')
-  const authUrl = isDev ? 'http://localhost:3003' : 'https://auth.iiap.gob.pe'
-  const loginUrl = `${authUrl}/login`
+
+  // Consultar configuración de módulos para redirección dinámica
+  const [{ data: moduleData }, { data: authModule }] = await Promise.all([
+    supabase.from('modules').select('url_prod, url_local, path').eq('code', 'intranet').maybeSingle(),
+    supabase.from('modules').select('url_prod, url_local').eq('code', 'auth').maybeSingle()
+  ])
+
+  // Determinar la URL base según el entorno
+  const baseUrl = isDev
+    ? (moduleData?.url_local || 'http://localhost:3004')
+    : (moduleData?.url_prod || 'https://explora.iiap.gob.pe')
+
+  const authBaseUrl = isDev
+    ? (authModule?.url_local || 'http://localhost:3003')
+    : (authModule?.url_prod || 'https://auth.iiap.gob.pe')
+
+  const modulePath = moduleData?.path || '/dashboard'
+  // Construir la URL de retorno respetando el locale
+  const fullRedirectUrl = `${baseUrl}/${locale}${modulePath.startsWith('/') ? modulePath : '/' + modulePath}`
+  const loginUrl = `${authBaseUrl}/${locale}/login?redirect=${encodeURIComponent(fullRedirectUrl)}`
 
   // 1. IF NOT LOGGED IN
   if (!user) {
