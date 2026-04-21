@@ -20,8 +20,27 @@ export default async function AdminLayout({
 
   const { data: { user } } = await supabase.auth.getUser()
 
-  const isDev = (await headers()).get('host')?.includes('localhost') ?? true
-  const loginUrl = isDev ? 'http://localhost:3003/login' : 'https://auth.iiap.gob.pe/'
+  const host = (await headers()).get('host')
+  const isDev = host?.includes('localhost') || host?.includes('127.0.0.1')
+
+  // Consultar configuración de módulos para redirección dinámica desde la tabla public.modules
+  const [{ data: moduleData }, { data: authModule }] = await Promise.all([
+    supabase.from('modules').select('url_prod, url_local, path').eq('code', 'fonoteca').maybeSingle(),
+    supabase.from('modules').select('url_prod, url_local').eq('code', 'auth').maybeSingle()
+  ])
+
+  // Determinar la URL base según el entorno
+  const baseUrl = isDev 
+    ? (moduleData?.url_local || 'http://localhost:3006') 
+    : (moduleData?.url_prod || 'https://fonoteca.iiap.gob.pe')
+  
+  const authBaseUrl = isDev
+    ? (authModule?.url_local || 'http://localhost:3003')
+    : (authModule?.url_prod || 'https://auth.iiap.gob.pe')
+
+  const modulePath = moduleData?.path || '/dashboard'
+  const fullRedirectUrl = `${baseUrl}${modulePath}`
+  const loginUrl = `${authBaseUrl}/es/login?redirect=${encodeURIComponent(fullRedirectUrl)}`
 
   if (!user) {
     redirect(loginUrl)
@@ -65,7 +84,7 @@ export default async function AdminLayout({
 
   if (!isAdmin && !hasModuleAccess) {
     // No tiene permiso para este módulo específico
-    redirect(`${loginUrl.replace('/login', '')}/launcher?error=unauthorized`)
+    redirect(`${authBaseUrl}/es/launcher?error=unauthorized`)
   }
 
   const userData = {
