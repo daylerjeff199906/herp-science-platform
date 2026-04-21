@@ -61,7 +61,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
         name: 'Bio-Intranet',
         description: 'Gestión interna y herramientas administrativas.',
         icon_name: 'LayoutDashboard',
-        url_prod: 'https://intranet.iiap.gob.pe',
+        url_prod: 'https://explora.iiap.gob.pe',
         url_local: 'http://localhost:3004',
         path: '/dashboard',
         color_class: 'from-blue-600 to-indigo-600'
@@ -121,7 +121,7 @@ export default async function LauncherPage({ params }: { params: Promise<{ local
                         {modules.map((module) => {
                             // Dinamicamente encontrar el icono
                             const IconComponent = (LucideIcons as any)[module.icon_name] || LucideIcons.AppWindow;
-                            
+
                             // Construir la URL según el entorno
                             const baseUrl = isDev ? (module.url_local || module.url_prod) : module.url_prod;
 
